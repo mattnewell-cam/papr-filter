@@ -49,9 +49,13 @@ function check(t, sel, p=202, r=15, h=50, ri=null, q=3000) {
   for(const [id,amount] of Object.entries(used)) assert(Math.abs(amount-t.used[id])<1e-6);
 }
 if(require.main===module){
+const catalogue=JSON.parse(fs.readFileSync(path.join(__dirname,'../testing/coefficients.json'),'utf8'));
+const grey=solver.mats.find(m=>m.id==='grey fuzzy');
+for(const [field,key] of Object.entries({A:'D',C:'C',alpha:'alpha',k:'k_layer',t:'t_layer',vlo:'v_lo',vhi:'v_hi'}))
+  assert.equal(grey[field],catalogue['grey fuzzy'][key],`Grey fuzzy catalogue mismatch: ${field}`);
   const legacy=process.argv.includes('--legacy') ? load(execFileSync('git',['show','f0b78245:src.html'],{cwd:__dirname,encoding:'utf8',maxBuffer:2e6})) : null;
   const refs=JSON.parse(fs.readFileSync(path.join(__dirname,'solver-reference.json'),'utf8'));
-  const references=[2.390406,3.336411,1.059105,1.406569,1.629367,1.429863,1.695636,2.450671];
+  const references=JSON.parse(fs.readFileSync(path.join(__dirname,'standard-reference.json'),'utf8'));
   let worstMs=0;
   for(const [i,[name,...args]] of [...cases,...refs.map((r,i)=>[`varied ${i}`,...r.args])].entries()){
     const start=performance.now(), t=solver.solve(...args), ms=performance.now()-start;
@@ -65,9 +69,9 @@ if(require.main===module){
   }
   assert(worstMs<1000, `slowest solve ${worstMs.toFixed(0)} ms exceeds one second`);
   const sel=cases[0][1], base=solver.solve(sel), seed=structuredClone(solver.seed());
-  assert(base.logs>=2.390,'default solve missed the competing material order');
+  assert(base.logs>=references[0]-.006,'default solve missed the reference');
   const pressure=solver.solve(sel,222.2,15,50,null,3000,seed);
-  assert(pressure.logs-base.logs>.059,'pressure sensitivity missed the order/core change');
+  assert(pressure.logs>=references[7]-.006,'pressure sensitivity missed the reference');
   assert.equal(solver.solve(sel.slice().reverse()).logs,base.logs,'input order changed solution');
   const relaxed=[
     [sel,222.2,15,50], [sel,202,16.5,50], [sel,202,15,55],

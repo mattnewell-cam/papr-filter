@@ -13,6 +13,21 @@ python fit_materials.py --output fitted_coefficients.json
 python theory_examples.py
 ```
 
+For the separate 0.5 µm catalogue (including the flat IIR mask test):
+
+```text
+python fit_materials.py --particle-um 0.5 --iir-csv iir_mask.csv --output coefficients_0.5um.json
+python check_channel_fits.py
+python plot_channel_fits.py
+```
+
+The 0.5 µm response is `log10(PF@0.5)` from column I, checked against the
+external-to-filtered count ratio. The default remains the 0.3 µm log response in column G.
+Missing or nonpositive PF stops that material's fit rather than creating a value.
+The IIR input uses rows 2–8 of its separate CSV and a flat, single-mask model.
+It uses the same exponent bounds and endpoint impaction rule as the radial fits.
+See [0.5 µm results](RESULTS_0.5um.md) for comparisons and provenance.
+
 The script leaves `coefficients.json` unchanged and reports differences in resistance.
 The grey core diameters are taken from the sheet formulas. Pink and towel are 2 ply.
 Pink wrapped length is **125 cm per ply** (250 cm total stock).
@@ -40,7 +55,10 @@ unweighted whole-bundle log10PF; alpha is constrained to (0, 2/3], beta to (0, 1
 and D/C/B are nonnegative. The endpoint upturn rule is applied within each geometry.
 Pressure uses a least-squares line through zero. RMSE, row lists, input hashes and
 geometry provenance accompany the output. Only current single-material runs above
-`OLD / IGNORE` are selected. H is read from column C per row; all six duvet rows
+`OLD / IGNORE` are selected. The loader rejects any selected row at or below that
+marker in either particle channel, even if a manifest accidentally includes it.
+Grey fuzzy uses rows 5–9 only; its corrected 0.3 µm catalogue and the planner are
+checked against that selection by the regression checks. H is read from column C per row; all six duvet rows
 record 42 cm.
 
 The output distinguishes midpoint velocity ranges from the full local velocity

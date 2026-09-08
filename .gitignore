@@ -7,6 +7,8 @@ _preview.html
 testing/*.xlsx
 testing/prototype_pf_q.csv
 testing/prototype_pf_q.source.json
+testing/iir_mask.csv
+PAPR Filtration Google Doc.md
 
 # Trial refits must be reviewed before replacing the published catalogue.
 testing/fitted_coefficients.json

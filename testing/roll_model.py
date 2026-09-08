@@ -118,6 +118,7 @@ BLUE_HOLEY = MATERIALS["blue holey"]
 TOWEL      = MATERIALS["towel"]
 PINK       = MATERIALS["pink"]
 SOFT_LINEN = MATERIALS["soft linen"]
+IIR_MASK   = MATERIALS["IIR mask"]
 
 
 @dataclass
@@ -229,11 +230,11 @@ def fmt(r: dict) -> str:
 
 if __name__ == "__main__":
     print(f'{"material":<12}{"t_lyr":>7}{"Pa/cm":>8}'
-          f'{"logs/cm @0.64":>15}{"@1.2":>7}{"@2.4":>7}'
+          f'{"logs/cm @0.64":>15}{"@1.2":>9}{"@2.4":>9}'
           f'{"QF @0.64":>10}{"@1.2":>8}{"@2.4":>8}')
     for m in sorted(MATERIALS.values(), key=lambda x: -x.qf(1.2)):
         print(f"{m.name:<12}{m.t_layer:7.3f}{m.k_layer / m.t_layer:8.1f}"
-              f"{m.logpf_cm(0.64):15.3f}{m.logpf_cm(1.2):7.3f}{m.logpf_cm(2.4):7.3f}"
+              f"{m.logpf_cm(0.64):15.3f}{m.logpf_cm(1.2):9.3f}{m.logpf_cm(2.4):9.3f}"
               f"{m.qf(0.64):10.1f}{m.qf(1.2):8.1f}{m.qf(2.4):8.1f}")
 
     # worked bundle: grey holey inside, grey fuzzy outside, 125 cm of each

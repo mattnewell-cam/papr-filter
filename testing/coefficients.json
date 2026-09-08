@@ -32,18 +32,28 @@
     "spec": "13.5 tog, synthetic polyester fill"
   },
   "grey fuzzy": {
-    "D": 0.10869,
-    "C": 0.08002,
-    "alpha": 0.488,
-    "k_layer": 6.54681,
+    "D": 0.10844236258724628,
+    "C": 0.0804490089082753,
+    "alpha": 0.5449124331355384,
+    "k_layer": 5.7833311776226255,
     "t_layer": 0.28301,
-    "source": "series A+B joint fit; t from a solid 4-ply roll along the 124 cm side, C=42.0",
-    "v_lo": 0.43,
-    "v_hi": 5.06,
+    "source": "Current Prototype PF & Q rows 5-9 only, 3 ply, core ID 65 mm. Refit 2026-09-08; all rows at or below OLD / IGNORE excluded. Thickness from solid 4-ply roll along 124 cm side, C=42.0.",
+    "v_lo": 0.4397581146069768,
+    "v_hi": 5.057218318317381,
     "product": "https://www.amazon.co.uk/dp/B073HC2G7Q",
     "size_cm": [
       124,
       125
+    ],
+    "log_rmse": 0.0162791887932291,
+    "r2": 0.9988784268884496,
+    "pressure_rmse": 9.503713960878729,
+    "rows": [
+      5,
+      6,
+      7,
+      8,
+      9
     ]
   },
   "blue holey": {
@@ -94,6 +104,17 @@
     "v_lo": 0.42,
     "v_hi": 3.52,
     "product": "https://www.asda.com/groceries/product/duvet-cover-sets/george-home-grey-striped-soft-touch-reversible-duvet-set-king/7727810"
+  },
+  "IIR mask": {
+    "D": 5.1189,
+    "C": 0.6123,
+    "alpha": 0.6667,
+    "k_layer": 7.828,
+    "t_layer": 0.042,
+    "v_lo": 5.1,
+    "v_hi": 54.4,
+    "source": "IIR mask tab (iir_mask.csv): one Type IIR surgical mask tested flat, 28.3 cm2, PF at 0.3 um, 7 points 5.1-54.4 cm/s; D+C fit (no impaction: highest-v point is the minimum), log rmse 0.098; k from dp OLS through zero, rmse 3 Pa; t = 0.042 cm measured by owner. One mask = one layer.",
+    "caveat": "Measured only at 5.1-54 cm/s and alpha sits on the 2/3 cap, so everything below ~5 cm/s is extrapolation whose slope is set by the cap, not by data. Spunbond/meltblown/spunbond; the meltblown middle layer does the filtering."
   },
   "_untested": {
     "blue fuzzy": {

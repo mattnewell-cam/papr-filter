@@ -24,13 +24,20 @@ def numeric(value):
         return None
 
 
-def observations(rows, spec):
+def observations(rows, spec, particle_um='0.3'):
     out = []
+    ignored_from = next((i+1 for i,row in enumerate(rows) if any('OLD / IGNORE' in str(cell).upper() for cell in row)), len(rows)+1)
+    column = {'0.3': 6, '0.5': 8}[particle_um]
+    expected = {'0.3': 'log(PF@.3)', '0.5': 'PF@0.5'}[particle_um]
+    if rows[1][column] != expected:
+        raise ValueError(f'expected {expected} in column {column+1}; inspect the export')
     t = spec['t_layer']
     for series in spec['series']:
         if series.get('r_i') is None and series.get('stock_cm') is None:
             raise ValueError('test-roll core radius or cloth stock is not documented')
         for number in range(series['rows'][0], series['rows'][1]+1):
+            if number >= ignored_from:
+                raise ValueError(f'row {number} is in OLD / IGNORE; excluded data cannot be fitted')
             row = rows[number-1]
             if not row[0].startswith(series['description_prefix']):
                 raise ValueError(f'row {number} no longer matches its material; update the row map')
@@ -45,7 +52,11 @@ def observations(rows, spec):
                 ri = math.sqrt(area)
             if not (0 < ri < ro and H > 0 and t > 0):
                 raise ValueError(f'row {number}: invalid geometry')
-            q, y = numeric(row[5]), numeric(row[6])
+            q, y = numeric(row[5]), numeric(row[column])
+            if particle_um == '0.5':
+                if y is None or y <= 0:
+                    raise ValueError(f'row {number}: missing or nonpositive PF@0.5')
+                y = math.log10(y)
             if q is None or q <= 0 or y is None:
                 raise ValueError(f'row {number}: missing flow or log10PF')
             # A pressure derived from an absent manometer observation is missing,
@@ -59,6 +70,12 @@ def observations(rows, spec):
 
 def prediction(theta, obs, t, impaction):
     D, C, alpha = theta[:3]
+    if obs[0].get('flat'):
+        v = np.array([o['midpoint_velocity'] for o in obs])
+        pred = D*v**-alpha+C
+        if impaction:
+            pred += theta[3]*v**theta[4]
+        return pred*np.array([o['layers'] for o in obs])
     K = np.array([o['K'] for o in obs])
     ri = np.array([o['ri'] for o in obs]); ro = np.array([o['ro'] for o in obs])
     pred = (D*K**-alpha*(ro**(1+alpha)-ri**(1+alpha))/(1+alpha)+C*(ro-ri))/t
@@ -95,7 +112,8 @@ def fit(obs, t):
     pressure_obs=[o for o in obs if o['p'] is not None]
     if not pressure_obs:
         raise ValueError('no measured pressure available')
-    basis=np.array([o['K']*math.log(o['ro']/o['ri'])/t for o in pressure_obs])
+    basis=np.array([o['layers']*o['midpoint_velocity'] if o.get('flat') else
+                    o['K']*math.log(o['ro']/o['ri'])/t for o in pressure_obs])
     pressure=np.array([o['p'] for o in pressure_obs])
     k_layer=float(basis@pressure/(basis@basis))
     if k_layer <= 0:
@@ -107,10 +125,29 @@ def fit(obs, t):
                 rows=[o['row'] for o in obs],impaction_selected=impaction,
                 midpoint_v_lo=min(o['midpoint_velocity'] for o in obs),
                 midpoint_v_hi=max(o['midpoint_velocity'] for o in obs),
-                v_lo=min(o['K']/o['ro'] for o in obs),v_hi=max(o['K']/o['ri'] for o in obs))
+                v_lo=min(o['midpoint_velocity'] if o.get('flat') else o['K']/o['ro'] for o in obs),
+                v_hi=max(o['midpoint_velocity'] if o.get('flat') else o['K']/o['ri'] for o in obs))
     if impaction:
         output.update(B=float(best.x[3]),beta=float(best.x[4]))
     return output
+
+
+def flat_observations(path, particle_um):
+    rows = list(csv.reader(path.open(encoding='utf-8-sig', newline='')))
+    if len(rows) < 8:
+        raise ValueError('IIR export must contain all seven measurement rows')
+    column = {'0.3': 6, '0.5': 8}[particle_um]
+    expected = {'0.3': 'log(PF@.3)', '0.5': 'PF@0.5'}[particle_um]
+    if rows[0][column] != expected or rows[0][5] != 'Velocity (cm/s)':
+        raise ValueError('IIR mask column mapping changed')
+    out = []
+    for number, row in enumerate(rows[1:8], 2):
+        layers, v, y, p = numeric(row[0]), numeric(row[5]), numeric(row[column]), numeric(row[2])
+        if layers != 1 or v is None or v <= 0 or y is None or (particle_um == '0.5' and y <= 0):
+            raise ValueError(f'IIR row {number}: invalid one-mask observation')
+        out.append(dict(row=number, flat=True, layers=layers, midpoint_velocity=v,
+                        y=math.log10(y) if particle_um == '0.5' else y, p=p, ri=0, ro=1))
+    return out
 
 
 def main():
@@ -118,24 +155,37 @@ def main():
     parser.add_argument('--csv',type=Path,default=HERE/'prototype_pf_q.csv')
     parser.add_argument('--manifest',type=Path,default=HERE/'fit_series.json')
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--particle-um', choices=['0.3','0.5'], default='0.3')
+    parser.add_argument('--iir-csv', type=Path, help='Include the separate flat, one-mask test')
     args=parser.parse_args()
     if args.output.resolve()==(HERE/'coefficients.json').resolve():
         parser.error('write a separate candidate file; do not overwrite the published coefficients')
     rows=list(csv.reader(args.csv.open(encoding='utf-8-sig',newline='')))
     manifest=json.loads(args.manifest.read_text(encoding='utf-8'))
     result={'_provenance':{'input_sha256':hashlib.sha256(args.csv.read_bytes()).hexdigest(),
+             'particle_um':float(args.particle_um),
+             'response':'log10(PF), count-based',
              'manifest_sha256':hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
-             'method':'unweighted whole-bundle log10PF residuals; radial integrals; nonnegative D/C/B; alpha<=2/3, beta<=1; pressure OLS through zero'},
+             'method':'unweighted whole-test log10PF residuals; radial integrals for rolls, flat velocity model for IIR; nonnegative D/C/B; alpha<=2/3, beta<=1; pressure OLS through zero'},
              '_unresolved':{}}
     published=json.loads((HERE/'coefficients.json').read_text(encoding='utf-8'))
     for name,spec in manifest['materials'].items():
         try:
-            result[name]=fit(observations(rows,spec),spec['t_layer'])
+            result[name]=fit(observations(rows,spec,args.particle_um),spec['t_layer'])
             result[name]['geometry_provenance']=spec['provenance']
             print(f"{name}: k_layer={result[name]['k_layer']:.5f} (published {published[name]['k_layer']:.5f}), log RMSE={result[name]['log_rmse']:.4f}")
         except ValueError as error:
             result['_unresolved'][name]=str(error)
             print(f'{name}: UNRESOLVED: {error}')
+    if args.iir_csv:
+        result['_provenance']['iir_input_sha256'] = hashlib.sha256(args.iir_csv.read_bytes()).hexdigest()
+        name = 'IIR mask'
+        try:
+            result[name] = fit(flat_observations(args.iir_csv,args.particle_um),published[name]['t_layer'])
+            result[name]['geometry_provenance'] = 'One whole mask tested flat; thickness 0.042 cm measured by owner. Flat velocity model, no radial integral.'
+            print(f"{name}: log RMSE={result[name]['log_rmse']:.4f}")
+        except ValueError as error:
+            result['_unresolved'][name] = str(error)
     args.output.write_text(json.dumps(result,indent=2,allow_nan=False)+'\n',encoding='utf-8')
     print(f"Wrote {args.output}; {len(result['_unresolved'])} unresolved materials. Published coefficients unchanged.")
 

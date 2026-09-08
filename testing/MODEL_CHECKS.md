@@ -1,13 +1,13 @@
 # Pressure linearity and grey+pink prediction checks
 
-Rechecked on 5 September 2026 against the saved `Prototype PF & Q` export. Reproduce
+Rechecked on 8 September 2026 against the saved `Prototype PF & Q` export. Reproduce
 with `python check_pressure_and_mixing.py` (numpy and scipy). The script reads the
 data and published coefficients without changing them.
 
 Inputs for the numbers below:
 
 - `prototype_pf_q.csv` SHA256: `0b5d4b8426df5f421d5cf7bd90948e4e731ac2f7389f9e094a09a351ef4474b6`.
-- `coefficients.json` SHA256: `1a16d0a8c7862b4e592ac28f724401cead79759930ffafc0605f8e0d0dbd5e94`.
+- `coefficients.json` SHA256: `5514fecdc1e618ab52f42123988a51a33f94e86af8ea1b5666438d920512c566`.
 - [Live source](https://docs.google.com/spreadsheets/d/1vNnPBNcy6AXGmybD3XqS8CLbzuCFn33SeNJbljD8o0Y/edit?gid=1848070649#gid=1848070649);
   geometry and row provenance in [FITTING.md](FITTING.md).
 
@@ -20,15 +20,15 @@ through these radial bands.
 
 | Q (L/min) | Measured PF | Predicted PF | Predicted / measured |
 |---:|---:|---:|---:|
-| 521.74 | 34.45 | 55.90 | 1.62 |
-| 342.86 | 39.55 | 75.18 | 1.90 |
-| 240.00 | 50.55 | 100.84 | 2.00 |
-| 153.85 | 89.40 | 155.06 | 1.73 |
-| 75.00 | 269.99 | 375.44 | 1.39 |
-| 35.29 | 2267.00 | 1326.71 | 0.59 |
-| 35.29 | 1764.55 | 1326.71 | 0.75 |
+| 521.74 | 34.45 | 51.84 | 1.50 |
+| 342.86 | 39.55 | 69.89 | 1.77 |
+| 240.00 | 50.55 | 94.37 | 1.87 |
+| 153.85 | 89.40 | 147.64 | 1.65 |
+| 75.00 | 269.99 | 379.41 | 1.41 |
+| 35.29 | 2267.00 | 1531.57 | 0.68 |
+| 35.29 | 1764.55 | 1531.57 | 0.87 |
 
-The model overpredicts PF by roughly 1.6–2.0× over the measured 154–522 L/min range.
+The model overpredicts PF by roughly 1.5–1.9× over the measured 154–522 L/min range.
 That description does not cover the whole sweep: the lowest-flow readings exceed
 the prediction. The old claim of agreement near 180 L/min and the old residual range
 should not be carried forward. Neither a constant correction factor nor a universal

@@ -10,7 +10,7 @@ These are model predictions. Constructed multi-material builds often achieve onl
 about half the PF predicted from single-material fits; see `testing/RESULTS.md`. This is not a universal correction.
 
 Worked examples in §§1–6 use the current `testing/coefficients.json` (SHA256
-`1a16d0a8c7862b4e592ac28f724401cead79759930ffafc0605f8e0d0dbd5e94`).
+`5514fecdc1e618ab52f42123988a51a33f94e86af8ea1b5666438d920512c566`).
 Regenerate the numbers with `python testing/theory_examples.py`. §7 intentionally uses α=0.5.
 All tabulated QF values are kPa⁻¹; velocities are cm/s.
 
@@ -64,9 +64,9 @@ D·u^((1−α)/2) + C·u^(1/2), and both exponents lie in (0, 1) for any α ∈ 
 objective is therefore **concave in u, so the equal split is the strict maximum**. Uniform
 velocity is optimal for any physical α, not just the fitted ones. ∎
 
-Numerically, for 125×90 cm grey fuzzy at Δp = 202 Pa and Q = 180 L/min:
-uniform velocity is 2.87 cm/s. Equal-volume stages at 2.58 / 3.13 cm/s
-cost 0.4% of the logs; 0.86 / 3.96 cm/s cost 15.0%.
+For 125×90 cm grey fuzzy at Δp = 202 Pa and Q = 180 L/min, the
+corrected uniform velocity is 3.05 cm/s. Numerical examples below use only
+the current three-ply grey-fuzzy tests; OLD / IGNORE rows are excluded.
 
 ### Two kinds of non-uniformity, very different in cost
 
@@ -76,7 +76,7 @@ cost 0.4% of the logs; 0.86 / 3.96 cm/s cost 15.0%.
   leak. Parallel paths mix as an arithmetic mean of *penetration*, so the worst path
   dominates and a small bypass costs whole logs.
 
-A 5× velocity spread across a roll's wall costs 9%. A 1% bypass caps PF at 100 whatever
+The one-fold example below loses 9.8% of the uniform-limit logs. A 1% bypass caps PF at 100 whatever
 the material does. **These are not the same order of problem**, and every additional seam,
 edge, joint and fold in a more elaborate build is a parallel-path risk taken on to chase a
 series-path gain that is at most single-digit percent.
@@ -84,14 +84,14 @@ series-path gain that is at most single-digit percent.
 ### There is also no packing pressure
 
 The required face area is pinned by the constraints, not chosen: A = V/(t·N) with
-N = √(V·Δp/(t²·k·Q)). For grey at 180 L/min and 202 Pa that is **0.105 m²**, growing only
-as √V — 0.148 m² at double the material, 0.209 m² at quadruple. Pleats, concertinas and
+N = √(V·Δp/(t²·k·Q)). For grey at 180 L/min and 202 Pa that is **0.098 m²**, growing only
+as √V — 0.139 m² at double the material, 0.197 m² at quadruple. Pleats, concertinas and
 cassettes exist to cram area into a fixed housing. There is no fixed housing here, and the
 areas needed are small enough that a rolled bundle reaches them without effort.
 
 ### Therefore: build a roll
 
-It hits the ceiling (within 9% at worst, ~0% with a few folds), it needs no cleverness to
+It hits the ceiling (within 10% in the one-fold example, ~0% with a few folds), it needs no cleverness to
 reach the required area, and it has almost no seams. Everything a more elaborate geometry
 could add is either unavailable — you cannot beat uniform — or unnecessary.
 
@@ -116,21 +116,21 @@ flattens the velocity profile. Holding a 125×90 cm grey blanket, Q = 180 L/min 
 
 | folds | ID (mm) | r_o/r_i | layers | v out→in | PF | QF |
 |---|---|---|---|---|---|---|
-| 1 | 13 | 5.19 | 9.75 | 1.55→8.05 | 27.0 | 16.32 |
-| 2 | 46 | 2.28 | 10.47 | 2.01→4.57 | 33.3 | 17.36 |
-| 4 | 119 | 1.51 | 10.68 | 2.37→3.57 | 35.5 | 17.67 |
-| 8 | 266 | 1.23 | 10.74 | 2.60→3.19 | 36.1 | 17.75 |
-| ∞ | — | 1.00 | 10.76 | uniform 2.87 | 36.3 | 17.78 |
+| 1 | 11 | 6.44 | 10.14 | 1.56→10.07 | 27.5 | 16.41 |
+| 2 | 41 | 2.54 | 11.06 | 2.06→5.22 | 35.4 | 17.66 |
+| 4 | 108 | 1.59 | 11.34 | 2.46→3.92 | 38.4 | 18.06 |
+| 8 | 246 | 1.26 | 11.42 | 2.73→3.44 | 39.2 | 18.16 |
+| ∞ | — | 1.00 | 11.44 | uniform 3.05 | 39.5 | 18.20 |
 
-**The gain is real but small — 9% — and 92% of it arrives by four folds.** Past that you
+**One fold loses 9.8% of the uniform-limit logs; four folds recover 92% of that gap.** Past that you
 are chasing decimals with absurd geometry.
 
 The mechanism is *not* that uniform velocity filters better. Per layer it is marginally
 worse: D·v^-alpha + C is convex, so by Jensen a spread of velocities gives a higher mean
 protection per layer at the same mean velocity under this two-term fit. The whole
-gain is **layer count**, 9.75 → 10.76. Because Δp ∝ ln(r_o/r_i) rather than wall
+gain is **layer count**, 10.14 → 11.44. Because Δp ∝ ln(r_o/r_i) rather than wall
 thickness, a non-uniform bundle spends its pressure budget on the fast inner layers; the
-same 202 Pa buys a 3.044 cm wall uniform against 2.760 cm at one fold.
+same 202 Pa buys a 3.239 cm wall uniform against 2.870 cm at one fold.
 
 Uniformity does not help the physics. It stops you wasting pressure.
 
@@ -152,20 +152,18 @@ material gives **√2 more layers and √2 more face area**, with velocity dropp
 ## 4. Scaling with material
 
 Since log10PF = N·(D·v^-alpha + C) with N ∝ V^0.5 and v ∝ V^-0.5, the diffusion term
-scales as V^(0.5+alpha/2) and interception as V^0.5. For grey (alpha = 0.488):
+scales as V^(0.5+alpha/2) and interception as V^0.5. For grey (alpha = 0.54491):
 
 | material | layers | v (cm/s) | log10PF | PF | QF |
 |---|---|---|---|---|---|
-| ×0.5 | 7.61 | 4.06 | 1.026 | 10.6 | 11.7 |
-| ×1 | 10.76 | 2.87 | 1.560 | 36.3 | 17.8 |
-| ×2 | 15.21 | 2.03 | 2.388 | 244 | 27.2 |
-| ×4 | 21.51 | 1.43 | 3.682 | 4.81e+03 | 42.0 |
-| ×8 | 30.42 | 1.01 | 5.719 | 5.23e+05 | 65.2 |
+| ×0.5 | 8.09 | 4.32 | 1.047 | 11.1 | 11.9 |
+| ×1 | 11.44 | 3.05 | 1.596 | 39.5 | 18.2 |
+| ×2 | 16.19 | 2.16 | 2.456 | 286 | 28.0 |
+| ×4 | 22.89 | 1.53 | 3.813 | 6.5e+03 | 43.5 |
+| ×8 | 32.37 | 1.08 | 5.972 | 9.38e+05 | 68.1 |
 
-**Each doubling of material multiplies the logs by about 1.53–1.55** across
-×1 to ×8. PF itself has no fixed multiplier: ×1→×2 gives 6.73× PF,
-and ×2→×4 gives 19.69× PF. The log multiplier tends to
-2^(0.5+alpha/2) = 1.675 as diffusion dominates. Effective exponent V^0.61–0.63.
+Each doubling from ×1 to ×8 multiplies logs by 1.54–1.57. The diffusion-dominated
+limit is 2^((1+α)/2) = 1.708. PF itself has no fixed multiplier.
 
 Note Δp is fixed here, so QF scales exactly as log10PF.
 
@@ -176,22 +174,22 @@ same optimum gives N ∝ Δp^0.5, A ∝ Δp^-0.5, v ∝ Δp^0.5, so
 
     log10PF = D' * Delta p^((1-alpha)/2)  +  C' * Delta p^(1/2)
 
-For alpha = 0.488 that is Δp^0.256 for diffusion and Δp^0.5 for interception. Note the
+For alpha = 0.54491 that is Δp^0.228 for diffusion and Δp^0.5 for interception. Note the
 reversal from §4: here **interception is the term that scales better**, because extra
 pressure raises velocity as fast as it raises layer count, and only diffusion is hurt by
 velocity.
 
 | Δp (Pa) | layers | v (cm/s) | log10PF | PF | QF |
 |---|---|---|---|---|---|
-| 50 | 5.35 | 1.43 | 0.917 | 8.26 | 42.2 |
-| 100 | 7.57 | 2.02 | 1.190 | 15.5 | 27.4 |
-| 202 | 10.76 | 2.87 | 1.560 | 36.3 | 17.8 |
-| 400 | 15.14 | 4.04 | 2.044 | 111 | 11.8 |
-| 800 | 21.41 | 5.71 | 2.707 | 510 | 7.8 |
-| 1600 | 30.27 | 8.07 | 3.610 | 4.07e+03 | 5.2 |
+| 50 | 5.69 | 1.52 | 0.950 | 8.91 | 43.7 |
+| 100 | 8.05 | 2.15 | 1.224 | 16.7 | 28.2 |
+| 202 | 11.44 | 3.05 | 1.596 | 39.5 | 18.2 |
+| 400 | 16.10 | 4.29 | 2.085 | 122 | 12.0 |
+| 800 | 22.78 | 6.07 | 2.756 | 571 | 7.9 |
+| 1600 | 32.21 | 8.59 | 3.673 | 4.71e+03 | 5.3 |
 
 Effective exponent ≈ **Δp^0.40**: doubling the pressure budget multiplies the logs by
-1.32, against 1.53 for doubling material. **Pressure is the weaker of the two levers.**
+1.31, against 1.54 for doubling material. **Pressure is the weaker of the two levers.**
 
 ### Why it is a square root, not linear
 
@@ -263,9 +261,9 @@ face velocity (equal material volumes; grey blanket V, Q = 180 L/min, Δp = 202 
 
 | | log10PF | PF | QF | vs grey alone (logs) |
 |---|---|---|---|---|
-| grey alone (V) | 1.560 | 36.3 | 17.78 | — |
-| grey + grey (2V) | 2.388 | 244 | 27.22 | ×1.53 |
-| grey + pink, batch-2 fit | 1.834 | 68.2 | 20.90 | ×1.18 |
+| grey alone (V) | 1.596 | 39.5 | 18.20 | — |
+| grey + grey (2V) | 2.456 | 286 | 28.00 | ×1.54 |
+| grey + pink, batch-2 fit | 1.861 | 72.6 | 21.21 | ×1.17 |
 
 The old combined-pink fit is absent from the current coefficient catalogue, so its
 example is no longer presented as reproducible.
@@ -326,13 +324,13 @@ log10PF falls with rho along the ridge, so the optimum sits at **rho\* = min(rho
 
 ### Results
 
-Grey fuzzy, Q = 180 L/min, Δp = 200 Pa, V = 20 L, alpha = 0.5. Flat plane = 4.879 logs.
+Grey fuzzy, Q = 180 L/min, Δp = 200 Pa, V = 20 L, alpha = 0.5. Flat plane = 5.108 logs.
 
 **Radius ratio barely matters.** Cost of being a cylinder at all, at the same Δp and V:
 
 | r_o/r_i | 1.5 | 2 | 3 | 4 | 6 | 8 | 19 |
 |---|---|---|---|---|---|---|---|
-| vs flat plane | −0.6% | −1.7% | −3.9% | −5.9% | −9.1% | −11.4% | −18.1% |
+| vs flat plane | −0.6% | −1.7% | −3.9% | −5.9% | −9.1% | −11.4% | −18.2% |
 
 Any sane roll sits at rho = 2–4, so the shape penalty is **single-digit percent of the
 logs**. Leave r_o unconstrained and you simply walk down the ridge toward rho -> 1 and
@@ -342,17 +340,65 @@ recover the slab.
 
 | R_max | H_max | log10PF | cloth used | binding |
 |---|---|---|---|---|
-| — | — | 4.88 | 20.0 L | flat plane |
-| 15 | 50 | 4.80 | 20.0 L | Δp, V, r_o — on the ridge |
-| 15 | 40 | 4.80 | 20.0 L | as above; H slack at 37.9 cm |
-| 12 | 50 | 4.58 | 18.9 L | Δp, r_o, H — pinched |
-| 12 | 40 | 3.79 | 13.8 L | Δp, r_o, H — pinched |
+| — | — | 5.11 | 20.0 L | flat plane |
+| 15 | 50 | 5.01 | 20.0 L | Δp, V, r_o |
+| 15 | 40 | 5.01 | 20.0 L | Δp, V, r_o |
+| 12 | 50 | 4.88 | 19.7 L | Δp, r_o, H |
+| 12 | 40 | 4.08 | 14.6 L | Δp, r_o, H |
 
-At R_max = 15 cm the length cap is free: the winning build is only 37.9 cm long, so
+At R_max = 15 cm the length cap is free: the winning build is only 36.5 cm long, so
 tightening H from 50 to 40 costs nothing. Tighten the radius to 12 cm and that same 10 cm
-of length now costs **0.79 logs**. The mechanism is the last column — once pinched off the
-ridge the build can no longer consume the cloth you own, 13.8 L of 20 L. You are not
+of length now costs **0.80 logs**. The mechanism is the last column — once pinched off the
+ridge the build can no longer consume the cloth you own, 14.6 L of 20 L. You are not
 paying for a worse shape; you are paying for material that will not fit in the box.
+
+## 8. Fibre diameter: where it matters and where it cancels
+
+The single-fibre theory the project runs on — Lee & Liu (1982) for capture, Davies for
+pressure, both as implemented in `../../filtration_modelling/src/physics.rs` — gives d_f a
+different exponent in each regime. With Λ = ln PF, L the wall thickness, α the solidity
+and Pe = v·d_f/D_B (D_B the particle's Brownian diffusivity — not the fitted D above):
+
+```
+diffusion      eta_D ∝ Pe^(-2/3)        =>  Lambda ∝ L * d_f^(-5/3) * v^(-2/3)
+interception   eta_R ∝ (d_p/d_f)^2      =>  Lambda ∝ L * d_f^(-3)
+Davies         Delta p ∝ L * v / d_f^2
+```
+
+(Λ carries an extra 1/d_f over η because a wall L thick presents 4αL/(π·d_f·(1−α))
+fibre-diameters of target.) At fixed thickness:
+
+| regime | Λ ∝ | Δp ∝ | QF ∝ |
+|---|---|---|---|
+| diffusion | d_f^(−5/3) | d_f^(−2) | **d_f^(+1/3)** |
+| MPPS (Lee & Liu 1974) | d_f^(−2) | d_f^(−2) | **d_f^0** |
+| interception, R ≪ 1 | d_f^(−3) | d_f^(−2) | **d_f^(−1)** |
+
+The MPPS row is the Google Doc's result (`../PAPR Filtration Google Doc.md`, lines
+157–190): Λ_MPPS = 0.911·αL·((1−α)Ku)^−½·d_f^−2·v^−½·(C_c·kT/η)^½ against Davies scaled by
+0.67, so QF_MPPS ∝ d_f^0 — recorded as a settled position in
+`../../filtration_modelling/CLAUDE.md`. The other two rows put it in context: in the
+diffusion regime **finer fibres are slightly worse per pascal**, because drag grows as
+d_f^(−2) while capture only grows as d_f^(−5/3); in interception finer fibres win outright.
+The MPPS independence is not a coincidence — it is the crossover between the two, which is
+what "most penetrating" means.
+
+**This does not make fibre diameter irrelevant.** A finer medium moves its MPPS down —
+meltblown filter media sit at 100–300 nm against ~600 nm for household cloth — so for a
+fixed particle size of interest a fine-fibre medium can be operating on the interception
+side of its own MPPS, where QF ∝ d_f^(−1). If the sizes we care about landed there, the
+d_f^(1/3) verdict would flip in favour of fine fibres.
+
+**Our mask data does not show that happening.** Interception is velocity-independent, so a
+medium in interception territory would show log PF flat against v. The IIR mask sweep
+(`IIR mask` tab of the testing sheet; 1–3 µm meltblown; PF at 0.3 µm over 5.1–54 cm/s)
+fits D·v^−α + C with α pinned at the 2/3 cap — the full diffusion exponent — and an
+interception floor of only C = 0.61 logs. At 0.3 µm the mask is still diffusion-dominated,
+so its MPPS has not moved far enough below that size to put it in interception territory.
+For now, at that particle size, the d_f^(1/3) regime is the one the data is in.
+
+Davies is a continuum fit. At meltblown sizes (Kn = 2λ/d_f ≈ 0.04–0.13 for 1–3 µm) slip flow
+softens the d_f^(−2) drag, so fine fibres recover a little QF relative to these exponents.
 
 ## Caveats
 

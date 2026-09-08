@@ -2,7 +2,7 @@
 
 Source: `filter_testing.xlsx` ([DIY PAPR Testing](https://docs.google.com/spreadsheets/d/1vNnPBNcy6AXGmybD3XqS8CLbzuCFn33SeNJbljD8o0Y/edit?gid=1848070649#gid=1848070649)), refetched 2026-09-05,
 plus `prototype_pf_q.csv` (formulas evaluated; missing pressure shown as dashes).
-The older standalone CSVs were removed; their source tabs remain in the XLSX. Published coefficients predate this refresh and live in `coefficients.json`;
+The older standalone CSVs were removed; their source tabs remain in the XLSX. Most published coefficients predate this refresh; grey fuzzy was corrected on 2026-09-08 using only current rows 5–9. They live in `coefficients.json`;
 `roll_model.py` loads them and computes bundles. `../THEORY.md` works out what the fits
 imply for how to build one.
 
@@ -17,7 +17,8 @@ For an auditable fitting procedure and its remaining geometry gaps, see `FITTING
 ## Where the numbers come from
 
 Ground truth is the **`Prototype PF & Q` tab**: single-material rolled bundles swept
-across fan voltage, giving PF, Q and centre pressure at 4–6 flows each. The flat-sheet
+across fan voltage, giving PF, Q and centre pressure at 4–6 flows each. The one
+exception is the IIR mask, tested flat on the `IIR mask` tab (`iir_mask.csv`). The flat-sheet
 bench rig on `V-PF relationship` is superseded (see the last section).
 
 Fits are on log₁₀PF per layer against face velocity, with velocity varying radially
@@ -40,13 +41,19 @@ Pa per (cm/s) per cm, the symbols `../THEORY.md` uses throughout.
 
 | material | t_layer (cm) | k (Pa/(cm/s)/cm) | logs/cm @0.64 | @1.2 | @2.4 | QF @0.64 | @1.2 | @2.4 |
 |---|---|---|---|---|---|---|---|---|
+| IIR mask † | 0.0420 | 186.4 | 178.69 | 122.51 | 82.57 | 3449 | 1261 | 425 |
 | grey holey | 0.2015 | 4.4 | 0.231 | 0.210 | 0.188 | 188.0 | 90.8 | 40.7 |
 | duvet | 1.9516 | 1.6 | 0.082 | 0.062 | 0.052 | 186.6 | 74.9 | 31.7 |
-| grey fuzzy | 0.2830 | 23.1 | 0.760 | 0.634 | 0.533 | 118.2 | 52.6 | 22.1 |
+| grey fuzzy | 0.2830 | 20.4 | 0.773 | 0.631 | 0.522 | 136.1 | 59.3 | 24.5 |
 | blue holey | 0.2903 | 9.8 | 0.282 | 0.240 | 0.211 | 103.5 | 46.9 | 20.6 |
 | towel | 0.2700 | 13.3 | 0.375 | 0.294 | 0.251 | 101.4 | 42.5 | 18.1 |
 | pink | 0.4688 | 14.9 | 0.283 | 0.255 | 0.228 | 68.2 | 32.7 | 14.7 |
 | soft linen | 0.0514 | 122.4 | 1.013 | 0.938 | 0.884 | 29.8 | 14.7 | 6.9 |
+
+† IIR mask: every value in this table is extrapolated below its 5.1 cm/s floor, and with
+α on the cap the extrapolation is steep. Interpolated, at 5.3 cm/s, it is 55 logs/cm and
+QF 127 — against 0.44 logs/cm and QF 9.3 for grey fuzzy. Tested flat, not rolled
+(`iir_mask.csv`); one mask counts as one layer.
 
 ### Products
 
@@ -64,8 +71,8 @@ product link.
 
 0.64–2.4 cm/s is the range a real bundle spans: an 80 mm core out to a 300 mm outer
 diameter at 180 L/min over 50 cm gives 0.64 at the skin and 2.39 at the core. QF at a
-single velocity ranks materials correctly — the integrated figure over that whole
-annulus is ~13% below QF@1 for every material, a near-constant offset.
+single velocity is a comparison point; the integrated QF depends on each material's
+velocity response and must be calculated for the actual annulus.
 
 Per-layer coefficients, geometry and provenance are in `coefficients.json`. Notes:
 
@@ -80,10 +87,10 @@ Per-layer coefficients, geometry and provenance are in `coefficients.json`. Note
   that plausibly transfers to other duvets, since t_layer (1.95 cm) and loft follow from
   it — but **down and feather duvets should not be assumed to behave the same way**. The
   fibre geometry is entirely different, and nothing here has been measured on one.
-  The published fit used rows 89–94 in the September 4 export. These are now
+  The published duvet fit used rows 89–94 in the September 4 export. These are now
   rows 56–61; all six now record effective length 42 cm after Matt corrected
   C57 in the live sheet on 2026-09-05 and the saved export was refreshed.
-  Published coefficients have not been refitted. Older partial-length runs are excluded.
+  The duvet coefficients have not been refitted. Older partial-length runs are excluded.
 
 ## Choosing the functional form
 
@@ -91,7 +98,7 @@ Per-layer coefficients, geometry and provenance are in `coefficients.json`. Note
 series well and others worse than a plain power law; freeing it always wins but the
 fitted value scatters 0.16–0.67 with no material pattern, and a shared-α fit sits on a
 very flat SSE profile. 2/3 is the physical ceiling for diffusive capture, so α floats
-below it. The production catalogue has seven materials; four exponents are at or close to the cap.
+below it. The production catalogue has eight materials; five exponents are at or close to the cap.
 
 **Impaction exponent β is capped at 1.0.** Single-fibre impaction efficiency scales with
 Stokes number, which is linear in v; saturation at high St only pushes the effective
@@ -176,7 +183,7 @@ The solid roll and the built roll may use different sides of the same piece — 
 **A correction to t is not just a rescale where the core was derived from t.** r_i comes
 out of r_o² − (material area)/π, so changing t moves the geometry and hence the per-cm
 coefficients; that series has to be refitted. Only where r_i is pinned independently — as
-in both grey fuzzy series, where the sheet's own v_mid column fixes it — does a change in
+in the current grey-fuzzy series, where the documented 65 mm core fixes it — does a change in
 t leave the per-cm values alone and simply re-split them per layer.
 
 **Ordering rule for multi-material bundles.** Not cheapest-first. At each radius place
@@ -194,7 +201,7 @@ The flat-sheet bench rig produced a 1-layer gross fit (slope −0.222), then a n
 per-layer analysis across 1/2/4/8 layers giving a near-flat 8-layer slope (−0.048) and a
 claimed n^−0.187 decline in per-layer protection with stack depth. Both are wrong: the
 roll series give −0.218 and −0.282, and going from grey A's 9.55 layers to grey B's 12.52
-shows per-layer protection 2.8% *up*. The original 1-layer bench slope agreed with the
+historically showed per-layer protection 2.8% *up* (superseded data, excluded from current fits). The original 1-layer bench slope agreed with the
 rolls; the layer-count correction broke it. The bench also under-predicts roll pressure
 drop by 1.6×.
 
@@ -203,8 +210,8 @@ drop by 1.6×.
 - **Constructed-build shortfall.** Multi-material builds often underperform predictions
   assembled from single-material fits: measured PF can be **about half the predicted PF**.
   In the grey-fuzzy + pink
-  run, with pink wrapped length 125 cm, the current model predicts PF 101 versus 51 measured at
-  240 L/min. Across 154–522 L/min it overpredicts by 1.6–2.0×; see
+  run, with pink wrapped length 125 cm, the current model predicts PF 94 versus 51 measured at
+  240 L/min. Across 154–522 L/min it overpredicts by 1.5–1.9×; see
   [the recalculated comparison](MODEL_CHECKS.md#grey-fuzzy--pink). The shortfall is flow-dependent: that run exceeds predictions at its lowest
   flow. Treat this as an observed discrepancy, not a universal correction or worst-case
   bound. A good single-material fit does not validate a combined build.
