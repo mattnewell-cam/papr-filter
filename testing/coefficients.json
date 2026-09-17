@@ -1,120 +1,412 @@
 {
-  "_note": "Per-layer fits.  log10PF per layer = D*v**-alpha + C + B*v**beta   (B/beta absent where no impaction term is used);  dp per layer = k_layer*v.  v in cm/s, dp in Pa, t_layer in cm.  alpha is capped at 2/3 (diffusion), beta at 1.0 (impaction). See RESULTS.md for the fit-selection rules.",
+  "_note": "Per-layer fits, keyed by material then by particle size in um ('0.3', '0.5'). log10PF per layer = D*v**-alpha + C + B*v**beta (B/beta absent where no impaction term); dp per layer = k_layer*v. v in cm/s, dp in Pa, t_layer in cm. alpha capped at 2/3, beta at 1.0. The planner and every published table use the '0.3' fits. See RESULTS.md and RESULTS_0.5um.md.",
   "grey holey": {
-    "D": 0.04345,
-    "C": 0.0,
-    "alpha": 0.158,
-    "k_layer": 0.8921,
     "t_layer": 0.20149,
-    "source": "2-ply prototype series, built C=37.0, H=54, rolled along the 173 cm side; blanket 173 x 137 cm; t from a solid 4-ply roll along the 137 cm side, C=37.25 -> ID 70.7 mm, 11.69 layers",
-    "v_lo": 1.16,
-    "v_hi": 4.63,
-    "caveat": "C pinned at 0; alpha 0.158 is the constrained best fit (R2 0.995, vs 0.976 at 2/3)",
     "product": "https://www.ikea.com/gb/en/p/sandbrodd-throw-anthracite-00562038/",
     "size_cm": [
       173,
       137
-    ]
+    ],
+    "caveat": "C pinned at 0; alpha 0.158 is the constrained best fit (R2 0.995, vs 0.976 at 2/3)",
+    "source": "2-ply prototype series, built C=37.0, H=54, rolled along the 173 cm side; blanket 173 x 137 cm; t from a solid 4-ply roll along the 137 cm side, C=37.25 -> ID 70.7 mm, 11.69 layers",
+    "fits": {
+      "0.3": {
+        "D": 0.04345,
+        "C": 0.0,
+        "alpha": 0.158,
+        "k_layer": 0.8921,
+        "v_lo": 1.16,
+        "v_hi": 4.63
+      },
+      "0.5": {
+        "D": 0.050277721732148235,
+        "C": 9.816705005144518e-26,
+        "alpha": 0.11205878541012457,
+        "k_layer": 0.8920707712463476,
+        "log_rmse": 0.015517438506035057,
+        "r2": 0.805900167658711,
+        "pressure_rmse": 0.4938280121447587,
+        "rows": [
+          25,
+          26,
+          27,
+          28
+        ],
+        "impaction_selected": false,
+        "midpoint_v_lo": 1.158526885504353,
+        "midpoint_v_hi": 4.634107542017412,
+        "v_lo": 0.9268527786119455,
+        "v_hi": 6.178462640519898,
+        "geometry_provenance": "coefficients.json: built 2-ply strip along 173 cm side; H=54. Core inferred from recorded outer circumference and cloth cross-section."
+      }
+    }
   },
   "duvet": {
-    "D": 0.10057,
-    "C": 0.01677,
-    "B": 0.01203,
-    "alpha": 0.6667,
-    "beta": 1.0,
-    "k_layer": 3.0829,
     "t_layer": 1.95159,
-    "v_lo": 0.66,
-    "v_hi": 4.76,
-    "r2": 0.9624,
-    "worst_v": 2.8,
+    "spec": "13.5 tog, synthetic polyester fill",
     "source": "rows 89-94 (full length). C=100, H=42, ID 80 mm, 2 ply x 191 cm, 6.11 layers. Rows 76-80 superseded - that build did not use the full length and read ~4.8x more resistive.",
-    "spec": "13.5 tog, synthetic polyester fill"
+    "fits": {
+      "0.3": {
+        "D": 0.10057,
+        "C": 0.01677,
+        "B": 0.01203,
+        "alpha": 0.6667,
+        "beta": 1.0,
+        "k_layer": 3.0829,
+        "v_lo": 0.66,
+        "v_hi": 4.76,
+        "r2": 0.9624,
+        "worst_v": 2.8
+      },
+      "0.5": {
+        "D": 0.07257038428695183,
+        "C": 3.8191344215766056e-17,
+        "alpha": 0.6666666666666664,
+        "k_layer": 3.082893180099615,
+        "log_rmse": 0.03762530754228871,
+        "r2": 0.6298864472621497,
+        "pressure_rmse": 6.560892443342129,
+        "rows": [
+          56,
+          57,
+          58,
+          59,
+          60,
+          61
+        ],
+        "impaction_selected": true,
+        "midpoint_v_lo": 0.6561176992021226,
+        "midpoint_v_hi": 4.75685331747121,
+        "v_lo": 0.41050903134920635,
+        "v_hi": 11.841885646718403,
+        "B": 0.045432991853375584,
+        "beta": 0.5254314968709617,
+        "geometry_provenance": "Current rows 56-61; 2 plies x 191 cm wrapped length and assumed ID 80 mm retained from the documented full-length build. Effective axial length is 42 cm throughout; Matt corrected C57 in the live sheet on 2026-09-05 and the saved export was refreshed and verified."
+      }
+    }
   },
   "grey fuzzy": {
-    "D": 0.10844236258724628,
-    "C": 0.0804490089082753,
-    "alpha": 0.5449124331355384,
-    "k_layer": 5.7833311776226255,
     "t_layer": 0.28301,
-    "source": "Current Prototype PF & Q rows 5-9 only, 3 ply, core ID 65 mm. Refit 2026-09-08; all rows at or below OLD / IGNORE excluded. Thickness from solid 4-ply roll along 124 cm side, C=42.0.",
-    "v_lo": 0.4397581146069768,
-    "v_hi": 5.057218318317381,
     "product": "https://www.amazon.co.uk/dp/B073HC2G7Q",
     "size_cm": [
       124,
       125
     ],
-    "log_rmse": 0.0162791887932291,
-    "r2": 0.9988784268884496,
-    "pressure_rmse": 9.503713960878729,
-    "rows": [
-      5,
-      6,
-      7,
-      8,
-      9
-    ]
+    "source": "Current Prototype PF & Q rows 5-9 only, 3 ply, core ID 65 mm. Refit 2026-09-08; all rows at or below OLD / IGNORE excluded. Thickness from solid 4-ply roll along 124 cm side, C=42.0.",
+    "fits": {
+      "0.3": {
+        "D": 0.10844236258724628,
+        "C": 0.0804490089082753,
+        "alpha": 0.5449124331355384,
+        "k_layer": 5.7833311776226255,
+        "v_lo": 0.4397581146069768,
+        "v_hi": 5.057218318317381,
+        "log_rmse": 0.0162791887932291,
+        "r2": 0.9988784268884496,
+        "pressure_rmse": 9.503713960878729,
+        "rows": [
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "0.5": {
+        "D": 0.0848945880499348,
+        "C": 0.1177446215075514,
+        "alpha": 0.6666666666666665,
+        "k_layer": 5.7833311776226255,
+        "log_rmse": 0.04601210538371084,
+        "r2": 0.9900987028341537,
+        "pressure_rmse": 9.503713960878729,
+        "rows": [
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "impaction_selected": false,
+        "midpoint_v_lo": 0.4397581146069768,
+        "midpoint_v_hi": 5.057218318317381,
+        "v_lo": 0.33355014090269786,
+        "v_hi": 7.419810866755028,
+        "geometry_provenance": "Current rows 5-9 only, 3 ply, core ID 65 mm from AF5 and AB formulas. Older two-ply series is now under OLD / IGNORE and excluded. Thickness retains documented solid-roll measurement."
+      }
+    }
   },
   "blue holey": {
-    "D": 0.02703,
-    "C": 0.04527,
-    "B": 0.00036,
-    "alpha": 0.6667,
-    "beta": 1.0,
-    "k_layer": 2.8474,
     "t_layer": 0.2903,
-    "v_lo": 0.94,
-    "v_hi": 11.24,
-    "r2": 0.9912,
-    "worst_v": 10.42,
-    "product": "https://www.amazon.co.uk/dp/B01C8XRV44"
+    "product": "https://www.amazon.co.uk/dp/B01C8XRV44",
+    "fits": {
+      "0.3": {
+        "D": 0.02703,
+        "C": 0.04527,
+        "B": 0.00036,
+        "alpha": 0.6667,
+        "beta": 1.0,
+        "k_layer": 2.8474,
+        "v_lo": 0.94,
+        "v_hi": 11.24,
+        "r2": 0.9912,
+        "worst_v": 10.42
+      },
+      "0.5": {
+        "D": 0.0264012008025182,
+        "C": 0.051319655467612336,
+        "alpha": 0.283967329176046,
+        "k_layer": 2.8474165382815935,
+        "log_rmse": 0.016105199547120235,
+        "r2": 0.8798108193050006,
+        "pressure_rmse": 13.818111675518601,
+        "rows": [
+          49,
+          50,
+          51,
+          52,
+          53,
+          54
+        ],
+        "impaction_selected": false,
+        "midpoint_v_lo": 0.9368402534511617,
+        "midpoint_v_hi": 11.242083041095416,
+        "v_lo": 0.7081200121584207,
+        "v_hi": 16.605648278411337,
+        "geometry_provenance": "Sheet row 82: 103 cm double layer plus 49 cm single, same setup as tests; H=39."
+      }
+    }
   },
   "towel": {
-    "D": 0.05595,
-    "C": 0.01704,
-    "B": 0.01152,
-    "alpha": 0.6667,
-    "beta": 0.6,
-    "k_layer": 3.5894,
     "t_layer": 0.26995,
-    "v_lo": 1.02,
-    "v_hi": 13.15,
-    "r2": 0.9789,
-    "worst_v": 3.78
+    "fits": {
+      "0.3": {
+        "D": 0.05595,
+        "C": 0.01704,
+        "B": 0.01152,
+        "alpha": 0.6667,
+        "beta": 0.6,
+        "k_layer": 3.5894,
+        "v_lo": 1.02,
+        "v_hi": 13.15,
+        "r2": 0.9789,
+        "worst_v": 3.78
+      },
+      "0.5": {
+        "D": 0.0781080089678157,
+        "C": 3.041302729719316e-26,
+        "alpha": 0.6666666666666665,
+        "k_layer": 3.5893728245148733,
+        "log_rmse": 0.014543324508630757,
+        "r2": 0.9235284001827072,
+        "pressure_rmse": 8.117804765136821,
+        "rows": [
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
+        ],
+        "impaction_selected": true,
+        "midpoint_v_lo": 1.022721833227755,
+        "midpoint_v_hi": 13.149280711613356,
+        "v_lo": 0.8547008547435896,
+        "v_hi": 16.366726115086283,
+        "B": 0.03037562404613944,
+        "beta": 0.42183425370953026,
+        "geometry_provenance": "Original user measurement recovered from Claude history, 2026-09-04T00:11:02.857Z: towel is 2 ply 85.5cm length. Original fitting command uses 2 x 85.5 cm stock, circumference 32.5 cm, effective axial length 40 cm, and thickness from separate 4 x 130 cm solid roll of circumference 42 cm. This gives ID 69.46 mm and k 3.5894. The later 130 and 70 cm wrapped-length reconstructions were incorrect; 70 cm came from the planner catalogue, not this test. See FITTING.md for historical provenance."
+      }
+    }
   },
   "pink": {
-    "D": 0.08474,
-    "C": 0.03837,
-    "alpha": 0.242,
-    "k_layer": 7.0001,
     "t_layer": 0.4688,
+    "product": "https://www.amazon.co.uk/dp/B082TPFNH7",
     "source": "prototype batch 2 (incense)",
-    "v_lo": 0.28,
-    "v_hi": 5.33,
-    "product": "https://www.amazon.co.uk/dp/B082TPFNH7"
+    "fits": {
+      "0.3": {
+        "D": 0.08474,
+        "C": 0.03837,
+        "alpha": 0.242,
+        "k_layer": 7.0001,
+        "v_lo": 0.28,
+        "v_hi": 5.33
+      },
+      "0.5": {
+        "D": 0.11230749492056315,
+        "C": 1.1204427263850388e-32,
+        "alpha": 0.2625611468716383,
+        "k_layer": 6.9992750951660385,
+        "log_rmse": 0.037383508035694624,
+        "r2": 0.930563972130489,
+        "pressure_rmse": 11.074887322586635,
+        "rows": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "impaction_selected": true,
+        "midpoint_v_lo": 0.2813311383843769,
+        "midpoint_v_hi": 5.330484728082504,
+        "v_lo": 0.201106083438914,
+        "v_hi": 8.868165003689507,
+        "B": 0.01480601642286216,
+        "beta": 0.7043959087798997,
+        "geometry_provenance": "Current rows 11-15 explicitly say 2 ply. Matt confirmed on 2026-09-05 to take wrapped strip length as 125 cm per ply (250 cm total stock). With recorded outer circumference 42.5 cm and retained per-ply thickness 0.4688 cm, inferred core ID is 58.13 mm; this is calculated, not measured."
+      }
+    }
   },
   "soft linen": {
-    "D": 0.00843,
-    "C": 0.04074,
-    "alpha": 0.666,
-    "k_layer": 6.2927,
     "t_layer": 0.05141,
+    "product": "https://www.asda.com/groceries/product/duvet-cover-sets/george-home-grey-striped-soft-touch-reversible-duvet-set-king/7727810",
     "source": "4 ply x 192 cm, C=35.5, H=40; t from solid 8-ply roll C=31.5; ID 88.0 mm, 24.33 layers",
-    "v_lo": 0.42,
-    "v_hi": 3.52,
-    "product": "https://www.asda.com/groceries/product/duvet-cover-sets/george-home-grey-striped-soft-touch-reversible-duvet-set-king/7727810"
+    "fits": {
+      "0.3": {
+        "D": 0.00843,
+        "C": 0.04074,
+        "alpha": 0.666,
+        "k_layer": 6.2927,
+        "v_lo": 0.42,
+        "v_hi": 3.52
+      },
+      "0.5": {
+        "D": 0.04644697167823509,
+        "C": 6.26040014383395e-27,
+        "alpha": 0.26158556433533425,
+        "k_layer": 6.2926297408842515,
+        "log_rmse": 0.012047866206800768,
+        "r2": 0.9777575585811832,
+        "pressure_rmse": 7.054851346407413,
+        "rows": [
+          36,
+          37,
+          38,
+          39,
+          40
+        ],
+        "impaction_selected": true,
+        "midpoint_v_lo": 0.4167699623365553,
+        "midpoint_v_hi": 3.5193907933281987,
+        "v_lo": 0.37064492218309864,
+        "v_hi": 4.019612969678986,
+        "B": 0.007120781678940994,
+        "beta": 0.9489505680952249,
+        "geometry_provenance": "coefficients.json: 4 plies x 192 cm, H=40; thickness from 8-ply solid roll circumference 31.5 cm."
+      }
+    }
   },
   "IIR mask": {
-    "D": 5.1189,
-    "C": 0.6123,
-    "alpha": 0.6667,
-    "k_layer": 7.828,
     "t_layer": 0.042,
-    "v_lo": 5.1,
-    "v_hi": 54.4,
+    "caveat": "Measured only at 5.1-54 cm/s and alpha sits on the 2/3 cap, so everything below ~5 cm/s is extrapolation whose slope is set by the cap, not by data. Spunbond/meltblown/spunbond; the meltblown middle layer does the filtering.",
     "source": "IIR mask tab (iir_mask.csv): one Type IIR surgical mask tested flat, 28.3 cm2, PF at 0.3 um, 7 points 5.1-54.4 cm/s; D+C fit (no impaction: highest-v point is the minimum), log rmse 0.098; k from dp OLS through zero, rmse 3 Pa; t = 0.042 cm measured by owner. One mask = one layer.",
-    "caveat": "Measured only at 5.1-54 cm/s and alpha sits on the 2/3 cap, so everything below ~5 cm/s is extrapolation whose slope is set by the cap, not by data. Spunbond/meltblown/spunbond; the meltblown middle layer does the filtering."
+    "fits": {
+      "0.3": {
+        "D": 5.1189,
+        "C": 0.6123,
+        "alpha": 0.6667,
+        "k_layer": 7.828,
+        "v_lo": 5.1,
+        "v_hi": 54.4
+      },
+      "0.5": {
+        "D": 7.101688646861322,
+        "C": 6.792603928264675e-24,
+        "alpha": 0.6666666666666665,
+        "k_layer": 7.827835418536181,
+        "log_rmse": 0.12419894350234964,
+        "r2": 0.930740732350333,
+        "pressure_rmse": 2.989778131862104,
+        "rows": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "impaction_selected": true,
+        "midpoint_v_lo": 5.1,
+        "midpoint_v_hi": 54.4,
+        "v_lo": 5.1,
+        "v_hi": 54.4,
+        "B": 0.07012429267738197,
+        "beta": 0.6421319900124188,
+        "geometry_provenance": "One whole mask tested flat; thickness 0.042 cm measured by owner. Flat velocity model, no radial integral."
+      }
+    }
+  },
+  "MERV 8": {
+    "t_layer": 0.07315,
+    "source": "Box Tests tab rows 17-32 (box_tests.csv, CSV line = sheet row): nine flat-stack builds of 8, 16 and 20 layers of MERV 8 furnace-filter medium in a food container (153 cm2) and two wooden squares (236 cm2), 6.6-20.1 cm/s, PF at 0.3 and 0.5 um, Q from 100 L fill time. Used in preference to the Mask & MERV bench series (merv8.csv) because it reflects real-world usage - whole stacks sealed in boxes at PAPR flow rates - and is self-consistent: per-layer log10PF agrees to within 0.01 across 8-, 16- and 20-layer builds at matched velocity, where the bench sessions disagree by 1.5x. Row 16 (2.46 logs at 20.1 cm/s, same build as row 18 which reads 1.70) is outside the requested range and excluded. D+C fit, no impaction (highest-velocity point is the per-layer minimum), whole-test log10PF residuals, flat velocity model. k_layer retained from the Mask & MERV 16-layer stack (measured; Box Tests pressures are estimates at 0.35 Pa/(cm/s)/layer). t from a solid 2-ply roll, 129 cm, 15.4 cm circumference. Refitted 2026-09-16.",
+    "caveat": "Measured range is 6.6-20.1 cm/s; anything below is extrapolation with alpha on the 2/3 cap. The superseded bench fit gave a shallower alpha (0.43) and reads ~1.3x higher per layer at 10 cm/s.",
+    "fits": {
+      "0.3": {
+        "D": 0.25838,
+        "C": 0.0687,
+        "alpha": 0.6667,
+        "k_layer": 0.3546,
+        "v_lo": 6.61,
+        "v_hi": 20.11,
+        "r2": 0.9895,
+        "log_rmse": 0.0566,
+        "rows": [
+          17,
+          18,
+          22,
+          26,
+          27,
+          29,
+          30,
+          31,
+          32
+        ]
+      },
+      "0.5": {
+        "D": 0.2982,
+        "C": 0.0,
+        "alpha": 0.2956,
+        "k_layer": 0.3546,
+        "v_lo": 6.61,
+        "v_hi": 20.11,
+        "r2": 0.9713,
+        "log_rmse": 0.1107,
+        "rows": [
+          17,
+          18,
+          22,
+          26,
+          27,
+          29,
+          30,
+          31,
+          32
+        ]
+      }
+    },
+    "superseded_bench_fit_0.3": {
+      "D": 0.64509,
+      "C": 0.0,
+      "B": 0.000525,
+      "alpha": 0.4348,
+      "beta": 0.8795,
+      "k_layer": 0.3546,
+      "v_lo": 5.2,
+      "v_hi": 251.0,
+      "note": "Mask & MERV tab, 52 points 5.2-251 cm/s, 4- and 16-layer bench stacks; replaced by the Box Tests fit 2026-09-16"
+    }
+  },
+  "_provenance": {
+    "0.5": {
+      "input_sha256": "0b5d4b8426df5f421d5cf7bd90948e4e731ac2f7389f9e094a09a351ef4474b6",
+      "particle_um": 0.5,
+      "response": "log10(PF), count-based",
+      "manifest_sha256": "f85d4e1bfb8f35e17d9c563239424b340e36d8f34b0b5456c0e98e365968de92",
+      "method": "unweighted whole-test log10PF residuals; radial integrals for rolls, flat velocity model for IIR; nonnegative D/C/B; alpha<=2/3, beta<=1; pressure OLS through zero",
+      "iir_input_sha256": "24ad94a88c1a12dfb075ee0154db15f793a022ca0cd58eea62c57346bc4c7b4a"
+    }
   },
   "_untested": {
     "blue fuzzy": {

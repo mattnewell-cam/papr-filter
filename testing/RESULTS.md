@@ -3,7 +3,7 @@
 Source: `filter_testing.xlsx` ([DIY PAPR Testing](https://docs.google.com/spreadsheets/d/1vNnPBNcy6AXGmybD3XqS8CLbzuCFn33SeNJbljD8o0Y/edit?gid=1848070649#gid=1848070649)), refetched 2026-09-05,
 plus `prototype_pf_q.csv` (formulas evaluated; missing pressure shown as dashes).
 The older standalone CSVs were removed; their source tabs remain in the XLSX. Most published coefficients predate this refresh; grey fuzzy was corrected on 2026-09-08 using only current rows 5–9. They live in `coefficients.json`;
-`roll_model.py` loads them and computes bundles. `../THEORY.md` works out what the fits
+`roll_model.py` loads them and computes bundles. `../theory/THEORY.md` works out what the fits
 imply for how to build one.
 
 Counts are count-based, at 0.3 µm. QF is in kPa⁻¹ throughout.
@@ -18,7 +18,8 @@ For an auditable fitting procedure and its remaining geometry gaps, see `FITTING
 
 Ground truth is the **`Prototype PF & Q` tab**: single-material rolled bundles swept
 across fan voltage, giving PF, Q and centre pressure at 4–6 flows each. The one
-exception is the IIR mask, tested flat on the `IIR mask` tab (`iir_mask.csv`). The flat-sheet
+exceptions are the IIR mask, tested flat on the `Mask & MERV` tab (`iir_mask.csv`), and
+the MERV 8 medium, fitted to the `Box Tests` tab rows 17–32 (`box_tests.csv`). The flat-sheet
 bench rig on `V-PF relationship` is superseded (see the last section).
 
 Fits are on log₁₀PF per layer against face velocity, with velocity varying radially
@@ -32,7 +33,7 @@ Three capture mechanisms: **diffusion** (falls with velocity), **interception**
 (velocity-independent), **impaction** (rises with velocity). Comparisons between
 materials are best made per centimetre of wall — divide by `t_layer` — since that is
 independent of how the fabric is folded: a(v) is logs per cm and k = k_layer/t_layer is
-Pa per (cm/s) per cm, the symbols `../THEORY.md` uses throughout.
+Pa per (cm/s) per cm, the symbols `../theory/THEORY.md` uses throughout.
 
 `coefficients.json` stores the per-layer fit under these same names: `D`, `C`, `B`, `alpha`,
 `beta`, `k_layer`, `t_layer`.
@@ -41,6 +42,7 @@ Pa per (cm/s) per cm, the symbols `../THEORY.md` uses throughout.
 
 | material | t_layer (cm) | k (Pa/(cm/s)/cm) | logs/cm @0.64 | @1.2 | @2.4 | QF @0.64 | @1.2 | @2.4 |
 |---|---|---|---|---|---|---|---|---|
+| MERV 8 * | 0.0732 | 4.8 | 5.70* | 4.07* | 2.91* | 4227* | 1610* | 576* |
 | IIR mask † | 0.0420 | 186.4 | 178.69 | 122.51 | 82.57 | 3449 | 1261 | 425 |
 | grey holey | 0.2015 | 4.4 | 0.231 | 0.210 | 0.188 | 188.0 | 90.8 | 40.7 |
 | duvet | 1.9516 | 1.6 | 0.082 | 0.062 | 0.052 | 186.6 | 74.9 | 31.7 |
@@ -54,6 +56,18 @@ Pa per (cm/s) per cm, the symbols `../THEORY.md` uses throughout.
 α on the cap the extrapolation is steep. Interpolated, at 5.3 cm/s, it is 55 logs/cm and
 QF 127 — against 0.44 logs/cm and QF 9.3 for grey fuzzy. Tested flat, not rolled
 (`iir_mask.csv`); one mask counts as one layer.
+
+\* MERV 8: fitted to **`Box Tests` rows 17–32** (`box_tests.csv`, CSV line = sheet row), not
+to the `Mask & MERV` bench series in `merv8.csv`. The box tests are whole 8-, 16- and 20-layer
+stacks sealed in a food container or wooden frame at PAPR flow rates, 6.6–20.1 cm/s — real-world
+usage — and they are self-consistent: per-layer log₁₀PF agrees to within 0.01 across layer counts at
+matched velocity (0.14 at 6.6–7.7 cm/s, 0.12 at 11–12.5, 0.106 at 20), where the bench sessions
+disagree by 1.5×. D + C fit, α on the cap, no impaction (r² 0.99, log rmse 0.057). Table values
+below 6.6 cm/s are extrapolation. k is from the `Mask & MERV` 16-layer stack; box-test pressures
+are estimates. The superseded bench fit is kept in `coefficients.json` as
+`superseded_bench_fit_0.3`; it read ~1.3× higher per layer at 10 cm/s. The QF cells were
+corrected 2026-09-16: the first version of this row had them ln 10 too low (1836/699/250)
+against its own logs/cm and k columns; `roll_model.py` prints 4227/1610/576.
 
 ### Products
 
@@ -91,6 +105,57 @@ Per-layer coefficients, geometry and provenance are in `coefficients.json`. Note
   rows 56–61; all six now record effective length 42 cm after Matt corrected
   C57 in the live sheet on 2026-09-05 and the saved export was refreshed.
   The duvet coefficients have not been refitted. Older partial-length runs are excluded.
+- **IIR mask** — nearly all of its filtration is the electret meltblown middle layer
+  (spunbond outers do ~3–10% each at 0.5 µm). The charge is trapped in the bulk of the
+  polypropylene, so dry handling does not drain it: 100 fold/compress cycles, 8 h–1 week
+  in artificial sweat or saliva, water-only washing, and 8 h wear all measure as no or
+  minor loss (74.4 → 70.6% at 100 nm for sweat). What kills it is wetting the fibre
+  surface with a polar/conductive liquid: detergent wash 74.4 → 46.9% at 100 nm (FFP2
+  surface potential −500 V → −20 V after one wash), IPA soak or ethanol spray to the same
+  ~47% (N95 96 → 56% from one spray); steam is fine once, bad by five cycles; dry heat
+  85 °C survives 50 cycles. Bulk oil is milder than expected (500 mg paraffin oil on an
+  FFP2, ~30 g/m², cost ~12% of electrostatic capture); fine oily aerosol such as smoke is
+  the real oil hazard (~2 g/m² of cigarette smoke took an electret 92.5 → 33%). Particle
+  loading degrades electrets at ~2–5 g/m² deposited (penetration roughly doubles, Δp
+  unchanged so no warning); at 20 µg/m³ PM10 that is ~150 km of air column per m² of
+  media, i.e. months of continuous use — not the failure mode for a mask layer (it is for
+  charged HVAC media in outdoor air: see the MERV 8 note below). Sources:
+  [handling/wear](https://pmc.ncbi.nlm.nih.gov/articles/PMC8943131/),
+  [washing](https://pmc.ncbi.nlm.nih.gov/articles/PMC9749850/),
+  [water vs detergent](https://pmc.ncbi.nlm.nih.gov/articles/PMC9508161/),
+  [paraffin oil](https://pmc.ncbi.nlm.nih.gov/articles/PMC5054281/),
+  [heat/steam/alcohol](https://medicalxpress.com/news/2020-05-disinfect-n95-masks-reuse.html),
+  [smoke loading](https://pmc.ncbi.nlm.nih.gov/articles/PMC8694494/),
+  [electret loading threshold](https://www.tandfonline.com/doi/abs/10.1080/027868200303731),
+  [layer split](https://makermask.org/mask-filtration-and-breathability-key-findings-from-the-ubc-study/).
+- **MERV 8** is a [K&N HVC-8-12025](https://www.amazon.co.uk/dp/B0CLBD4Z98) 20×25×1
+  washable furnace filter. K&N's spec sheet calls the medium "non-woven synthetic" pleated
+  media; its FAQ says the medium is electrostatically charged during manufacture (seen via a
+  search excerpt — the page blocks fetching, verify). K&N cites no ASHRAE 52.2 test and
+  publishes no post-wash efficiency. **Its QF is 25–30× above the mechanical ceiling.**
+  Lee & Liu (η_D coefficient 1.6) + Davies at 0.3 µm, 20 °C — the `../theory/THEORY.md` §8
+  formulae — give 2.3–3.5 kPa⁻¹ at 10 cm/s and 130–320 at 0.64 cm/s for any d_f 1–20 µm and
+  α 0.03–0.10. The fabrics sit at that ceiling, the IIR mask ~15× above it, this medium at
+  81 kPa⁻¹ (10 cm/s). Its k, 0.35 Pa/(cm/s) per layer, is what Davies predicts for a 20 µm,
+  α ≈ 0.06, 0.73 mm nonwoven (0.32), so the structure is mechanically ordinary and the
+  capture per layer is ~33× what that structure can do uncharged. Treat the fitted
+  coefficients as the **new, dry, charged** value; the discharged floor has not been
+  measured (an IPA-soaked coupon would give it). Open item in `../../TODO.md`.
+  **Field decay of charged HVAC media — Raynor & Chae 2004.** 30 charged polyolefin-fibre
+  filters and 30 uncharged glass-fibre filters ran in near-identical air-handling units
+  supplying outdoor air to a large building, almost continuously for more than 19 weeks,
+  efficiency tracked with two real-time particle counters. At 0.6 µm the charged filters
+  fell from 85% to 45% by week 11, then recovered to 65% by the end of the test; the glass
+  filters were flat throughout. Δp rose 0.28 in wc (~70 Pa) on the charged filters against
+  0.40 in wc (~100 Pa) on glass, so the charged filter gives no Δp warning of the loss. The
+  abstract does not state the filters' MERV rating, depth, pleat type or face velocity and
+  the full text is paywalled. The 2008 follow-up (Raynor et al., hospital HVAC, 13 weeks)
+  saw 92% → 44% at 0.7–1.0 µm with biological-particle capture unchanged. Sources:
+  [K&N spec](https://www.knfilters.com/hvc-8-12025-hvac-filter-20-x-25-x-1-merv-8),
+  [K&N FAQ](https://www.knfilters.com/faq),
+  [Raynor & Chae 2004](https://pubmed.ncbi.nlm.nih.gov/15238317/),
+  [Raynor et al. 2008](https://pubmed.ncbi.nlm.nih.gov/18093124/),
+  [Appendix J and charged synthetics](https://www.filtsep.com/content/other/synthetic-filter-media-balancing-energy-efficiency-and-electrostatics-in-new-synthetic-filter-media).
 
 ## Choosing the functional form
 
@@ -98,7 +163,13 @@ Per-layer coefficients, geometry and provenance are in `coefficients.json`. Note
 series well and others worse than a plain power law; freeing it always wins but the
 fitted value scatters 0.16–0.67 with no material pattern, and a shared-α fit sits on a
 very flat SSE profile. 2/3 is the physical ceiling for diffusive capture, so α floats
-below it. The production catalogue has eight materials; five exponents are at or close to the cap.
+below it. The production catalogue has nine materials; five exponents are at or close to the cap.
+
+**Near-ties go to the solution that agrees with theory.** The fit surface is flat: for
+duvet, blue holey and towel the fitter finds solutions with C = 0 and a low free α that
+beat the published ones by 0.001–0.005 in r². Improvements that small do not justify
+moving a published curve, so the α-on-the-cap-plus-interception form is kept. A refit
+replaces a published fit only when it is clearly better, not marginally.
 
 **Impaction exponent β is capped at 1.0.** Single-fibre impaction efficiency scales with
 Stokes number, which is linear in v; saturation at high St only pushes the effective

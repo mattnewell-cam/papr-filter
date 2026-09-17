@@ -5,16 +5,15 @@ import math
 from pathlib import Path
 import numpy as np
 from scipy.integrate import quad
+from roll_model import load_catalogue
+from roll_model import load_catalogue
 from fit_materials import observations, flat_observations, prediction, fit
 
 HERE = Path(__file__).resolve().parent
 rows = list(csv.reader((HERE/'prototype_pf_q.csv').open(encoding='utf-8-sig')))
 specs = json.loads((HERE/'fit_series.json').read_text())['materials']
-fits = json.loads((HERE/'coefficients_0.5um.json').read_text())
-assert not fits['_unresolved']
+fits = load_catalogue(particle_um='0.5')
 for name, m in fits.items():
-    if name.startswith('_'):
-        continue
     obs = flat_observations(HERE/'iir_mask.csv','0.5') if name == 'IIR mask' else observations(rows,specs[name],'0.5')
     theta = [m['D'],m['C'],m['alpha']] + ([m['B'],m['beta']] if m['impaction_selected'] else [])
     pred = prediction(theta,obs,m['t_layer'],m['impaction_selected'])
@@ -49,7 +48,7 @@ for channel in ('0.3','0.5'):
         assert 'OLD / IGNORE' in str(error)
     else:
         raise AssertionError('Ignored measurements must never enter either fit')
-published = json.loads((HERE/'coefficients.json').read_text())['grey fuzzy']
+published = load_catalogue()['grey fuzzy']
 current = fit(observations(rows,specs['grey fuzzy']),published['t_layer'])
 assert published['rows'] == [5,6,7,8,9]
 for key in ('D','C','alpha','k_layer'):

@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import LogLocator, NullFormatter, ScalarFormatter
 import numpy as np
 
+from roll_model import load_catalogue
 from fit_materials import observations, prediction
 
 HERE = Path(__file__).resolve().parent
@@ -37,7 +38,7 @@ def main():
     with (HERE / 'prototype_pf_q.csv').open(encoding='utf-8-sig', newline='') as f:
         rows = list(csv.reader(f))
     specs = json.loads((HERE / 'fit_series.json').read_text())['materials']
-    coefficients = json.loads((HERE / 'coefficients.json').read_text())
+    coefficients = load_catalogue()
     plt.rcParams.update({'font.size': 10, 'axes.spines.top': False,
                          'axes.spines.right': False, 'svg.fonttype': 'none'})
 

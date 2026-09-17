@@ -3,15 +3,15 @@ N.B. this file is mainly for agents - it's dense and hard to parse. See PAPR Fil
 # Bundle allocation theory — how to spend a fixed pressure budget
 
 What to do with a given pile of blankets, given a flow rate you need and a pressure you
-can afford. Derived from the per-layer model in `testing/RESULTS.md`; `testing/roll_model.py` computes
+can afford. Derived from the per-layer model in `../testing/RESULTS.md`; `testing/roll_model.py` computes
 the general (non-uniform) case numerically.
 
 These are model predictions. Constructed multi-material builds often achieve only
-about half the PF predicted from single-material fits; see `testing/RESULTS.md`. This is not a universal correction.
+about half the PF predicted from single-material fits; see `../testing/RESULTS.md`. This is not a universal correction.
 
-Worked examples in §§1–6 use the current `testing/coefficients.json` (SHA256
-`5514fecdc1e618ab52f42123988a51a33f94e86af8ea1b5666438d920512c566`).
-Regenerate the numbers with `python testing/theory_examples.py`. §7 intentionally uses α=0.5.
+Worked examples in §§1–6 use the current `../testing/coefficients.json` (SHA256
+`a2dc3a34acd1442e32f8b1dbdfcb061b9910f8744d4e97fc956792c5d6ac8cbe`).
+Regenerate the numbers with `python theory/theory_examples.py`. §7 intentionally uses α=0.5.
 All tabulated QF values are kPa⁻¹; velocities are cm/s.
 
 Everything here assumes you are free to choose the bundle's **face area**. That freedom
@@ -28,7 +28,7 @@ log10PF = D*v^-alpha + C + B*v^beta
 ```
 
 Diffusion, interception, impaction. B and beta are absent for materials with no
-impaction upturn — see `testing/RESULTS.md` for which, and the rule. The sections below are
+impaction upturn — see `../testing/RESULTS.md` for which, and the rule. The sections below are
 written with the two-term form for readability; the impaction term changes none of the
 conclusions, since it is small at the velocities a real bundle runs at.
 
@@ -40,8 +40,8 @@ Delta p = k*v per cm                   k in Pa per (cm/s) per cm
 QF = 1000*ln(10)*a/(k*v)               (kPa^-1, thickness-independent)
 ```
 
-`testing/coefficients.json` stores the per-layer fit as `D`, `C`, `B`, `alpha`, `beta`, `k_layer` (= k·t)
-and `t_layer`; `testing/RESULTS.md` uses the same symbols as here.
+`../testing/coefficients.json` stores the per-layer fit as `D`, `C`, `B`, `alpha`, `beta`, `k_layer` (= k·t)
+and `t_layer`; `../testing/RESULTS.md` uses the same symbols as here.
 
 A bundle of face area A and material volume V has a wall V/A thick, V/(A·t) layers, and
 sees v = Q/A.
@@ -319,8 +319,8 @@ log10PF falls with rho along the ridge, so the optimum sits at **rho\* = min(rho
 - **rho_C > rho_H** — no point on the ridge is legal. The optimum is *pinched off* it onto
   the pressure face, where Delta p, r_o and H are tight and **cloth goes unused**.
 
-`testing/roll_surface.py` draws the surface and solves this:
-`python testing/roll_surface.py out.png --ro 15 --h 50`, or with no caps for the bare ridge.
+`theory/roll_surface.py` draws the surface and solves this:
+`python theory/roll_surface.py out.png --ro 15 --h 50`, or with no caps for the bare ridge.
 
 ### Results
 
@@ -355,7 +355,7 @@ paying for a worse shape; you are paying for material that will not fit in the b
 ## 8. Fibre diameter: where it matters and where it cancels
 
 The single-fibre theory the project runs on — Lee & Liu (1982) for capture, Davies for
-pressure, both as implemented in `../../filtration_modelling/src/physics.rs` — gives d_f a
+pressure, both as implemented in `../../../filtration_modelling/src/physics.rs` — gives d_f a
 different exponent in each regime. With Λ = ln PF, L the wall thickness, α the solidity
 and Pe = v·d_f/D_B (D_B the particle's Brownian diffusivity — not the fitted D above):
 
@@ -377,7 +377,7 @@ fibre-diameters of target.) At fixed thickness:
 The MPPS row is the Google Doc's result (`../PAPR Filtration Google Doc.md`, lines
 157–190): Λ_MPPS = 0.911·αL·((1−α)Ku)^−½·d_f^−2·v^−½·(C_c·kT/η)^½ against Davies scaled by
 0.67, so QF_MPPS ∝ d_f^0 — recorded as a settled position in
-`../../filtration_modelling/CLAUDE.md`. The other two rows put it in context: in the
+`../../../filtration_modelling/CLAUDE.md`. The other two rows put it in context: in the
 diffusion regime **finer fibres are slightly worse per pascal**, because drag grows as
 d_f^(−2) while capture only grows as d_f^(−5/3); in interception finer fibres win outright.
 The MPPS independence is not a coincidence — it is the crossover between the two, which is
@@ -391,7 +391,7 @@ d_f^(1/3) verdict would flip in favour of fine fibres.
 
 **Our mask data does not show that happening.** Interception is velocity-independent, so a
 medium in interception territory would show log PF flat against v. The IIR mask sweep
-(`IIR mask` tab of the testing sheet; 1–3 µm meltblown; PF at 0.3 µm over 5.1–54 cm/s)
+(`Mask & MERV` tab of the testing sheet; 1–3 µm meltblown; PF at 0.3 µm over 5.1–54 cm/s)
 fits D·v^−α + C with α pinned at the 2/3 cap — the full diffusion exponent — and an
 interception floor of only C = 0.61 logs. At 0.3 µm the mask is still diffusion-dominated,
 so its MPPS has not moved far enough below that size to put it in interception territory.
@@ -399,6 +399,28 @@ For now, at that particle size, the d_f^(1/3) regime is the one the data is in.
 
 Davies is a continuum fit. At meltblown sizes (Kn = 2λ/d_f ≈ 0.04–0.13 for 1–3 µm) slip flow
 softens the d_f^(−2) drag, so fine fibres recover a little QF relative to these exponents.
+
+## 9. Masks as a filter bank: layers are cheaper than area
+
+The IIR mask fit (`../testing/RESULTS.md`) has an interception floor C = 0.61 logs per
+layer that costs no area, so for a fixed logs target stacking layers needs less mask than
+spreading one layer wide — until pressure, k = 7.83 Pa/(cm/s) per layer, bites. For
+170 L/min and 3 logs, masks 12.5 × 15 cm with 30% of the area lost to seams and edges
+(131 cm² usable each):
+
+| layers | v (cm/s) | masks | Δp (Pa) |
+|---|---|---|---|
+| 1 | 3.1\* | 6.9 | 25 |
+| 2 | 13.8 | 3.1 | 217 |
+| 3 | 48 | 1.3 | 1126 |
+| 4 | 227\* | 0.4 | 7095 |
+
+\* outside the 5.1–54 cm/s measured range.
+
+Without a pressure limit the answer degenerates (five layers reach 3 logs on the floor
+alone, at any velocity). At a **200 Pa budget** two layers is the optimum: 222 cm² effective
+per layer, 3.4 masks. In whole masks, **4 masks as two layers of two** — 10.8 cm/s,
+3.3 logs, 169 Pa.
 
 ## Caveats
 
@@ -409,7 +431,7 @@ softens the d_f^(−2) drag, so fine fibres recover a little QF relative to thes
   layers for breadth. If the build caps frontal area, adding resistive material stops
   paying and the break-even q rises toward 1 — §7 is what that looks like.
 - Coefficients come from single-material roll sweeps and have not predicted a
-  two-material build to better than ~20% at the top of the flow range — see `testing/RESULTS.md`.
+  two-material build to better than ~20% at the top of the flow range — see `../testing/RESULTS.md`.
 - Δp is treated as linear in Q, and layers as independent of depth.
 - Materials with an impaction term have a **worst velocity** rather than monotonically
   improving as flow drops — towel 3.8, duvet 2.8 cm/s. Slowing past that point still

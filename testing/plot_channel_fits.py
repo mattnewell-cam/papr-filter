@@ -7,14 +7,16 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.ticker import LogLocator, FuncFormatter, NullFormatter
+from roll_model import load_catalogue
+from roll_model import load_catalogue
 from fit_materials import observations, flat_observations, prediction
 
 HERE = Path(__file__).resolve().parent
 rows = list(csv.reader((HERE/'prototype_pf_q.csv').open(encoding='utf-8-sig')))
 specs = json.loads((HERE/'fit_series.json').read_text())['materials']
-fits = json.loads((HERE/'coefficients_0.5um.json').read_text())
+fits = load_catalogue(particle_um='0.5')
 fig, axes = plt.subplots(4,2,figsize=(10,13),layout='constrained')
-for ax, (name,m) in zip(axes.flat,((n,m) for n,m in fits.items() if not n.startswith('_'))):
+for ax, (name,m) in zip(axes.flat,fits.items()):
     obs = flat_observations(HERE/'iir_mask.csv','0.5') if name == 'IIR mask' else observations(rows,specs[name],'0.5')
     theta = [m['D'],m['C'],m['alpha']] + ([m['B'],m['beta']] if m['impaction_selected'] else [])
     ax.scatter([o['midpoint_velocity'] for o in obs],[o['y'] for o in obs],color='#222222',label='Measured',zorder=3)

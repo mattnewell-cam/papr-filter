@@ -10,7 +10,7 @@ Usage
     python roll_surface.py out.png                  # surfaces + ridge, no size caps
     python roll_surface.py out.png --ro 15 --h 50   # + cap walls, allowed region, optimum
 
-Needs plotly + kaleido. See ../THEORY.md section 7 for what the picture means.
+Needs plotly + kaleido. See THEORY.md section 7 for what the picture means.
 """
 import argparse, json, math, os
 import numpy as np
@@ -28,8 +28,9 @@ ap.add_argument('--alpha', type=float, default=0.5, help='diffusion exponent')
 args = ap.parse_args()
 CAPPED = args.ro is not None and args.h is not None
 
-m = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'coefficients.json')))[args.mat]
+_raw = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'testing',
+                                   'coefficients.json'), encoding='utf-8'))[args.mat]
+m = {k: v for k, v in _raw.items() if k != 'fits'} | _raw['fits']['0.3']
 tl = m['t_layer']
 a, c, k = m['D'] / tl, m['C'] / tl, m['k_layer'] / tl          # per cm of wall
 al = args.alpha

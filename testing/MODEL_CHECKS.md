@@ -1,4 +1,4 @@
-# Pressure linearity and grey+pink prediction checks
+# Pressure linearity and combined-build prediction checks
 
 Rechecked on 8 September 2026 against the saved `Prototype PF & Q` export. Reproduce
 with `python check_pressure_and_mixing.py` (numpy and scipy). The script reads the
@@ -38,6 +38,35 @@ There are no recorded centre-pressure measurements for these rows. The old claim
 1.7× lower resistance was inferred by treating fan-voltage-derived stall pressure as
 the operating pressure. It does not establish measured mixed-material resistance.
 The PF shortfall also does not establish improved QF: pressure was not measured.
+
+## Grey fuzzy + IIR masks
+
+2-ply grey fuzzy (125 cm, H 40, circumference 42 → ID 94 mm) with one layer of masks
+taped over the outside. Two builds in `Prototype PF & Q`: rows 57–76, intact pleated
+masks, 952 cm²; rows 77–83, masks cut and unpleated to a single ply, 1122 cm².
+**Rows 77–83 are the series to use.** The pleated build ran 5–20% high on pressure
+because much of its taped-flat area was three plies.
+
+Single-ply build, measured against the model:
+
+| V | Q (L/min) | Δp meas / pred (Pa) | logs meas / pred | mask v (cm/s) | mask-layer bypass |
+|---|---|---|---|---|---|
+| 6 | 45 | 29 / 26 | 2.80 / 8.97* | 0.7 | 7% |
+| 8 | 81 | 52 / 48 | 2.49 / 6.48* | 1.2 | 7% |
+| 10 | 122 | 79 / 72 | 2.24 / 5.23* | 1.8 | 9% |
+| 12 | 171 | 110 / 101 | 2.11 / 4.44* | 2.5 | 9% |
+| 15 | 261 | 167 / 154 | 2.02 / 3.66* | 3.9 | 9% |
+| 19 | 382 | 254 / 226 | 1.93 / 3.12 | 5.7 | 9% |
+| 23 | 536 | 343 / 317 | 1.81 / 2.74 | 8.0 | 10% |
+
+\* mask below its 5.1 cm/s measured floor.
+
+Pressure agrees (mean ratio 1.09). Logs fall short by an amount consistent with
+**7–10% of the flow bypassing the mask layer** through the seams — rising gently with
+flow, as seams pushed open by pressure would — and being filtered by the fuzzy only.
+The pleated build gave the same picture at 12–16%. The same shortfall would also
+follow from the masks themselves having degraded in cutting and handling; a direct
+retest of a mask taken from the build would separate the two.
 
 ## Pressure linearity
 

@@ -6,7 +6,9 @@ No fit parameters or project files are changed.
 """
 import hashlib
 import math
+import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'testing'))
 from roll_model import GREY_FUZZY as M, PINK, Bundle, Section
 
 
@@ -62,7 +64,7 @@ def capped(radius, length):
 
 
 def main():
-    digest = hashlib.sha256(Path(__file__).with_name('coefficients.json').read_bytes()).hexdigest()
+    digest = hashlib.sha256((Path(__file__).resolve().parent.parent / 'testing' / 'coefficients.json').read_bytes()).hexdigest()
     print('coefficients.json SHA256:', digest)
     print('folds | ID mm | ro/ri | layers | v out | v in | PF | QF | logs')
     for row in fold_rows():

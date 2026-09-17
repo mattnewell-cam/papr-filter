@@ -7,12 +7,13 @@ household blankets and towels.
 |---|---|
 | [Live planner](https://mattnewell-cam.github.io/papr-filter/planner/) | Choose materials, airflow, pressure and size limits to calculate a proposed rolled-filter build. |
 | [Planner source](planner/README.md) | Browser app, build script, solver tests, reference cases and material photographs. |
-| [Filter theory](THEORY.md) | Pressure-budget allocation, material mixing and bundle geometry. |
+| [Filter theory](theory/THEORY.md) | Pressure-budget allocation, material mixing and bundle geometry. |
+| [Mask designs](mask_designs.md) | Mask-based bank: leak physics, series-stage tolerance, the through-bag sleeve cartridge and its tests. |
 | [Measured results](testing/RESULTS.md) | Published material fits, test conditions and model limitations. |
 | [Fitting procedure](testing/FITTING.md) | Data preparation, geometry inputs, fitting and plot reproduction. |
 | [Model checks](testing/MODEL_CHECKS.md) | Pressure linearity and measured versus predicted multi-material performance. |
-| [Fit coefficients](testing/coefficients.json) | Published per-layer coefficients and measured velocity ranges. |
-| [0.5 µm fits](testing/RESULTS_0.5um.md) | Separate count-based fits for all eight materials, including the IIR mask. |
+| [Fit coefficients](testing/coefficients.json) | Published per-layer coefficients at 0.3 and 0.5 µm, keyed by material then particle size, with measured velocity ranges. |
+| [0.5 µm fits](testing/RESULTS_0.5um.md) | Notes on the 0.5 µm entries. |
 | [Fit plots](testing/plots/) | Filtration, pressure and combined-material comparisons. |
 
 The planner uses count-based PF at 0.3 µm; separate 0.5 µm fits are also available.
@@ -35,9 +36,9 @@ Check the row mapping in `testing/fit_series.json` after changes to the source s
 The manifest describes the September 5, 2026 prototype data snapshot. Grey fuzzy was
 corrected on September 8 using current rows 5–9 only; rows below OLD / IGNORE are
 rejected by the fitter. Other published 0.3 µm coefficients predate that refresh;
-refitting does not automatically replace them. Download the separate `IIR mask` tab
+refitting does not automatically replace them. Download the separate `Mask & MERV` tab
 as `testing/iir_mask.csv` to reproduce the eight-material 0.5 µm fits.
-The bundle model and theory examples use the published coefficients
+Theory scripts live in `theory/`. The bundle model and theory examples use the published coefficients
 and do not require the workbook export.
 
 ## Planner development

@@ -1,6 +1,6 @@
 """Fit radial integrals to prototype PF/pressure with explicit geometry.
 
-python fit_materials.py --output fitted_coefficients.json
+python fit_materials.py --output candidate.json
 Output is a new fit, never an automatic replacement of coefficients.json.
 Requires numpy and scipy. See FITTING.md for assumptions and unresolved inputs.
 """
@@ -168,7 +168,8 @@ def main():
              'manifest_sha256':hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
              'method':'unweighted whole-test log10PF residuals; radial integrals for rolls, flat velocity model for IIR; nonnegative D/C/B; alpha<=2/3, beta<=1; pressure OLS through zero'},
              '_unresolved':{}}
-    published=json.loads((HERE/'coefficients.json').read_text(encoding='utf-8'))
+    from roll_model import load_catalogue
+    published=load_catalogue()
     for name,spec in manifest['materials'].items():
         try:
             result[name]=fit(observations(rows,spec,args.particle_um),spec['t_layer'])

@@ -43,7 +43,7 @@ LN10 = math.log(10.0)
 
 @dataclass
 class Material:
-    """One fabric, with per-layer coefficients loaded from coefficients.json.
+    """One fabric, with per-layer coefficients loaded from coefficients.json (0.3 um fits by default).
 
         log10PF per layer = D*v**-alpha + C + B*v**beta
         dp      per layer = k_layer*v
@@ -92,14 +92,23 @@ class Material:
         return LN10 * self.logpf_layer(v) / (self.k_layer * v / 1000.0)
 
 
-def _load(path: str = "coefficients.json") -> dict[str, Material]:
+def load_catalogue(path: str = "coefficients.json", particle_um: str = "0.3") -> dict[str, dict]:
+    """One flat dict per material for a given particle size: the material-level fields
+    (t_layer, product, ...) merged with that size's fit (D, C, B, alpha, beta, k_layer, ...)."""
     here = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
     with open(here, encoding="utf-8") as fh:
         raw = json.load(fh)
     out = {}
     for name, m in raw.items():
-        if name.startswith("_"):
+        if name.startswith("_") or particle_um not in m.get("fits", {}):
             continue
+        out[name] = {k: v for k, v in m.items() if k != "fits"} | m["fits"][particle_um]
+    return out
+
+
+def _load(path: str = "coefficients.json", particle_um: str = "0.3") -> dict[str, Material]:
+    out = {}
+    for name, m in load_catalogue(path, particle_um).items():
         out[name] = Material(
             name=name, k_layer=m["k_layer"], t_layer=m["t_layer"], plies=2,
             v_lo=m.get("v_lo", 0.0), v_hi=m.get("v_hi", 99.0),
@@ -119,6 +128,7 @@ TOWEL      = MATERIALS["towel"]
 PINK       = MATERIALS["pink"]
 SOFT_LINEN = MATERIALS["soft linen"]
 IIR_MASK   = MATERIALS["IIR mask"]
+MERV_8     = MATERIALS["MERV 8"]
 
 
 @dataclass

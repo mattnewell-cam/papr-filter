@@ -1,6 +1,7 @@
 # 0.5 µm material fits
 
-`coefficients_0.5um.json` contains eight fits to count-based 0.5 µm PF.
+The `"0.5"` entries in `coefficients.json` are eight fits to count-based 0.5 µm PF
+(`roll_model.load_catalogue(particle_um='0.5')` returns them flat).
 The 0.3 µm catalogue and planner are unchanged. Reproduction commands are in
 [FITTING.md](FITTING.md); [fit plots](plots/fits_0.5um.png) show the measured responses.
 

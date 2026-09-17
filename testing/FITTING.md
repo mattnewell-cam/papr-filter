@@ -9,14 +9,14 @@ Run from `testing/`:
 
 ```text
 python -m pip install numpy scipy
-python fit_materials.py --output fitted_coefficients.json
-python theory_examples.py
+python fit_materials.py --output candidate.json
+python ../theory/theory_examples.py
 ```
 
 For the separate 0.5 µm catalogue (including the flat IIR mask test):
 
 ```text
-python fit_materials.py --particle-um 0.5 --iir-csv iir_mask.csv --output coefficients_0.5um.json
+python fit_materials.py --particle-um 0.5 --iir-csv iir_mask.csv --output candidate_0.5um.json
 python check_channel_fits.py
 python plot_channel_fits.py
 ```
@@ -29,6 +29,8 @@ It uses the same exponent bounds and endpoint impaction rule as the radial fits.
 See [0.5 µm results](RESULTS_0.5um.md) for comparisons and provenance.
 
 The script leaves `coefficients.json` unchanged and reports differences in resistance.
+Candidates are not kept in the repository; `coefficients.json` holds both particle sizes
+under each material's `fits` key and is the only catalogue.
 The grey core diameters are taken from the sheet formulas. Pink and towel are 2 ply.
 Pink wrapped length is **125 cm per ply** (250 cm total stock).
 With the recorded 42.5 cm outer circumference and 0.4688 cm
@@ -65,6 +67,7 @@ The output distinguishes midpoint velocity ranges from the full local velocity
 range across the measured annuli. Do not treat an old midpoint range as a measured
 range at every radius. Parameter agreement alone is not independent validation;
 review prediction residuals and geometry before replacing published coefficients.
+Marginal r² gains (see the near-tie rule in `RESULTS.md`) do not replace a published fit.
 
 Constructed multi-material builds often fall below single-material-based predictions:
 measured PF can be about half the predicted PF. This is flow-dependent, not a universal correction; see `RESULTS.md`.
@@ -85,7 +88,7 @@ The script reads the saved CSV, geometry manifest and published coefficients wit
 refitting. It plots only the measured flow range and records input hashes. Impaction
 comparisons omit the term while retaining the other coefficients; they are not refits.
 These are current-data plots, not reproductions of superseded fit variants.
-For the 3D geometry surfaces, use `roll_surface.py` as described in `../THEORY.md` §7.
+For the 3D geometry surfaces, use `roll_surface.py` as described in `../theory/THEORY.md` §7.
 
 To refresh the prototype CSV after downloading the live sheet as XLSX, run
 `python export_prototype.py fresh-download.xlsx`. The export preserves worksheet

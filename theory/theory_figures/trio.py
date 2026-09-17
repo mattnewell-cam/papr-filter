@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 from scipy.optimize import brentq
 
-m = json.load(open(Path(__file__).resolve().parents[1]/'coefficients.json'))["grey fuzzy"]
+_raw = json.load(open(Path(__file__).resolve().parents[2]/'testing'/'coefficients.json', encoding='utf-8'))["grey fuzzy"]
+m = {k: v for k, v in _raw.items() if k != 'fits'} | _raw['fits']['0.3']
 tl = m["t_layer"]
 a, c, k = m["D"]/tl, m["C"]/tl, m["k_layer"]/tl
 al, Q, V, P = 0.5, 3000.0, 20000.0, 200.0
