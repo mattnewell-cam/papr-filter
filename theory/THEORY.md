@@ -354,8 +354,9 @@ paying for a worse shape; you are paying for material that will not fit in the b
 
 ## 8. Fibre diameter: where it matters and where it cancels
 
-The single-fibre theory the project runs on — Lee & Liu (1982) for capture, Davies for
-pressure, both as implemented in `../../../filtration_modelling/src/physics.rs` — gives d_f a
+The single-fibre theory the project runs on — Lee & Liu (1982) Eq. (38) for capture
+(coefficients 1.6 and 0.6, no cross term), Davies × 0.67 for pressure, both as implemented
+in `../../../filtration_modelling/src/physics.rs` (`single_fibre`, `davies_dp_real`) — gives d_f a
 different exponent in each regime. With Λ = ln PF, L the wall thickness, α the solidity
 and Pe = v·d_f/D_B (D_B the particle's Brownian diffusivity — not the fitted D above):
 
@@ -383,11 +384,19 @@ d_f^(−2) while capture only grows as d_f^(−5/3); in interception finer fibre
 The MPPS independence is not a coincidence — it is the crossover between the two, which is
 what "most penetrating" means.
 
-**This does not make fibre diameter irrelevant.** A finer medium moves its MPPS down —
-meltblown filter media sit at 100–300 nm against ~600 nm for household cloth — so for a
-fixed particle size of interest a fine-fibre medium can be operating on the interception
-side of its own MPPS, where QF ∝ d_f^(−1). If the sizes we care about landed there, the
-d_f^(1/3) verdict would flip in favour of fine fibres.
+**This does not make fibre diameter irrelevant.** A finer medium moves its MPPS down, so
+for a fixed particle size of interest a fine-fibre medium can be operating on the
+interception side of its own MPPS, where QF ∝ d_f^(−1). If the sizes we care about landed
+there, the d_f^(1/3) verdict would flip in favour of fine fibres.
+
+**Correction (2026-09-25): the household-cloth MPPS is not ~600 nm.** This section
+previously put meltblown at 100–300 nm against ~600 nm for household cloth. Measurement
+says otherwise: PF rises monotonically from 0.3 to 1 µm in 95% of the prototype rows, so
+these fabrics' MPPS is **at or below 0.3 µm** — the counter's smallest channel — and
+0.3 µm is the measured worst case over the RFP's 0.3–10 µm range. See
+`../testing/RESULTS.md`, "Particle size". The ~600 nm figure came from a monodisperse
+20 µm fibre idealisation; real fleece and napped blanket carry a wide diameter
+distribution with fine surface fibres, and interception scales as (d_p/d_f)².
 
 **Our mask data does not show that happening.** Interception is velocity-independent, so a
 medium in interception territory would show log PF flat against v. The IIR mask sweep
@@ -399,6 +408,97 @@ For now, at that particle size, the d_f^(1/3) regime is the one the data is in.
 
 Davies is a continuum fit. At meltblown sizes (Kn = 2λ/d_f ≈ 0.04–0.13 for 1–3 µm) slip flow
 softens the d_f^(−2) drag, so fine fibres recover a little QF relative to these exponents.
+
+### 8.1 Reference table: mechanical QF by fibre and particle size
+
+Lee & Liu (1982) Eq. (38) — coefficients 1.6 and 0.6, no cross term — over Davies × 0.67,
+α = 0.05, 1 cm/s, 20 °C. QF = ln PF / Δp in kPa⁻¹, split by mechanism. Impaction omitted:
+St < 0.1 everywhere except the starred cell (0.36). Generated with
+`cargo run --release -- qf --df_um 0.1,1,10,20` in `filtration_modelling`; rerun that,
+don't hand-roll.
+
+| d_f (µm) | d_p (µm) | Diffusion | Interception | Total |
+|---:|---:|---:|---:|---:|
+| 0.1 | 0.1 | 101 | 27 | 129 |
+| 0.1 | 0.3 | 32 | 123 | 156 |
+| 0.1 | 0.5 | 21 | 229 | 249 |
+| 0.1 | 1.0 | 12 | 499 | 510\* |
+| 1 | 0.1 | 219 | 5 | 224 |
+| 1 | 0.3 | 70 | 38 | 108 |
+| 1 | 0.5 | 45 | 91 | 136 |
+| 1 | 1.0 | 26 | 274 | 300 |
+| 10 | 0.1 | 471 | 1 | 472 |
+| 10 | 0.3 | 150 | 5 | 155 |
+| 10 | 0.5 | 96 | 13 | 109 |
+| 10 | 1.0 | 55 | 50 | 105 |
+| 20 | 0.1 | 594 | 0 | 594 |
+| 20 | 0.3 | 190 | 2 | 192 |
+| 20 | 0.5 | 121 | 7 | 128 |
+| 20 | 1.0 | 70 | 26 | 96 |
+
+Reading it:
+
+- The 10 and 20 µm rows are inside Eq. (38)'s fitted range (R = 0.0045–0.12, St ≤ 0.22).
+  The 0.1 µm row is not: R ≥ 1 there, and at α = 0.05 the mean fibre gap is ~0.4 µm, so a
+  1 µm particle is sieved rather than intercepted. Single-fibre theory has nothing to say
+  about that cell; a real medium's PF is then set by its largest pores, not the mean —
+  the channelling result in the fibreglass derisking doc.
+- The 0.1 µm column is also at Kn ≈ 1.3, where Davies (a continuum fit) overpredicts Δp,
+  so those QFs are floors.
+- Coarse fibres win on diffusion per pascal (the d_f^(1/3) row above) and, *in this table*,
+  push the MPPS up to ~1 µm; fine fibres are already deep in interception at 0.5 µm.
+  **The measured fabrics do not behave this way** — their PF rises monotonically from 0.3
+  to 1 µm, so their MPPS is at or below 0.3 µm (`../testing/RESULTS.md`, "Particle size").
+  Read the ~1 µm figure as a property of the monodisperse idealisation, not of blanket.
+- Scaling to other velocities: diffusion ∝ v^(−5/3), interception ∝ v^(−1).
+
+### 8.2 Fibre diameters in HEPA glass paper
+
+**Measured sheets.** SEM image analysis of commercial HEPA ("THE") glass papers, count basis.
+Every number read from the thesis page, not a summary.
+
+| Medium | Source | Count median d₅₀ (µm) | GSD | Count mean (µm) | Sheet |
+|---|---|---|---|---|---|
+| Bernard Dumas D309 | [Pénicot-Baugé 1998](http://docnum.univ-lorraine.fr/public/INPL_T_1998_PENICOT_BAUGE_P.pdf), Tab. 5 | 0.70 | 1.44 | 0.86 | α 0.056 |
+| Bernard Dumas D309, re-measured | [Mouret 2008](http://docnum.univ-lorraine.fr/public/INPL/2008_MOURET_G.pdf), Fig. A-19 (read from curve) | ≈ 0.9 | ≈ 1.9 (d₈₄/d₅₀) | — | α 0.078, 409 µm |
+| Bernard Dumas D350 | Pénicot-Baugé 1998, Tab. 5 | 0.76 | 1.50 | 0.88 | α 0.059 |
+| IRSN nuclear-grade THE | [Joubert 2009](http://docnum.univ-lorraine.fr/public/INPL/2009_JOUBERT_A.pdf), Tab. 2-11 (165 fibres) | 0.6 | 2.2 | 0.9 | α 0.071, 521 µm, 92 g/m² |
+| Nuclear-grade THE | [Bourrous 2014](http://docnum.univ-lorraine.fr/public/DDOC_T_2014_0301_BOURROUS.pdf), Tab. 4 | — | — | 0.59–0.60 | α 0.078, 450 µm |
+| Whatman THE | Pénicot-Baugé 1998, Tab. 5 | 0.33 | 1.63 | 0.36 | α 0.056 |
+
+**Typical HEPA glass paper: count median 0.6–0.9 µm, GSD 1.4–2.2.** Whatman's lab paper is
+the fine outlier at 0.33 µm.
+
+**Recipes.** Patent worked examples, HEPA-grade by test. Diameters are the fibre maker's
+nominal grade value, which Johns Manville defines as a BET (surface-area) diameter —
+[code 106 = 0.65 µm, 110X = 2.70 µm](https://www.jm.com/content/dam/jm/global/en/engineered-products/EP-documents/Product_Data_Sheets/Fibers/Micro_Fibers/Americas/FINAL%20VERSION_EP_Microfibers_Sell_Sheet_LR.pdf) —
+not a count median. [DOE-HDBK-1169-2003](https://www.energy.gov/sites/default/files/2026-05/DOE-HDBK-1169-2003_Chapter-3.pdf)
+Table 3.1 gives the same codes as freeness-test ranges (106: 0.54–0.63 µm).
+
+| Source | Fine grade | Coarse grade | Chopped strand | Sheet and result |
+|---|---|---|---|---|
+| [Hokuetsu US 6,939,386](https://patents.google.com/patent/US6939386B2/en), Ex. 1 | 60 wt% 0.65 µm | 35 wt% 2.70 µm | 5 wt% 6 µm | 70 g/m²; 280 Pa at 5.3 cm/s; 99.9936 % at 0.3–0.4 µm |
+| [H&V US 8,709,120](https://patents.google.com/patent/US8709120B2/en), Ex. 1 | 61 wt% 0.6 µm | 30 wt% 3.0 µm | 9 wt% 6.5 µm | 70.8 g/m², 0.295 mm; 399 Pa at 5.3 cm/s; 0.0007 % pen. at 0.3 µm |
+| [Hokuetsu US 8,951,324](https://patents.google.com/patent/US8951324B2/en), Ref. Ex. 1 | 90 wt% JM 106-475 (0.65 µm) | 10 wt% JM 110X-475 (2.70 µm) | none | 70 g/m²; 441 Pa at 5.3 cm/s; 99.9965 % at 0.1–0.15 µm |
+
+**Unresolved:** a 0.65 µm-BET grade should have a count median below 0.65 µm, so these
+recipes predict finer sheets than the European papers measured above. No measured
+distribution exists for a US or Japanese recipe paper, so this could be a real product
+difference or a plan-view SEM detection floor near 0.25 µm.
+
+**Rejected — do not cite:**
+
+- [Moelter & Fissan 1997](https://doi.org/10.1080/02786829708965484) (H13, polished cross-sections): their
+  64-class histograms are mass-weighted and unreliable below 0.45 µm. Count mean 0.7–0.8 µm
+  agrees with the table; the "2.7 µm median" is by mass and should not be compared with anything above.
+- [Charvet et al. 2018](https://hal.science/hal-01828938v1): "mean fibre diameter 1.6 µm", ~300 fibres,
+  weighting and method unstated.
+- DOE-HDBK-1169-2003 §3.3.1 "0.2 to 0.5 µm": asserted from theory, contradicted by its own
+  Table 3.1, deleted from the 2022 edition.
+- Pui group "HE 1073 = 1.9 µm" (KONA 2013): derived from Δp, and the sheet is 87 % at 0.3 µm, not HEPA.
+- Wikipedia "0.5 to 2.0 µm": cites a hospital-planning textbook.
+- [WO 2021/072122](https://patents.google.com/patent/WO2021072122A1/en): electrospun nylon, not glass; its "1.52" is g/m².
+- "0.64–1.52 µm fine / 2.03–4.57 µm coarse": a search-engine attribution that appears in no patent.
 
 ## 9. Masks as a filter bank: layers are cheaper than area
 

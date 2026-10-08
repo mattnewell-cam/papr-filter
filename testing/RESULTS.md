@@ -9,7 +9,10 @@ imply for how to build one.
 Counts are count-based, at 0.3 µm. QF is in kPa⁻¹ throughout.
 
 The 0.3 µm channel is the project's working worst-case proxy and has higher counts
-for less noisy measurements. This count-based endpoint differs from the wider
+for less noisy measurements. It is also the **measured** worst case: PF rises
+monotonically from 0.3 to 1 µm across the prototype sweeps, so the MPPS for these
+materials sits at or below 0.3 µm — see [Particle size](#particle-size-03-µm-is-the-measured-worst-case).
+This count-based endpoint differs from the wider
 project's RFP endpoint of inhaled PM10 mass reduction.
 
 For an auditable fitting procedure and its remaining geometry gaps, see `FITTING.md`.
@@ -68,6 +71,8 @@ are estimates. The superseded bench fit is kept in `coefficients.json` as
 `superseded_bench_fit_0.3`; it read ~1.3× higher per layer at 10 cm/s. The QF cells were
 corrected 2026-09-16: the first version of this row had them ln 10 too low (1836/699/250)
 against its own logs/cm and k columns; `roll_model.py` prints 4227/1610/576.
+
+Car engine intake filters were ruled out without testing (2026-09-20): their rated efficiency comes from dust-cake loading, and clean cellulose measures [11 % at 0.35 µm, QF ≈ 0.8 kPa⁻¹ at 16 cm/s](https://www.mcilvainecompany.com/Decision_Tree/subscriber/Tree/DescriptionTextLinks/RECENT%20DEVELPOMENTS%20IN%20HEAVY%20DUTY%20ENGINE%20AIR%20FILTRATION.pdf), which single-fibre theory extrapolates to at best household-fabric territory at bundle velocities.
 
 ### Products
 
@@ -214,6 +219,48 @@ give log₁₀PF = N·log₁₀PF₁ with no bundle-level saturation, so the eff
 downward shift — **degenerate with D and C**, already inside the fitted coefficients and
 not separable from this data. (φ is a *flow* fraction, not open area: holes are far less
 resistive per unit area, ρ ≈ 0.003–0.01, so φ = 47% is only ~0.3–0.9% open area.)
+
+## Particle size: 0.3 µm is the measured worst case
+
+**Protection rises monotonically with particle size over 0.3–1 µm, so the MPPS for these
+materials is at or below 0.3 µm.** `prototype_pf_q.csv` carries `PF@0.3`, `PF@0.5` and
+`PF@1` columns; only the first two have ever been fitted. Across the prototype rows:
+
+| comparison | rows agreeing |
+|---|---|
+| PF@0.5 > PF@0.3 | 78/83 (94%) |
+| PF@1 > PF@0.5 | 63/64 (98%) |
+| strictly PF@0.3 < PF@0.5 < PF@1 | 61/64 (95%) |
+
+Median log₁₀PF@1 / log₁₀PF@0.3 = **1.73** (range 0.96–3.55, n = 64). A further 21 rows
+have zero downstream 1 µm counts and are censored out of that median; they are the
+*best*-performing rows, so 1.73 is biased low. Counting noise does not explain the
+effect: downstream 1 µm counts are median 28 against external 2748, i.e. ~±19% Poisson
+on the count and ~4% on the log, against a median shift of 73%.
+
+Worked example — grey fuzzy + pink at 240 L/min: **PF 50.5 at 0.3 µm, PF 799 at 1 µm.**
+
+Consequences:
+
+- **The catalogue understates performance at the sizes the project cares about.** The
+  threat is bacterial (>1 µm), and the RFP scores PM10 mass over 0.3–10 µm, which weights
+  the coarse end heavily. Quoting 0.3 µm logs against a mass-weighted target is
+  conservative by roughly the factor above.
+- **0.3 µm is a defensible worst case for the scored range**, since the RFP's range starts
+  there and nothing in these fabrics penetrates worse above it. It is not established as
+  the true MPPS: 0.3 µm is the counter's smallest channel, so the minimum could lie below.
+- **This contradicts the project's own theory notes.** `../theory/THEORY.md` §8 said
+  ~600 nm for household cloth and §8.1 read the single-fibre table as putting coarse-fibre
+  MPPS near 1 µm. Those follow from a monodisperse 20 µm fibre; real fleece and napped
+  blanket have a wide diameter distribution with fine surface fibres, and interception
+  scales as (d_p/d_f)². Both notes now carry the correction. The measurement is direct and
+  replicated 64 times; the table is an idealisation.
+- **Unresolved:** whether the counter's channels are cumulative (≥0.3, ≥0.5, ≥1 µm) or
+  binned. If cumulative, `PF@1` is protection against everything ≥1 µm — more directly
+  useful for the PM10 endpoint, but not a monodisperse 1 µm figure. Record the instrument
+  model and settle this before the 1 µm channel is fitted.
+
+The 1 µm channel has no published fit. Fitting it is the outstanding work.
 
 ## The aerosol effect
 
