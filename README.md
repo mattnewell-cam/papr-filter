@@ -7,6 +7,7 @@ household blankets and towels.
 |---|---|
 | [Live planner](https://mattnewell-cam.github.io/papr-filter/planner/) | Choose materials, airflow, pressure and size limits to calculate a proposed rolled-filter build. |
 | [Planner source](planner/README.md) | Browser app, build script, solver tests, reference cases and material photographs. |
+| [Blanket filter designer](https://mattnewell-cam.github.io/papr-filter/FnF_testing_blanket_filter_design/) | Friends-and-family version: enter generic blankets, duvets and linen by size. [Source and notes](FnF_testing_blanket_filter_design/README.md). |
 | [Filter theory](theory/THEORY.md) | Pressure-budget allocation, material mixing and bundle geometry. |
 | [Mask designs](mask_designs.md) | Mask-based bank: leak physics, series-stage tolerance, the through-bag sleeve cartridge and its tests. |
 | [Measured results](testing/RESULTS.md) | Published material fits, test conditions and model limitations. |
