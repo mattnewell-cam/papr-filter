@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="List the blankets, duvets and linen you can spare and get instructions for rolling them into the air filter with the highest protection factor.">
+<meta name="description" content="List the blankets, duvets and sheets you can spare and get instructions for rolling them into the best air filter your fan and space allow.">
 <meta name="color-scheme" content="light dark">
 <title>Blanket filter designer</title>
 <style>
 :root{
-  --bg:#f5f2ea; --paper:#fffdf8; --ink:#1f1d1a; --ink-2:#4a463f; --ink-3:#7a7468;
-  --rule:#d9d3c5; --go:#1f5c4a; --go-ink:#fff; --bad:#a3361f; --warn:#8a5a00;
-  --blanket:#b5654a; --duvet:#d8c7a0; --linen:#5b7896; --core:#ece6d8;
+  --bg:#eef2f6; --paper:#fff; --ink:#0e1a26; --ink-2:#3a4b5c; --ink-3:#5f7084;
+  --rule:#d3dce5; --go:#1d4ed8; --go-ink:#fff; --bad:#b91c22; --warnbg:#fff4d6; --warnink:#6b4a00;
+  --blanket:#0f766e; --duvet:#e39a0c; --linen:#5b5bd6; --core:#c9d3de;
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#191816; --paper:#22201d; --ink:#eeeae2; --ink-2:#c4beb2; --ink-3:#8f897d;
-  --rule:#3b3833; --go:#5fae92; --go-ink:#10221b; --bad:#e2785f; --warn:#e0b04a;
-  --blanket:#c97a5e; --duvet:#b9a77f; --linen:#7f9cba; --core:#2e2b27;
+  --bg:#0c131a; --paper:#131d27; --ink:#e6edf3; --ink-2:#b2c0cd; --ink-3:#8b9aab;
+  --rule:#25313d; --go:#4f7cff; --go-ink:#fff; --bad:#f06a6f; --warnbg:#3a2e10; --warnink:#f5d48a;
+  --blanket:#22a596; --duvet:#f2b33d; --linen:#8486f2; --core:#334353;
 }}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);
@@ -23,252 +23,209 @@ body{margin:0;background:var(--bg);color:var(--ink);
 main{max-width:680px;margin:0 auto;padding:28px 18px 60px}
 h1{font-size:28px;line-height:1.15;margin:0 0 8px;letter-spacing:-.01em}
 .lede{color:var(--ink-2);margin:0 0 26px}
-h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);
-  margin:30px 0 10px;font-weight:700}
-.panel{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:16px}
+h2{font-size:19px;margin:30px 0 10px}
+h2 .n{color:var(--go);margin-right:6px}
+.panel{background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:16px}
+.panel:focus{outline:none}
+.hint{font-size:14px;color:var(--ink-3);margin:0 0 12px}
 label{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ink-2)}
 input,select{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);
-  border:1px solid var(--rule);border-radius:3px;padding:8px 10px;width:100%;min-width:0}
+  border:1px solid var(--rule);border-radius:6px;padding:8px 10px;width:100%;min-width:0}
+input[aria-invalid=true]{border-color:var(--bad);outline:1px solid var(--bad)}
 input:focus,select:focus,button:focus-visible{outline:2px solid var(--go);outline-offset:1px}
-button{font:inherit;cursor:pointer;border-radius:3px}
+button{font:inherit;cursor:pointer;border-radius:6px}
 .addrow{display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:10px;align-items:end}
-.addrow button{background:var(--ink);color:var(--bg);border:0;padding:9px 18px;font-weight:600}
+.addrow button{background:var(--ink);color:var(--paper);border:0;padding:9px 18px;font-weight:600;min-height:42px}
 @media (max-width:520px){.addrow{grid-template-columns:1fr 1fr}.addrow label:first-child,.addrow button{grid-column:1/-1}}
-.err{color:var(--bad);font-size:14px;margin:8px 0 0;min-height:0}
+.err{color:var(--bad);font-size:14px;margin:8px 0 0}
 .err:empty{display:none}
 #items{list-style:none;margin:14px 0 0;padding:0;border-top:1px solid var(--rule)}
-#items li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--rule)}
-#items .dot{width:12px;height:12px;border-radius:2px;flex:none}
+#items li{display:flex;align-items:center;gap:10px;padding:4px 0;min-height:46px;border-bottom:1px solid var(--rule)}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;flex:none}
 #items .what{flex:1}
-#items .size{color:var(--ink-3);font-variant-numeric:tabular-nums}
-#items button{background:none;border:0;color:var(--ink-3);padding:2px 6px;font-size:14px;text-decoration:underline}
+#items .size{color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.linkbtn{background:none;border:0;color:var(--ink-3);padding:0 8px;min-height:44px;font-size:14px;text-decoration:underline}
 #items .none{color:var(--ink-3);font-style:italic}
+#clear{display:block;margin:6px 0 -10px auto}
 .limits{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
 @media (max-width:520px){.limits{grid-template-columns:1fr}}
 .limits small{color:var(--ink-3);font-size:12.5px}
 #go{display:block;width:100%;margin:26px 0 0;padding:14px;border:0;background:var(--go);
   color:var(--go-ink);font-size:17px;font-weight:700}
 #go:disabled{opacity:.6;cursor:default}
-#out.stale{opacity:.45}
-.stalenote{font-size:14px;color:var(--warn);margin:0 0 10px}
+.notice{background:var(--warnbg);color:var(--warnink);border-radius:6px;padding:10px 12px;margin:0}
 .big{font-size:44px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.big small{font-size:15px;font-weight:600;color:var(--ink-3);margin-left:8px}
 .bigsub{color:var(--ink-2);margin:6px 0 16px}
+.bigsub .notice{margin-top:8px}
 .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
-  background:var(--rule);border:1px solid var(--rule);margin:0 0 18px}
-.facts div{background:var(--paper);padding:9px 11px}
+  background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin:0 0 18px}
+.facts div{background:var(--paper);padding:8px 10px}
 .facts dt{font-size:12.5px;color:var(--ink-3)}
-.facts dd{margin:0;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap}
-@media (max-width:520px){.facts{grid-template-columns:1fr 1fr}}
+.facts dd{margin:0;font-weight:650;font-variant-numeric:tabular-nums}
 .facts dd span{font-weight:400;color:var(--ink-3)}
-.wall{display:flex;height:34px;border:1px solid var(--rule);margin:4px 0 4px}
-.wall div{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
-  color:#fff;border-left:1px solid var(--paper);overflow:hidden;min-width:2px}
-.wall .c{background:var(--core);color:var(--ink-3);border-left:0}
-.wallcap{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-3);margin:0 0 18px}
-ol.steps{margin:0;padding:0 0 0 22px}
+@media (max-width:520px){.facts{grid-template-columns:1fr}
+  .facts div{display:flex;justify-content:space-between;align-items:baseline;padding:6px 10px}}
+.wall{display:flex;height:22px;border-radius:5px;overflow:hidden;margin:4px 0 6px}
+.wall div{border-left:2px solid var(--paper);min-width:4px}
+.wall .c{background:var(--core);border-left:0}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink-3);margin:0 0 18px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+ol.steps{margin:0 0 14px;padding:0 0 0 22px}
 ol.steps li{margin:0 0 14px;padding-left:4px}
-ol.steps b{font-weight:650}
 ol.steps p{margin:2px 0}
-ol.steps .meta{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
-ol.steps .x{font-size:13px;color:var(--warn)}
-.unused{font-size:14px;color:var(--ink-2);margin:4px 0 14px}
-.note{font-size:13.5px;color:var(--ink-2);border-left:3px solid var(--rule);padding:2px 0 2px 10px;margin:16px 0 0}
-details{margin:28px 0 0;font-size:14px;color:var(--ink-2)}
-summary{cursor:pointer;color:var(--ink)}
-details p{margin:8px 0}
-.empty{color:var(--ink-3)}
+ol.steps .sz{font-size:14px;color:var(--ink-3);white-space:nowrap}
+.unused{font-size:14px;color:var(--ink-2);margin:4px 0 0}
+.empty{color:var(--ink-3);margin:0}
 </style>
 </head>
 <body>
 <main>
 <h1>Blanket filter designer</h1>
-<p class="lede">List the blankets, duvets and linen you can spare. This works out how to roll them
-around a tube into the air filter with the highest protection factor your fan and space allow, and
-tells you how to build it.</p>
+<p class="lede">List the blankets, duvets and sheets you can spare. This works out the best way to
+roll them onto the filter core for your fan, and tells you how to build it.</p>
 
-<h2>1 · Your materials</h2>
+<h2><span class="n">1.</span>Your materials</h2>
 <div class="panel">
+  <p class="hint">Add each piece separately: lay it flat and measure its length and width. Add a duvet
+  cover as two sheets of its size. Feather and down duvets aren't covered.</p>
   <form id="add" class="addrow" novalidate>
     <label>Type
       <select id="type">
-        <option value="blanket">Blanket</option>
-        <option value="duvet">Duvet</option>
-        <option value="linen">Linen (sheet or duvet cover)</option>
+        <option value="blanket">Blanket or throw</option>
+        <option value="duvet">Duvet (synthetic fill)</option>
+        <option value="linen">Sheet</option>
       </select></label>
     <label>Length · cm<input id="len" type="number" inputmode="decimal" min="1" step="any"></label>
     <label>Width · cm<input id="wid" type="number" inputmode="decimal" min="1" step="any"></label>
     <button type="submit">Add</button>
   </form>
-  <p class="err" id="adderr"></p>
+  <p class="err" id="adderr" role="alert"></p>
   <ul id="items"></ul>
+  <button type="button" class="linkbtn" id="clear" hidden>Clear all</button>
 </div>
 
-<h2>2 · Your limits</h2>
+<h2><span class="n">2.</span>Your limits</h2>
 <div class="panel limits">
-  <label>Airflow · L/min<input id="q" type="number" value="180" min="1" step="any"><small>What the fan pushes through the filter.</small></label>
-  <label>Pressure budget · Pa<input id="dp" type="number" value="202" min="1" step="any"><small>The most resistance the fan can push against at that airflow.</small></label>
-  <label>Max outer diameter · mm<input id="od" type="number" value="300" min="1" step="any"><small>Widest the finished roll can be.</small></label>
-  <label>Max length · cm<input id="h" type="number" value="50" min="1" step="any"><small>Longest the finished roll can be.</small></label>
-  <label>Core diameter · mm<input id="core" type="number" placeholder="automatic" min="0" step="any"><small>Leave blank to let it choose.</small></label>
+  <label>Airflow · L/min<input id="q" type="number" value="180" min="1" step="any"><small>How much air the fan moves. 1 m³/h = 16.7 L/min; 1 CFM = 28.3 L/min.</small></label>
+  <label>Pressure budget · Pa<input id="dp" type="number" value="202" min="1" step="any"><small>The pressure your fan can still give at that airflow, not its maximum pressure.</small></label>
+  <label>Max diameter · cm<input id="od" type="number" value="30" min="1" step="any"><small>Widest the finished roll can be.</small></label>
+  <label>Max length · cm<input id="h" type="number" value="50" min="1" step="any"><small>Longest the roll can be, not counting the tied-off end.</small></label>
 </div>
 
 <button id="go" type="button">Design my filter</button>
 
 <section id="res" hidden>
-  <h2>3 · Your filter</h2>
-  <div class="panel" id="out"></div>
+  <h2><span class="n">3.</span>Your filter</h2>
+  <div class="panel" id="out" tabindex="-1" aria-live="polite"></div>
 </section>
-
-<details>
-  <summary>What the material types mean</summary>
-  <p><b>Blanket</b> is the average of the four blankets tested so far (a woven throw, two fuzzy
-  fleeces and an open-knit fleecy throw): the geometric mean of their per-layer protection
-  factors, pressure drops and thicknesses. Real blankets vary a lot either side of it.</p>
-  <p><b>Duvet</b> is a tested 13.5 tog duvet with synthetic polyester fill. Down and feather duvets
-  have not been tested and may behave quite differently.</p>
-  <p><b>Linen</b> is a tested polyester soft-touch duvet cover.</p>
-  <p>Protection factors are for 0.3 µm particles, counted, from whole-roll tests.</p>
-</details>
 </main>
 
 <script id="solvercore">
 let Q = 180*1000/60;                // cm^3/s, set from the flow input
 const LN10 = Math.LN10;
+const RI = 3.25;                    // roll inside radius, cm: 65 mm core
+const OVERHANG = 8;                 // cm every piece must run past the far end, to tie off
+const H_MIN = 5;                    // shortest roll considered, cm
 
 /* ---- physics ---- */
 // integral of r^p dr from r0 to r1
 const rint=(r0,r1,p)=> Math.abs(p+1)<1e-9 ? Math.log(r1/r0) : (Math.pow(r1,p+1)-Math.pow(r0,p+1))/(p+1);
-// A material's per-layer fit is a list of terms [c,p]: log10PF per layer = sum c*v^p.
+// A material's per-layer fit is a list of terms [c,p,vmax]: log10PF per layer = sum c*v^p.
 // With v = K/r and 1/t layers per cm, logs over [r0,r1] = (1/t) sum c*K^p * int r^-p dr.
+// Rising (impaction) terms are held at their value at vmax, the fastest measured speed,
+// inside r = K/vmax: no capture is credited for speeds beyond what was measured.
 function logsOf(m,r0,r1,K){
   let s=0;
-  for(const [c,p] of m.terms) s+=c*Math.pow(K,p)*rint(r0,r1,-p);
+  for(const [c,p,vmax] of m.terms){
+    let ra=r0;
+    if(p>0 && vmax){ ra=Math.min(r1,Math.max(r0,K/vmax)); s+=c*Math.pow(vmax,p)*(ra-r0); }
+    s+=c*Math.pow(K,p)*rint(ra,r1,-p);
+  }
   return s/m.t;
 }
 const dpOf=(m,r0,r1,K)=> (m.k/m.t)*K*Math.log(r1/r0);
 
-/* ---- folding ---- *
- * A sheet L x W. Either roll along L (W becomes axial, fold across W) or roll along W.
- * plies*circumference is the single-ply stock that ends up in the cross-section.
- * Axial extent must be >= H + r_out so there is material to gather and tie off.
- * TODO(refine): the tie-off allowance below is a first guess - excess >= outer radius
- * of that layer. Replace once we know what actually knots up reliably.               */
-const PLY_OPTS=[1,2,3,4,5,6,8,10,12,16,20,24,32];
-function foldAll(m,H,rOut){
-  const need=H+rOut, out=[];
-  if(!(m.L>0)||!(m.W>0)||!(m.t>0)) return out;
+/* ---- folding ----
+ * A piece L x W is rolled along one side (circ) with the other folded into f equal plies
+ * (axial). Every piece is used whole, so it fills f*circ*t = L*W*t/axial of cross-section,
+ * and must go round at least once. It starts level with the fan end and must run at least
+ * OVERHANG past the far end of an H cm roll. Options are sorted narrowest (most cloth in
+ * the roll) first, so the ones that reach at any H are a suffix. Folds are ones people can
+ * do by halving and thirding. */
+const PLY_OPTS=[1,2,3,4,6,8];
+function foldAll(m){
+  const out=[], seen=new Set();
+  if(!(m.L>0&&m.W>0&&m.t>0)) return out;
   for(const f of PLY_OPTS) for(const roll of ['L','W']){
-    const axial=(roll==='L'? m.W : m.L)/f, circ=(roll==='L'? m.L : m.W);
-    if(axial<need) continue;
-    out.push({f,roll,axial,circ,stock:f*circ,need});
+    const axial=(roll==='L'?m.W:m.L)/f, circ=roll==='L'?m.L:m.W, key=axial+'x'+circ;
+    if(axial<H_MIN+OVERHANG || seen.has(key)) continue;
+    seen.add(key); out.push({f,roll,axial,circ,area:f*circ*m.t});
   }
-  return out;
+  return out.sort((a,b)=>a.axial-b.axial);
 }
-/* ---- optimiser ---- */
-// Thick folded wraps need complete turns; thin wraps allow partial turns.
-const TURN_MIN=1.0;
-let LAST=null;
+const firstFit=(opts,need)=>{let s=0; while(s<opts.length && opts[s].axial<need-1e-9) s++; return s;};
+// Same pieces in any entry order give the same plan.
+const canonical=sel=>sel.slice().sort((a,b)=>a.type<b.type?-1:a.type>b.type?1:
+  b.L*b.W-a.L*a.W || b.L-a.L || b.W-a.W || (a.id<b.id?-1:a.id>b.id?1:0));
 
-/* Search actual build instructions, not a radius-by-radius greedy score. Each
- * material has a fold, position and amount; zero amount excludes it. This keeps
- * every material and fold in the search, including discontinuous whole turns.
- * A fixed evaluation budget and seeded randomness make cold solves repeatable.
- */
-function optimise(sel,dpMax,roMax,Hmax,fixedRi,quick){
+/* ---- optimiser ----
+ * Genes: x[0] roll length; per piece an order key, a fold and a use flag. Pieces go on core
+ * outward in key order. The fold gene sets the most cloth a piece may put in the roll; if
+ * that breaks a limit (or fails to go round once) the next wider fold is tried, and a piece
+ * that fits no way is left out. Seeded differential evolution, then a local search over
+ * length, folds, use and order, including moves that change two pieces at once. */
+function optimise(sel,dpMax,roMax,Hmax){
   if(!sel.length || ![dpMax,roMax,Hmax,Q].every(v=>Number.isFinite(v)&&v>0)) return null;
-  sel=sel.slice().sort((a,b)=>a.id.localeCompare(b.id));
-  if(sel.some(m=>![m.t,m.k,m.L,m.W].every(v=>Number.isFinite(v)&&v>0))) return null;
-  const minRi=Math.min(.5,roMax/10), maxRi=roMax-Math.min(...sel.map(m=>m.t));
-  if(maxRi<=minRi || (fixedRi && (fixedRi<=0 || fixedRi>=roMax))) return null;
-  const n=sel.length, dim=3+3*n;
-  const all=sel.map(m=>foldAll(m,0,0));
+  if(roMax<=RI || Hmax<H_MIN) return null;
+  sel=canonical(sel);
+  const n=sel.length, dim=1+3*n, all=sel.map(foldAll);
   const clamp=x=>Math.max(0,Math.min(1,x));
+  const Hof=x0=>H_MIN+clamp(x0)*(Hmax-H_MIN), x0Of=H=>Hmax>H_MIN?(H-H_MIN)/(Hmax-H_MIN):0;
   let rng=0x9e3779b9;
   const random=()=>{rng^=rng<<13;rng^=rng>>>17;rng^=rng<<5;return (rng>>>0)/4294967296;};
-  let best=null, bestX=null;
+  let best=-1, bestX=null;
   const evaluate=(x,save=false)=>{
-    const H=Math.max(Math.min(.01,Hmax),x[0]*Hmax), ri=fixedRi||minRi+x[1]*(maxRi-minRi);
-    const cap=ri+x[2]*(roMax-ri), need=H+cap, K=Q/(2*Math.PI*H);
-    let r=ri, dp=0, logs=0;
-    const order=Array.from({length:n},(_,i)=>i).sort((i,j)=>x[3+3*i]-x[3+3*j]);
-    const bands=[], folds={}, used={}, stock={};
+    const H=Hof(x[0]), K=Q/(2*Math.PI*H), need=H+OVERHANG;
+    const order=Array.from({length:n},(_,i)=>i).sort((i,j)=>x[1+3*i]-x[1+3*j]||i-j);
+    let r=RI, dp=0, logs=0;
+    const bands=[];
     for(const i of order){
-      const m=sel[i], amount=clamp((x[5+3*i]-.08)/.84);
-      if(amount===0) continue;
-      const opts=all[i].filter(f=>f.axial>=need-1e-10);
-      if(!opts.length) continue;
-      const f=opts[Math.min(opts.length-1,Math.floor(x[4+3*i]*opts.length))];
-      const available=Math.min(cap-r,Math.sqrt(r*r+f.stock*m.t/Math.PI)-r,
-        r*Math.expm1(Math.min(700,(dpMax-dp)*m.t/(m.k*K))));
-      let depth=Math.max(0,available)*amount;
-      if(f.f*m.t>=TURN_MIN) depth=Math.floor((depth+1e-10)/(f.f*m.t))*f.f*m.t;
-      if(depth<m.t-1e-9) continue;
-      const r1=r+depth;
-      logs+=logsOf(m,r,r1,K); dp+=dpOf(m,r,r1,K);
-      if(save){
-        folds[m.id]={...f,need}; stock[m.id]=f.stock;
-        used[m.id]=Math.PI*(r1*r1-r*r)/m.t;
-        bands.push({m,r0:r,r1,n:depth/m.t,turns:depth/(m.t*f.f)});
+      if(x[3+3*i]<.5) continue;
+      const opts=all[i], m=sel[i];
+      for(let j=Math.max(firstFit(opts,need),Math.min(opts.length-1,Math.floor(clamp(x[2+3*i])*opts.length)));j<opts.length;j++){
+        const f=opts[j], r1=Math.sqrt(r*r+f.area/Math.PI);
+        if(r1>roMax+1e-9 || r1-r<f.f*m.t-1e-9) continue;
+        const d=dpOf(m,r,r1,K);
+        if(dp+d>dpMax+1e-9) continue;
+        logs+=logsOf(m,r,r1,K); dp+=d;
+        if(save) bands.push({m,r0:r,r1,fold:f});
+        r=r1; break;
       }
-      r=r1;
     }
-    if(save) return logs>0?{H,ri,ro:r,K,dp,logs,bands,folds,stock,used,rFold:cap}:null;
-    if(logs>0 && (!best || logs>best.logs)) {best={logs};bestX=x.slice();}
+    if(save) return logs>0?{H,ri:RI,ro:r,K,dp,logs,bands}:null;
+    if(logs>best){best=logs;bestX=x.slice();}
     return logs;
   };
+  // Lengths where some fold just reaches, plus the length limit.
+  const Hc=[...new Set([Hmax,...all.flat().map(o=>o.axial-OVERHANG)])].filter(h=>h>=H_MIN&&h<=Hmax);
+  // Seeds: every such length, all pieces in, most cloth, grouped by type in each type order.
+  const types=[...new Set(sel.map(m=>m.type))];
+  const permutations=a=>a.length?a.flatMap((v,i)=>permutations(a.filter((_,j)=>j!==i)).map(p=>[v,...p])):[[]];
   const seeds=[];
-  const remember=x=>{const score=evaluate(x);seeds.push({x,score});};
-  // Sample every fold in isolation, at its exact axial boundary as well as the
-  // length limit. These seeds protect small subsets from larger selections.
-  for(let i=0;i<n;i++) for(const f of all[i]){
-    for(const rf of [.06,.2,.45,.7]) for(const hf of [1,.7]){
-      const ri=fixedRi||minRi+rf*(maxRi-minRi);
-      const cap=Math.min(roMax,Math.max(ri+sel[i].t, f.axial*0.3));
-      const H=Math.min(Hmax,f.axial-cap)*hf;
-      if(H<=0) continue;
-      const x=new Array(dim).fill(0); x[0]=H/Hmax;x[1]=rf;x[2]=(cap-ri)/(roMax-ri);
-      const opts=all[i].filter(o=>o.axial>=H+cap-1e-10), k=opts.indexOf(f);
-      if(k<0) continue;
-      x[4+3*i]=(k+.5)/opts.length; x[5+3*i]=1;
-      remember(x);
-    }
-  }
-  // Preserve an actual previous plan, re-evaluated with today's materials and
-  // airflow. A looser limit must not lose an already feasible solution.
-  let incumbent=null;
-  if(LAST && LAST.bands && LAST.H<=Hmax && (!fixedRi || fixedRi===LAST.ri)){
-    const map=new Map(sel.map(m=>[m.id,m])), folds={},stock={},used={},bands=[];
-    let logs=0,dp=0,r=LAST.ri,valid=r>0;
-    const K=Q/(2*Math.PI*LAST.H);
-    for(const b of LAST.bands){
-      const m=map.get(b.id), prev=LAST.folds[b.id];
-      if(!m || m.t!==b.t || !prev){valid=false;break;}
-      const f=foldAll(m,LAST.H,LAST.ro).find(f=>f.f===prev.f&&f.roll===prev.roll);
-      if(!f){valid=false;break;}
-      const r1=r+b.depth;
-      used[m.id]=(used[m.id]||0)+Math.PI*(r1*r1-r*r)/m.t;
-      if(used[m.id]>f.stock+1e-7){valid=false;break;}
-      logs+=logsOf(m,r,r1,K);dp+=dpOf(m,r,r1,K);
-      bands.push({m,r0:r,r1,n:b.depth/m.t,turns:b.depth/(m.t*f.f)});
-      folds[m.id]=f;stock[m.id]=f.stock;r=r1;
-    }
-    if(valid && bands.length && r<=roMax+1e-8 && dp<=dpMax+1e-7)
-      incumbent={H:LAST.H,ri:LAST.ri,ro:r,K,logs,dp,bands,folds,stock,used,rFold:r};
+  for(const h of Hc) for(const to of permutations(types)){
+    const x=new Array(dim).fill(0); x[0]=x0Of(h);
+    sel.forEach((m,i)=>{x[1+3*i]=(to.indexOf(m.type)+(i+.5)/n)/to.length; x[3+3*i]=1;});
+    seeds.push({x,score:evaluate(x)});
   }
   seeds.sort((a,b)=>b.score-a.score);
-  // Independent populations retain several basins instead of polishing only
-  // the winner of a coarse geometry grid.
-  const size=48, generations=quick?65:(n>4?1000:180);
-  // With a few materials, explicitly explore every order. Random-key evolution
-  // can otherwise converge all populations on the same order and miss a narrow
-  // competing solution when (for example) only the pressure limit is relaxed.
-  const permutations=a=>a.length?a.flatMap((v,i)=>permutations(a.filter((_,j)=>j!==i)).map(p=>[v,...p])):[[]];
+  const size=40, generations=n<=3?120:n<=6?250:400;
   const orders=n<=3?permutations(Array.from({length:n},(_,i)=>i)):[];
   const setOrder=(x,island)=>{
-    if(orders.length) orders[island%orders.length].forEach((i,j)=>{x[3+3*i]=(j+.5)/n;});
+    if(orders.length) orders[island%orders.length].forEach((i,j)=>{x[1+3*i]=(j+.5)/n;});
     return x;
   };
-  for(let island=0;island<Math.max(4,orders.length);island++){
+  for(let island=0;island<Math.max(6,orders.length);island++){
     const pop=[],scores=[];
     for(let j=0;j<size;j++){
       let x;
@@ -293,43 +250,36 @@ function optimise(sel,dpMax,roMax,Hmax,fixedRi,quick){
       const score=evaluate(x);
       if(score>=scores[j]){pop[j]=x;scores[j]=score;}
     }
-    const finalists=scores.map((score,j)=>({score,x:pop[j]})).sort((a,b)=>b.score-a.score);
-    seeds.push(...finalists.slice(0,6));
+    seeds.push(...scores.map((score,j)=>({score,x:pop[j]})).sort((a,b)=>b.score-a.score).slice(0,6));
   }
-  // Coordinate polish includes categorical fold/order jumps, then shrinking
-  // geometric steps; fractions are continuous only for thin folded wraps.
-  seeds.push({x:bestX,score:best?.logs||0});
+  seeds.push({x:bestX,score:best});
   seeds.sort((a,b)=>b.score-a.score);
-  for(const s of seeds.slice(0,8)){
-    if(!s.x) continue;
-    let x=s.x.slice(), score=evaluate(x);
-    for(const step of [.08,.03,.01,.003,.001,.0003,.0001]){
-      for(let pass=0;pass<4;pass++){
-        const before=score;
-        for(let k=0;k<dim;k++){
-          if(k===1 && fixedRi) continue;
-          const values=[clamp(x[k]-step),clamp(x[k]+step)];
-          if(k>=3 && (k-3)%3===1){
-            const i=(k-4)/3, H=Math.max(.01,x[0]*Hmax),ri=fixedRi||minRi+x[1]*(maxRi-minRi);
-            const count=all[i].filter(f=>f.axial>=H+ri+x[2]*(roMax-ri)-1e-10).length;
-            for(let j=0;j<count;j++) values.push((j+.5)/count);
-          } else if(k>=3) values.push(0,1);
-          for(const v of values){
-            const trial=x.slice();trial[k]=v;
-            const sc=evaluate(trial);
-            if(sc>score+1e-12){x=trial;score=sc;}
-          }
+  for(const s0 of seeds.slice(0,10)){
+    if(!s0.x) continue;
+    let x=s0.x.slice(), score=evaluate(x);
+    const tryX=t=>{const sc=evaluate(t); if(sc>score+1e-12){x=t;score=sc;return true;} return false;};
+    const foldVals=i=>{const opts=all[i],s=firstFit(opts,Hof(x[0])+OVERHANG);
+      return Array.from({length:opts.length-s},(_,j)=>(s+j+.5)/opts.length);};
+    for(let pass=0;pass<30;pass++){
+      const before=score;
+      for(const h of Hc){const t=x.slice();t[0]=x0Of(h);tryX(t);}
+      for(const step of [.1,.03,.01,.003,.001,.0003,.0001])
+        for(const v of [x[0]-step,x[0]+step]){const t=x.slice();t[0]=clamp(v);tryX(t);}
+      for(let i=0;i<n;i++){
+        {const t=x.slice();t[3+3*i]=x[3+3*i]<.5?1:0;tryX(t);}
+        for(const v of foldVals(i)){const t=x.slice();t[2+3*i]=v;tryX(t);}
+        for(let j=0;j<n;j++) if(j!==i){
+          const t=x.slice();[t[1+3*i],t[1+3*j]]=[x[1+3*j],x[1+3*i]];tryX(t);
+          for(const e of [-1e-7,1e-7]){const u=x.slice();u[1+3*i]=x[1+3*j]+e;tryX(u);}
+          // two at once: swap which piece is in, or refold one while toggling the other
+          {const u=x.slice();u[3+3*i]=x[3+3*i]<.5?1:0;u[3+3*j]=x[3+3*j]<.5?1:0;tryX(u);}
+          for(const v of foldVals(i)){const u=x.slice();u[2+3*i]=v;u[3+3*j]=x[3+3*j]<.5?1:0;tryX(u);}
         }
-        if(score<=before+1e-12) break;
       }
+      if(score<=before+1e-12) break;
     }
   }
-  best=bestX?evaluate(bestX,true):null;
-  if(incumbent && (!best || incumbent.logs>best.logs)) best=incumbent;
-  if(best && !quick) LAST={H:best.H,ri:best.ri,ro:best.ro,
-    folds:Object.fromEntries(Object.entries(best.folds).map(([id,f])=>[id,{f:f.f,roll:f.roll}])),
-    bands:best.bands.map(b=>({id:b.m.id,t:b.m.t,depth:b.r1-b.r0}))};
-  return best;
+  return bestX?evaluate(bestX,true):null;
 }
 </script>
 
@@ -338,166 +288,182 @@ function optimise(sel,dpMax,roMax,Hmax,fixedRi,quick){
  * Per-layer 0.3 um fits from ../testing/coefficients.json (the planner's MATS):
  * log10PF = D*v^-alpha + C + B*v^beta, dp = k*v, v in cm/s, dp in Pa, t in cm.  */
 const FITS={
-  'blue holey':{D:0.02703,C:0.04527,B:0.00036,alpha:0.6667,beta:1.0,k:2.8474,t:0.2903,vlo:0.94,vhi:11.24},
-  'grey fuzzy':{D:0.10844236258724628,C:0.0804490089082753,B:0,alpha:0.5449124331355384,beta:null,k:5.7833311776226255,t:0.28301,vlo:0.4397581146069768,vhi:5.057218318317381},
-  'pink':      {D:0.08474,C:0.03837,B:0,alpha:0.242,beta:null,k:7.0001,t:0.4688,vlo:0.28,vhi:5.33},
-  'grey holey':{D:0.04345,C:0.0,B:0,alpha:0.158,beta:null,k:0.8921,t:0.20149,vlo:1.16,vhi:4.63},
-  'duvet':     {D:0.10057,C:0.01677,B:0.01203,alpha:0.6667,beta:1.0,k:3.0829,t:1.95159,vlo:0.66,vhi:4.76},
-  'soft linen':{D:0.00843,C:0.04074,B:0,alpha:0.666,beta:null,k:6.2927,t:0.05141,vlo:0.42,vhi:3.52}
+  'blue holey':{D:0.02703,C:0.04527,B:0.00036,alpha:0.6667,beta:1.0,k:2.8474,t:0.2903,vhi:11.24},
+  'grey fuzzy':{D:0.10844236258724628,C:0.0804490089082753,B:0,alpha:0.5449124331355384,beta:null,k:5.7833311776226255,t:0.28301},
+  'pink':      {D:0.08474,C:0.03837,B:0,alpha:0.242,beta:null,k:7.0001,t:0.4688},
+  'grey holey':{D:0.04345,C:0.0,B:0,alpha:0.158,beta:null,k:0.8921,t:0.20149},
+  'duvet':     {D:0.10057,C:0.01677,B:0.01203,alpha:0.6667,beta:1.0,k:3.0829,t:1.95159,vhi:4.76},
+  'soft linen':{D:0.00843,C:0.04074,B:0,alpha:0.666,beta:null,k:6.2927,t:0.05141}
 };
-const termsOf=f=>[[f.D,-f.alpha],[f.C,0],...(f.B&&f.beta?[[f.B,f.beta]]:[])];
-// Geometric mean per layer: the mean of the log10PF curves (merged term by term),
-// geometric means of k and t. Measured range is where every source was measured.
+const termsOf=f=>[[f.D,-f.alpha],[f.C,0],...(f.B&&f.beta?[[f.B,f.beta,f.vhi]]:[])];
+// Generic blanket, per layer: the mean of the four blankets' log10PF curves (each term
+// scaled by 1/n, constants merged), and the geometric means of k and t.
 function geomean(ids){
-  const fs=ids.map(id=>FITS[id]), n=fs.length, byP=new Map();
-  for(const f of fs) for(const [c,p] of termsOf(f)) byP.set(p,(byP.get(p)||0)+c/n);
+  const fs=ids.map(id=>FITS[id]), n=fs.length, terms=[];
+  let C=0;
+  for(const f of fs) for(const [c,p,v] of termsOf(f)) if(p===0) C+=c/n; else terms.push([c/n,p,v]);
+  if(C) terms.push([C,0]);
   const gm=key=>Math.exp(fs.reduce((s,f)=>s+Math.log(f[key]),0)/n);
-  return {terms:[...byP].filter(([p,c])=>c!==0).map(([p,c])=>[c,p]), k:gm('k'), t:gm('t'),
-          vlo:Math.max(...fs.map(f=>f.vlo)), vhi:Math.min(...fs.map(f=>f.vhi))};
+  return {terms, k:gm('k'), t:gm('t')};
 }
-const single=id=>{const f=FITS[id];return {terms:termsOf(f),k:f.k,t:f.t,vlo:f.vlo,vhi:f.vhi};};
+const single=id=>{const f=FITS[id];return {terms:termsOf(f),k:f.k,t:f.t};};
 const TYPES={
   blanket:{name:'Blanket',colour:'var(--blanket)',...geomean(['blue holey','grey fuzzy','pink','grey holey'])},
   duvet:  {name:'Duvet',  colour:'var(--duvet)',  ...single('duvet')},
-  linen:  {name:'Linen',  colour:'var(--linen)',  ...single('soft linen')}
+  linen:  {name:'Sheet',  colour:'var(--linen)',  ...single('soft linen')}
 };
 
 /* ---- solver worker ---------------------------------------------------------- */
 const WORKER_SRC=document.getElementById('solvercore').textContent+`
 onmessage=e=>{
-  const d=e.data; Q=d.q; LAST=d.seed||null;
-  let r=null;
-  try{ r=optimise(d.sel,d.dpMax,d.roMax,d.Hmax,d.fixedRi,false); }catch(err){}
-  postMessage({result:r&&r.bands.length?r:null, seed:LAST});
+  const d=e.data; Q=d.q;
+  try{ const r=optimise(d.sel,d.dpMax,d.roMax,d.Hmax); postMessage({r:r&&r.bands.length?r:null}); }
+  catch(err){ postMessage({error:String(err)}); }
 };`;
 const workerURL=URL.createObjectURL(new Blob([WORKER_SRC],{type:'text/javascript'}));
 let worker=null;
-function solve(sel,lim,seed){
+function solve(sel,lim){
   if(worker) worker.terminate();
   const w=worker=new Worker(workerURL);
   return new Promise(res=>{
     w.onmessage=e=>{res(e.data);w.terminate();};
-    w.onerror=()=>res({result:null,seed:null});
-    w.postMessage({sel,...lim,q:Q,seed});
+    w.onerror=()=>res({error:'worker'});
+    w.postMessage({sel,...lim,q:Q});
   });
 }
 
 /* ---- state ------------------------------------------------------------------ */
-const KEY='fnf-blanket-filter-v1', $=id=>document.getElementById(id);
-const LIMITS=['q','dp','od','h','core'];
-let state={items:[],next:1};
+const KEY='fnf-blanket-filter-v2', $=id=>document.getElementById(id);
+const LIMITS=['q','dp','od','h'];
+let state={items:[]}, version=0;
 try{
   const s=JSON.parse(localStorage.getItem(KEY));
   if(s&&Array.isArray(s.items)){
-    state.items=s.items.filter(i=>TYPES[i.type]&&i.L>0&&i.W>0);
-    state.next=s.next||state.items.length+1;
+    state.items=s.items.filter(i=>TYPES[i.type]&&i.L>0&&i.W>0&&i.n>0&&i.id);
     LIMITS.forEach(k=>{ if(s.limits&&s.limits[k]!=null) $(k).value=s.limits[k]; });
   }
 }catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({...state,
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({items:state.items,
   limits:Object.fromEntries(LIMITS.map(k=>[k,$(k).value]))}));}catch(e){}};
-let SEED=null;   // the last plan, so loosening a limit never loses it
 
+const NB=' ';
 const cm=x=>Math.abs(x-Math.round(x))<0.05?String(Math.round(x)):x.toFixed(1);
-// Display names follow list order within each type: Blanket 1, Blanket 2, ...
-function named(items){
-  const seen={};
-  return items.map(i=>({...i,label:`${TYPES[i.type].name} ${seen[i.type]=(seen[i.type]||0)+1}`}));
-}
+const label=i=>`${TYPES[i.type].name} ${i.n}`;
 
 function renderItems(){
-  const ul=$('items');
-  ul.innerHTML=state.items.length?named(state.items).map(i=>`<li>
+  $('items').innerHTML=state.items.length?state.items.map(i=>`<li>
     <span class="dot" style="background:${TYPES[i.type].colour}"></span>
-    <span class="what">${i.label}</span><span class="size">${cm(i.L)} × ${cm(i.W)} cm</span>
-    <button type="button" data-id="${i.id}" aria-label="Remove ${i.label}">Remove</button></li>`).join('')
+    <span class="what">${label(i)}</span><span class="size">${cm(i.L)} × ${cm(i.W)}${NB}cm</span>
+    <button type="button" class="linkbtn" data-id="${i.id}" aria-label="Remove ${label(i)}">Remove</button></li>`).join('')
     :'<li class="none">Nothing added yet.</li>';
+  $('clear').hidden=!state.items.length;
 }
+function changed(){ version++; save(); if(!$('res').hidden) $('out').innerHTML=
+  '<p class="notice">You’ve changed your materials or limits. Press <b>Design my filter</b> to update.</p>'; }
 $('items').addEventListener('click',e=>{
   const b=e.target.closest('button[data-id]'); if(!b) return;
   state.items=state.items.filter(i=>i.id!==b.dataset.id);
-  renderItems(); save(); stale();
+  renderItems(); changed(); $('len').focus();
+});
+$('clear').addEventListener('click',()=>{
+  if(!confirm('Remove all your pieces?')) return;
+  state.items=[]; renderItems(); changed(); $('len').focus();
 });
 $('add').addEventListener('submit',e=>{
   e.preventDefault();
-  const L=parseFloat($('len').value), W=parseFloat($('wid').value);
+  const L=parseFloat($('len').value), W=parseFloat($('wid').value), type=$('type').value;
   if(!(L>0&&W>0)){ $('adderr').textContent='Enter a length and width in cm.'; return; }
   $('adderr').textContent='';
-  state.items.push({id:'i'+state.next++,type:$('type').value,L,W});
+  // Numbers stay with a piece; a new one takes the next free number for its type.
+  const n=1+Math.max(0,...state.items.filter(i=>i.type===type).map(i=>i.n));
+  state.items.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),type,n,L,W});
   $('len').value=''; $('wid').value=''; $('len').focus();
-  renderItems(); save(); stale();
+  renderItems(); changed();
 });
-LIMITS.forEach(k=>$(k).addEventListener('input',()=>{save();stale();}));
-
-function stale(){
-  if($('res').hidden) return;
-  $('out').classList.add('stale');
-  $('go').textContent='Design my filter';
-}
+LIMITS.forEach(k=>$(k).addEventListener('input',()=>{$(k).removeAttribute('aria-invalid');changed();}));
 
 /* ---- results ---------------------------------------------------------------- */
-const fmtPF=x=>x>=100?Number(x.toPrecision(3)).toLocaleString():x.toFixed(1);
-const plural=(x,w)=>`${cm(x)} ${w}${Math.abs(x-1)<0.05?'':'s'}`;
+const sig2=x=>Number(x.toPrecision(2)).toLocaleString();
+const FOLD={2:'Fold it in half',3:'Fold it in thirds, like a letter',4:'Fold it in half, then in half again',
+            6:'Fold it in thirds, then in half',8:'Fold it in half three times'};
+
+function show(html){
+  const out=$('out'); $('res').hidden=false; out.innerHTML=html;
+  out.focus({preventScroll:true}); $('res').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function invalid(id,msg){ $(id).setAttribute('aria-invalid','true'); show(`<p class="notice">${msg}</p>`); }
 
 $('go').addEventListener('click',async()=>{
-  const lim={dpMax:+$('dp').value, roMax:+$('od').value/20, Hmax:+$('h').value,
-             fixedRi:(+$('core').value||0)/20||null};
-  Q=+$('q').value*1000/60;
-  $('res').hidden=false;
-  const out=$('out');
-  if(!state.items.length){ out.className='panel'; out.innerHTML='<p class="empty">Add at least one material first.</p>'; return; }
-  if(![Q,lim.dpMax,lim.roMax,lim.Hmax].every(v=>v>0)){ out.className='panel'; out.innerHTML='<p class="empty">Fill in airflow, pressure budget, max outer diameter and max length.</p>'; return; }
-  const sel=named(state.items).map(i=>({...TYPES[i.type],id:i.id,type:i.type,label:i.label,L:i.L,W:i.W}));
+  const q=+$('q').value, dp=+$('dp').value, od=+$('od').value, h=+$('h').value;
+  if(!state.items.length) return show('<p class="notice">Add at least one piece first.</p>');
+  for(const [id,v,name] of [['q',q,'airflow'],['dp',dp,'pressure budget'],['od',od,'max diameter'],['h',h,'max length']])
+    if(!(v>0)) return invalid(id,`Enter your ${name} as a number above zero.`);
+  if(od<=RI*2) return invalid('od',`The max diameter must be more than the ${RI*20}${NB}mm core (${cm(RI*2)}${NB}cm).`);
+  if(h<H_MIN) return invalid('h',`The max length must be at least ${H_MIN}${NB}cm.`);
+  const sel=state.items.map(i=>({...TYPES[i.type],id:i.id,type:i.type,label:label(i),L:i.L,W:i.W}));
+  if(sel.every(m=>Math.max(m.L,m.W)<H_MIN+OVERHANG))
+    return show(`<p class="notice">Every piece needs one side at least ${H_MIN+OVERHANG}${NB}cm long.</p>`);
+  const lim={dpMax:dp, roMax:od/2, Hmax:h}, asked=version;
+  Q=q*1000/60;
   $('go').disabled=true; $('go').textContent='Working it out…';
-  const rep=await solve(sel,lim,SEED);
-  $('go').disabled=false; $('go').textContent='Up to date';
-  if(rep.seed) SEED=rep.seed;
-  out.className='panel';
-  out.innerHTML=rep.result?report(rep.result,sel,lim)
-    :`<p class="empty">Nothing fits these limits. Try a bigger diameter, a higher pressure budget or a
-      shorter roll. Each piece must be wider than the roll is long, with enough extra to tie off the ends.</p>`;
-  $('res').scrollIntoView({behavior:'smooth',block:'start'});
+  const rep=await solve(sel,lim);
+  $('go').disabled=false; $('go').textContent='Design my filter';
+  if(asked!==version) return;          // inputs changed while it ran; the notice is showing
+  if(rep.error) return show('<p class="notice">Something went wrong working this out. Please try again.</p>');
+  show(rep.r?report(rep.r,sel,lim)
+    :`<p class="notice">None of your pieces can be used within these limits. Try a higher pressure
+      budget, a bigger diameter or a longer roll.</p>`);
 });
 
 function report(r,sel,lim){
-  const PF=Math.pow(10,r.logs), vIn=r.K/r.ri, vOut=r.K/r.ro;
-  // Used against limit: "202 / 202 Pa"
-  const fact=(t,v,u,max)=>`<div><dt>${t}</dt><dd>${v}${max!=null?` <span>/ ${max}</span>`:''} ${u}</dd></div>`;
+  const PF=Math.pow(10,r.logs);
+  const pfText=PF>=1e5?'over 100,000':sig2(PF);
+  const sub=PF>=10?`About 1 in ${pfText} fine particles in the air gets through.`
+    :`It stops about ${Math.floor(100*(1-1/PF))}% of fine particles in the air.
+      <span class="notice" style="display:block">That isn’t much protection. Add more pieces or allow more pressure, diameter or length.</span>`;
+  const fact=(t,v,max,u)=>`<div><dt>${t}</dt><dd>${v} <span>of ${max}</span>${NB}${u}</dd></div>`;
   const facts=[
-    fact('Pressure drop',r.dp.toFixed(0),'Pa',lim.dpMax.toFixed(0)),
-    fact('Outer diameter',(r.ro*20).toFixed(0),'mm',(lim.roMax*20).toFixed(0)),
-    fact('Length',r.H.toFixed(0),'cm',lim.Hmax.toFixed(0)),
-    fact('Core diameter',(r.ri*20).toFixed(0),'mm'),
-    fact('Quality factor',(LN10*r.logs/(r.dp/1000)).toFixed(0),'kPa⁻¹'),
-    fact('Air speed in cloth',`${vOut.toFixed(2)}–${vIn.toFixed(2)}`,'cm/s')
+    fact('Pressure',r.dp.toFixed(0),lim.dpMax.toFixed(0),'Pa'),
+    fact('Diameter',cm(r.ro*2),cm(lim.roMax*2),'cm'),
+    fact('Length',cm(r.H),cm(lim.Hmax),'cm')
   ].join('');
-  // Radius to scale: centre on the left, outside on the right.
-  const wall=`<div class="wall" role="img" aria-label="Roll radius from centre to outside, to scale">`+
-    `<div class="c" style="flex:${r.ri.toFixed(3)}">core</div>`+
-    r.bands.map((b,i)=>`<div style="flex:${(b.r1-b.r0).toFixed(3)};background:${TYPES[b.m.type].colour}" title="${b.m.label}">${i+1}</div>`).join('')+`</div>`;
+  // Radius to scale, core on the left.
+  const wall=`<div class="wall" aria-hidden="true"><div class="c" style="flex:${r.ri.toFixed(3)}"></div>`+
+    r.bands.map(b=>`<div style="flex:${(b.r1-b.r0).toFixed(3)};background:${TYPES[b.m.type].colour}"></div>`).join('')+`</div>`;
+  const used=[...new Set(r.bands.map(b=>b.m.type))];
+  const legend=`<div class="legend" aria-hidden="true"><span><i class="dot" style="background:var(--core)"></i>core</span>`+
+    used.map(t=>`<span><i class="dot" style="background:${TYPES[t].colour}"></i>${TYPES[t].name.toLowerCase()}</span>`).join('')+`</div>`;
   const steps=r.bands.map(b=>{
-    const m=b.m, f=r.folds[m.id], foldSide=f.roll==='L'?m.W:m.L, used=Math.PI*(b.r0+b.r1)*b.turns;
+    const m=b.m, f=b.fold, foldSide=f.roll==='L'?m.W:m.L;
     const fold=f.f===1?`Don't fold it.`
-      :`Fold the <b>${cm(foldSide)} cm</b> side into ${f.f} equal parts so it is <b>${cm(f.axial)} cm</b> wide and ${f.f} layers thick.`;
-    const roll=`Roll the <b>${cm(f.circ)} cm</b> side around: <b>${plural(b.turns,'turn')}</b>, using ${cm(used)} cm of it`+
-      (f.circ-used>1?' (cut off the rest).':'.');
-    const vLo=r.K/b.r1, vHi=r.K/b.r0;
-    const x=(vHi>m.vhi+1e-9||vLo<m.vlo-1e-9)?`<p class="x">Air speed here (${vLo.toFixed(2)}–${vHi.toFixed(2)} cm/s) is outside the tested range (${m.vlo.toFixed(2)}–${m.vhi.toFixed(2)} cm/s), so this layer's prediction is less certain.</p>`:'';
-    return `<li><p><b>${m.label}</b> <span class="meta">(${cm(m.L)} × ${cm(m.W)} cm)</span></p><p>${fold}</p><p>${roll}</p>
-      <p class="meta">${plural(b.n,'layer')} · ${(b.r0*20).toFixed(0)}→${(b.r1*20).toFixed(0)} mm diameter · ${logsOf(m,b.r0,b.r1,r.K).toFixed(2)} logs · ${dpOf(m,b.r0,b.r1,r.K).toFixed(0)} Pa</p>${x}</li>`;
+      :`${FOLD[f.f]}, so the ${cm(foldSide)}${NB}cm side becomes <b>${cm(f.axial)}${NB}cm</b>.`;
+    return `<li><p><i class="dot" style="background:${TYPES[m.type].colour}"></i> <b>${m.label}</b> <span class="sz">${cm(m.L)} × ${cm(m.W)}${NB}cm</span></p>
+      <p>${fold} Lay its ${cm(f.axial)}${NB}cm edge along the core with every layer level with the fan end,
+      then roll the whole piece on tightly. About ${cm(f.axial-r.H)}${NB}cm will hang past the far end.</p></li>`;
   }).join('');
-  const usedIds=new Set(r.bands.map(b=>b.m.id)), unused=sel.filter(m=>!usedIds.has(m.id));
-  return `<div class="big">${fmtPF(PF)}</div>
-    <p class="bigsub">Predicted protection factor: about 1 in ${fmtPF(PF)} particles (0.3 µm) gets through at ${cm(Q*60/1000)} L/min.</p>
+  const usedIds=new Set(r.bands.map(b=>b.m.id));
+  const left=sel.filter(m=>!usedIds.has(m.id)).map(m=>{
+    const opts=foldAll(m), s=firstFit(opts,r.H+OVERHANG);
+    if(s===opts.length)
+      return `${m.label} is too small: it needs a side at least ${cm(r.H+OVERHANG)}${NB}cm long for this ${cm(r.H)}${NB}cm roll.`;
+    if(!opts.slice(s).some(o=>Math.sqrt(r.ro*r.ro+o.area/Math.PI)-r.ro>=o.f*m.t-1e-9))
+      return `${m.label} is too short to go all the way round the roll.`;
+    return Math.sqrt(r.ro*r.ro+opts[opts.length-1].area/Math.PI)>lim.roMax+1e-9
+      ? `${m.label} would make the roll wider than ${cm(lim.roMax*2)}${NB}cm.`
+      : `${m.label} would need more pressure than your fan has.`;
+  });
+  return `<div class="big">${pfText}<small>protection factor</small></div>
+    <div class="bigsub">${sub}</div>
     <dl class="facts">${facts}</dl>
-    ${wall}<div class="wallcap"><span>centre</span><span>outside · radius to scale</span></div>
-    <p><b>Build it from the centre out.</b> Start with a stiff tube or rolled card <b>${(r.ri*20).toFixed(0)} mm</b> across and
-    <b>${r.H.toFixed(0)} cm</b> long. Each piece below is wider than the tube is long: centre it so the extra hangs
-    over both ends. Wrap each piece tightly over the one before.</p>
+    <p class="hint" style="margin:0">From the centre (left) to the outside (right):</p>
+    ${wall}${legend}
+    <p>You need the ${RI*20}${NB}mm core, ${cm(r.H)}${NB}cm long. One end goes to the fan; the other is the far end.
+    Put the pieces on in this order. Start each piece where the last one finished, and keep rolling the same way.</p>
     <ol class="steps">${steps}</ol>
-    <p>Finally, gather the overhanging cloth at each end and tie it off tight round the tube so air can only pass through the wall.</p>
-    ${unused.length?`<p class="unused">Not used: ${unused.map(m=>m.label).join(', ')}. ${unused.length>1?'They don’t':'It doesn’t'} improve the filter within these limits, or ${unused.length>1?'are':'is'} too narrow to tie off.</p>`:''}
-    <p class="note">This is a model prediction. Filters built from more than one material have often measured about half the predicted protection factor.</p>`;
+    <p>Tape or pin down the end of the last piece so the roll can’t loosen. Then gather everything hanging past
+    the far end and tie it off tightly with string or a cable tie, right at the end of the core, so the only
+    way out for the air is through the cloth.</p>
+    ${left.length?`<p class="unused"><b>Not used.</b> ${left.join(' ')}</p>`:''}`;
 }
 
 renderItems();
