@@ -115,6 +115,13 @@ The later resin-free blends need only two clean fibres of different polymers, ca
 
 Every one of these insists on clean fibre, which fits the physics: spin finishes and antistats exist to conduct charge away. Wool and PP can both be had as loose fibre, which makes a hand-carded blend the most promising route to a durable home-made electret. It is a very different object from a rubbed shopping bag.
 
+**Household carding tool: the pet slicker brush.** An estimated **10–30% of US households** own one. No survey measures slicker ownership directly, so this rests on two estimates:
+
+- **Ownership surveys, ~25% (18–33%).** 45.5% of households have dogs and 32.1% have cats ([AVMA 2024](https://www.avma.org/news/pet-population-continues-increase-while-pet-spending-declines)). APPA data say 23% of dog owners and 32% of cat owners own no brush ([Frontiers, 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8907591/)). That puts some dog or cat brush in 45–55% of households. Assuming 40–60% of brush owners have a slicker gives the range. The 40–60% is an assumption, not data, and drives most of the uncertainty.
+- **Sales, ~9–16%.** [NielsenIQ Homescan](https://www.supermarketnews.com/consumer-trends/increased-pet-grooming-at-home-creates-an-opportunity-for-retailers) counted 12.3 M households buying any grooming product in the year to Oct 2020, about 10% of households. Assuming a third bought a slicker and a slicker lasts 3–5 years gives the range. Homescan likely undercounts online sales, which were 53% of grooming dollar sales. Market-research reports on slicker sales contradict each other and were discarded.
+
+The two methods do not fully reconcile, so 10–30% is the tightest range the evidence supports.
+
 ## Which two household materials to pair
 
 **Answer: polypropylene, rubbed with a disposable glove or a PTFE surface.** PP is a
