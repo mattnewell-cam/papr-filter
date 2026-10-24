@@ -80,3 +80,38 @@ All rows are from the live testing sheet, retrieved 2026-10-16.
   from the brand's whole-bag fit, which was measured over a wide velocity range, and
   fits only D to the electret points. With that choice the two brands' D values match
   to 0.1%.
+
+## Basis weight and price
+
+- **Basis weight:** the electret lining is about 20 g/m². This is an estimate; no weighing
+  is recorded in the testing sheet.
+- **Wholesale price at scale:** about US$2/kg for charged surgical-grade (BFE99) meltblown.
+  [Fujian Angel](https://angelnonwoven.en.made-in-china.com/product/SFmaJONbrecu/China-Wholesale-Meltblown-Nonwoven-Fabric-Bfe99-Meltblown-Fabric.html)
+  lists 25 g/m² BFE99 at US$2.29/kg for 1–5 t, US$2.19 for 5–10 t and US$1.99 above 10 t.
+  [NWFabric](https://www.nwfabric.com/product/bfe-99-meltblown-nonwoven-fabric-for-mask/)
+  lists electret-treated BFE99 at US$1.7–2.2. Before COVID, meltblown sold for about
+  ¥18,000/t, roughly US$2.6/kg
+  ([Global Times, 2020](https://www.globaltimes.cn/content/1180980.shtml)). All retrieved
+  2026-10-24; these are asking prices, not transaction prices.
+- The electret square calculator uses US$2/kg. At 20 g/m² that is about US$0.04/m².
+
+### Why charged meltblown listings span 10×
+
+1. **Grade, the main cause.** Respirator-grade meltblown (KF94, FFP2, N95) is a different
+   product. It is 40–50 g/m² and hydro-charged, and it must stop ≥ 96–97% of a 0.3 µm oil
+   aerosol at 55–95 L/min within 90–130 Pa. Surgical grade is about 25 g/m², rated by
+   bacterial filtration efficiency (BFE), with ≤ 3 mmH₂O resistance. Qingdao Gon (Shenzhen
+   002768) sells both: US$10,000–17,300/t for the
+   [hydro-charged respirator grade](https://qdguoen.en.made-in-china.com/product/tXjmZPaLbCpl/China-Hydrocharging-Water-Electret-Meltblown-Fabric.html)
+   against US$3,700–5,100/t for its
+   [25 g/m² surgical grade](https://qdguoen.en.made-in-china.com/product/hXLxJluEujrG/China-100-PP-Bfe99-Pfe99-Vfe99-25GSM-En14683-Yy-T-0969-Melt-Blown-Fabric-for-Face-Mask.html).
+   At about 20 g/m², the bag lining matches surgical grade.
+2. **Stale listings.** Many Made-in-China prices were set in 2020–21 and never updated.
+   Qingdao Gon's supplier profile was last active in October 2021. Meltblown went from about
+   ¥20,000/t before COVID to ¥400,000/t at the 2020 peak
+   ([NetEase, 2020](https://www.163.com/money/article/F73T1INM00259DLP.html)), so
+   listings from the tail of that spike sit far above today's bulk prices.
+3. **Volume.** This is small: Fujian Angel's tiers move the price about 15% between 1 t
+   and 10 t.
+4. **Missing units.** NWFabric's prices give no unit, and its own range is inconsistent: a
+   water-electret N95 grade is listed below its BFE99 grade. Treat it as a rough check only.
