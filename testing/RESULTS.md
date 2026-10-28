@@ -118,35 +118,31 @@ Per-layer coefficients, geometry and provenance are in `coefficients.json`. Note
   surface with a polar/conductive liquid: detergent wash 74.4 → 46.9% at 100 nm (FFP2
   surface potential −500 V → −20 V after one wash), IPA soak or ethanol spray to the same
   ~47% (N95 96 → 56% from one spray); steam is fine once, bad by five cycles; dry heat
-  85 °C survives 50 cycles. Bulk oil is milder than expected (500 mg paraffin oil on an
-  FFP2, ~30 g/m², cost ~12% of electrostatic capture); fine oily aerosol such as smoke is
-  the real oil hazard (~2 g/m² of cigarette smoke took an electret 92.5 → 33%). Solid
-  particle loading: in Walsh & Stenhouse 1998 (tribocharged mixed-fibre medium, 92 g/m²,
-  20 µm fibres, loaded with stearic acid at 10 cm/s) 0.3 µm penetration went ~16% →
-  ~31% by 7–9 g/m² deposited, peaked at 25–40% near 17 g/m² (smaller loading particles
-  worse), then fell towards zero as a cake formed; Δp rose throughout (values read off
-  their Figs. 3 and 8; Fig. 8 has no point between 0 and 7–9 g/m²). **Replace at a 20%
-  drop in log PF** (log₁₀PF 0.80 → 0.64, i.e. 16 → 23% penetration per layer; the
-  fractional log drop is the same for any number of equally loaded layers). On the
-  authors' drawn curves (PCHIP through a pixel digitisation) one layer reaches it at
-  2.1 g/m² (0.61 µm loading), 2.9 (1.03 µm), 7.3 (1.40 µm); straight lines between the
-  markers give 3.9, 5.5, 16. **Central estimate 2 g/m² per layer**, the most degrading
-  curve, since ambient fine PM is mostly sub-micron. **A 3-log stack does better than
-  layers × 2 g/m²**: log loss is concave in deposit, so front-loading (layer 1 takes 84%
-  at first) costs fewer logs than an even spread. Simulated sequentially (4 layers
-  scaled to 3.0 logs, each layer's penetration of the passing mass taken from the same
-  curve), the stack loses 20% of its logs at 12 g/m² of face area (0.61 µm drawn curve;
-  layers then carry 8.9/2.9/0.7/0.1) against 8.2 if loaded evenly; 1.03 µm gives 19
-  against 11. At 20 µg/m³ PM10, 12 g/m² is ~5,000 h for 1000 cm² at 200 L/min; one
-  layer at 2 g/m² is ~800 h. Not the failure mode for a mask layer
-  (it is for charged HVAC media in outdoor air: see the MERV 8 note below). Sources:
+  85 °C survives 50 cycles. Paraffin oil: 500 mg on an FFP2 cost ~25% of the
+  electrostatic log term at 0.1–0.4 µm in the plotted trial (Fig. 3; the text says
+  11–12%) and the paper gives no facepiece area, so there is no g/m² figure. Fine oily
+  aerosol such as smoke is the real oil hazard: 2.04 g/m² of cigarette smoke took an
+  electret sheet 92.5 → 33% (Heo et al. 2022, abstract only).
+  **Loading by any aerosol is now in
+  `../../../zz_filtration-modelling/electret-loading/README.md`.** For an electret layer:
+  oily/smoke deposits and outdoor air take ~20–25% of the electrostatic part by
+  ~0.5–1 g/m² and half by ~1–4 g/m², and the loss runs on to the discharged floor rather
+  than turning over. The earlier "replace at 2 g/m² per layer" estimate came from Walsh
+  & Stenhouse's stearic-acid curves (0.3 µm penetration ~16 → ~31% by 7–9 g/m², peak near
+  17 g/m², then a cake), the gentle end of the range. Stacks still do better per m² of
+  face: the absolute rise in ln P per gram is roughly fixed, so more layers lose a smaller
+  fraction of their logs (3M's 4-layer PP web needed ~5× the DOP of one layer to halve Q).
+  At 20 µg/m³ and 200 L/min through 1000 cm² the face takes ~2.4 mg/m² per hour, so
+  ~0.7 g/m² is ~300 h of continuous use - not the failure mode for a mask layer in
+  ordinary air, but smoke at 200–500 µg/m³ gets there in a day or two (and it is the
+  failure mode for charged HVAC media in outdoor air: see the MERV 8 note below). Sources:
   [handling/wear](https://pmc.ncbi.nlm.nih.gov/articles/PMC8943131/),
   [washing](https://pmc.ncbi.nlm.nih.gov/articles/PMC9749850/),
   [water vs detergent](https://pmc.ncbi.nlm.nih.gov/articles/PMC9508161/),
-  [paraffin oil](https://pmc.ncbi.nlm.nih.gov/articles/PMC5054281/),
+  [paraffin oil, Tombolini 2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC5054281/),
   [heat/steam/alcohol](https://medicalxpress.com/news/2020-05-disinfect-n95-masks-reuse.html),
-  [smoke loading](https://pmc.ncbi.nlm.nih.gov/articles/PMC8694494/),
-  [solid loading, Walsh & Stenhouse 1998](https://doi.org/10.1080/02786829808965580),
+  [cigarette smoke, Heo 2022](https://doi.org/10.1016/j.scitotenv.2021.150754),
+  [stearic acid, Walsh & Stenhouse 1998](https://doi.org/10.1080/02786829808965580),
   [layer split](https://makermask.org/mask-filtration-and-breathability-key-findings-from-the-ubc-study/).
 - **MERV 8** is a [K&N HVC-8-12025](https://www.amazon.co.uk/dp/B0CLBD4Z98) 20×25×1
   washable furnace filter. K&N's spec sheet calls the medium "non-woven synthetic" pleated
@@ -167,13 +163,15 @@ Per-layer coefficients, geometry and provenance are in `coefficients.json`. Note
   efficiency tracked with two real-time particle counters. At 0.6 µm the charged filters
   fell from 85% to 45% by week 11, then recovered to 65% by the end of the test; the glass
   filters were flat throughout. Δp rose 0.28 in wc (~70 Pa) on the charged filters against
-  0.40 in wc (~100 Pa) on glass, so the charged filter gives no Δp warning of the loss. The
-  abstract does not state the filters' MERV rating, depth, pleat type or face velocity and
-  the full text is paywalled. The 2008 follow-up (Raynor et al., hospital HVAC, 13 weeks)
+  0.40 in wc (~100 Pa) on glass, so the charged filter gives no Δp warning of the loss.
+  Full text (CDC Stacks copy): PE/PP media, nominally 90–95% dust spot (~MERV 14), 15
+  pleats 28 cm deep, 4.65 m² of media per 2×2 ft filter, ~20 cm/s through the media,
+  behind pre-filters taking >90% at 3 µm; the polyolefin filters were weighed at
+  49 g/m² (±12) after 134 days. The 2008 follow-up (Raynor et al., hospital HVAC, 13 weeks)
   saw 92% → 44% at 0.7–1.0 µm with biological-particle capture unchanged. Sources:
   [K&N spec](https://www.knfilters.com/hvc-8-12025-hvac-filter-20-x-25-x-1-merv-8),
   [K&N FAQ](https://www.knfilters.com/faq),
-  [Raynor & Chae 2004](https://pubmed.ncbi.nlm.nih.gov/15238317/),
+  [Raynor & Chae 2004](https://stacks.cdc.gov/view/cdc/188464),
   [Raynor et al. 2008](https://pubmed.ncbi.nlm.nih.gov/18093124/),
   [Appendix J and charged synthetics](https://www.filtsep.com/content/other/synthetic-filter-media-balancing-energy-efficiency-and-electrostatics-in-new-synthetic-filter-media).
 
