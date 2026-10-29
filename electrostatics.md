@@ -302,9 +302,9 @@ hours.
   efficiency.
 - Fine solid salt depends on fibre size and time: 30-70 nm NaCl on 10-32 µm fibres halves the
   electrostatic part at ~0.2 g/m² (~30 h); fine-fibre N95 media under fast lab NaCl loading lose
-  ≤11% by ≤13 g/m² (>1,800 h); the same NaCl dosed every 168 h halves one N95 model by
-  ~5 g/m² (~700 h).
-- Slow or intermittent loading is several to 30-40× worse per gram than accelerated lab
+  ≤11% by ≤13 g/m² (>1,800 h); N95s dosed with 5 mg every 168 h passed 5% penetration at
+  ~45-65 mg (~3-4 g/m², ~420-600 h; one model stayed under 5% to 78 mg).
+- Slow or intermittent loading is several to ~30× worse per gram than accelerated lab
   loading. In the one weighed field-vs-lab comparison (Li 2022, same MERV 13, lab aerosol
   probably NaCl) the field loss per gram was ~1.5× the lab loss.
 - Normalised by fibre surface, plain PP loses half its electrostatic part at ~0.06-0.10 g of
@@ -341,7 +341,10 @@ Half of the electrostatic part gone at:
 | pine-needle smoke, ~1.5 mg/m³ | charged MERV 11-15 media | 33 | not measured | ~330 fed-equivalent | 80 min: MERV 13 62.9 → 17.8%, all charged media 9-21%; glass/uncharged ≤14% relative | [Shirman et al. 2025](https://arxiv.org/pdf/2505.01622) Table 1 |
 
 Respirator-scale oil loading (multi-layer, mass per whole filter, mostly no media area given):
-N95 FFR DOP 0.85 → 13% at 200 mg, retained −ln P 0.43 ([Rengasamy 2013](https://stacks.cdc.gov/view/cdc/195150)
+200 mg DOP (CMD 0.185 µm, ~13 g/m², ~1,850 h at the reference duty) took N95s 1.15-1.73 → 19-22%
+(mfr A), 5.7-7.0 → 16.5-20.3% (B), 5.3-5.5 → 35-36% (C), N99 0.63-0.96 → 1.8-4.0%, R95 0.14-0.21
+→ 0.77-1.5%, P100 unchanged at 0.000% ([Martin & Moyer 2000](https://stacks.cdc.gov/view/cdc/198418)
+Tables I-II ✓; N95 A retained −ln P ~0.37); N95 FFR DOP 0.85 → 13% at 200 mg, retained −ln P 0.43 ([Rengasamy 2013](https://stacks.cdc.gov/view/cdc/195150)
 Fig 1); FFP2 paraffin oil 834 mg over 8 h, 0.4-0.6 → 2.2-3.2%, retained 0.65-0.72, glass P2 flat
 P but Δp doubled ([Plebani 2010](https://mattioli1885journals.com/index.php/lamedicinadellavoro/article/download/212/179/214)
 Table 1); 3M AS-140 electret PAPR filter (754 cm², 4.97 cm/s) DOP continuous 0.02 → 0.25-0.85%
@@ -378,6 +381,7 @@ Table 3), so "below IPA" can also mean the IPA reference was high.
 | Tampere outdoor, F7 electret | - | ~1,000, then flat to ~5,800 | ~3-9 g/m² fed by 1,000 h (estimate) | PM2.5 mass efficiency 85 → ~40% | [NT TR 531](http://nordtest.info/images/documents/nt-technical-reports/NT%20TR%20531_Field%20test%20method%20for%20the%20easurement%20of%20filter%20efficiency_Nordtest%20Technical%20Report.pdf) Fig 14 |
 | hospital HVAC | charged synthetic | 2,180 | none | 0.7-1.0 µm 92 → 44%; culturable bioaerosol efficiency unchanged | [Raynor et al. 2008](https://pubmed.ncbi.nlm.nih.gov/18093124/), abstract |
 | office AHU | MERV 13 electret | ~5,800 calendar | none | 78 → 64%, retained 0.67 | Arakawa et al. 2024, SHASE G-41 (`electret_loading_sources/nonenglish.md`) |
+| Corsi-Rosenthal boxes, UC Davis labs and offices, 9 h a day | four 5 cm MERV 13 per box (~1 m² of face, 0.1-0.4 m/s face velocity; media area not given) | ~2,350-2,610 of fan operation over 6,720 calendar | 1-9.6 g per box estimated (PurpleAir PM10 × CADR × hours, rated only "moderately" accurate) | Tex-Air filters: CADR for 0.35-1 µm 62-63% of new after ~4.8 g (linear fit, boxes 2-4); single-pass efficiency fell with deposited mass, airflow didn't. Air Handler filters (box 1): 63-75% of new after 9.6 g | [Pistochini et al. 2025](https://doi.org/10.1039/d4em00406j) Table 5, Figs 2, 4 ✓ |
 
 The field loss tracks the fine combustion/secondary fraction, not total mass. Nordtest's
 diesel + PTI dust mixtures (Figs 5.29-5.35): with ≥25% diesel by mass the loss followed the
@@ -396,21 +400,42 @@ makes it worse, because the electret then sees mostly fine aerosol. Recovery in 
   with ~10 µm fibres, 0.07 µm NaCl: β 3.4 m²/g, minimum at ~0.25-0.4 g/m² (35-56 h; Ji 2002
   Fig 11). Toyobo R-type (15 µm, 300 g/m²): NaCl penetration 0.04 → 3.8% at 10 g/m² (1,390 h)
   ([Toyobo 2009](https://www.jstage.jst.go.jp/article/transjtmsj/62/2/62_126/_pdf)).
-- NaCl on N95, fast and continuous (NIOSH 42 CFR 84 conditions, to the penetration maximum,
-  ≤200 mg ≈ ≤13 g/m², loaded in well under 1 h): only 0.5-11% of the electrostatic part lost
-  against a 15 s IPA-dip reference (Martin & Moyer 2000, via [3M JobHealth Highlights 2001](https://multimedia.3m.com/mws/media/99824O/spurious-research-on-electrostatic-filter-performance-2001.pdf)
-  Tables 1-2; primary walled).
-- NaCl on N95, 5 mg every 168 h with office storage between doses: mfr A 1.4 → 12.4% by 125 mg
-  (~8 g/m², over ~4,500 h), ~half the electrostatic part by ~5 g/m², ~65% by 8; B and C less
-  (Moyer & Bergman 2000, same 3M source Table 3; primary walled). 30-40× worse per gram than
-  the continuous run. Penetration fell during each loading session and rose during the
-  168 h rests. Silica dust loaded the same way did nothing.
+- NaCl on N95, fast and continuous (NIOSH 42 CFR 84 conditions without preconditioning,
+  85 L/min, NaCl CMD 0.075 µm, loaded in well under 1 h to the penetration maximum, ≤200 mg ≈
+  ≤13 g/m², >1,800 h at the reference duty): photometric penetration rose only 0.28-0.76 →
+  0.54-1.14% (mfr A), 2.14-2.62 → 2.33-2.66% (B), 1.90-2.23 → 1.97-2.23% (C). A 15 s IPA dip
+  took the same models to 34-36% (A), 39% (B), 41-44% (C) on the TSI 8110 NaCl test, so the
+  NaCl run cost ≤~11% of the electrostatic part ([Martin & Moyer 2000](https://stacks.cdc.gov/view/cdc/198418)
+  Tables I, III ✓). The same group's run on the Moyer & Bergman models: 200 mg continuous
+  peaked at 1.27-1.60% (A), 1.68-1.82% (B), 0.76-0.91% (C) ([Moyer & Bergman 2000](https://stacks.cdc.gov/view/cdc/198430)
+  p.602 ✓).
+- NaCl on N95, 5 ± 1 mg once every 168 h, stored uncovered on an office desk between doses:
+  penetration rose roughly linearly with load. Mfr A passed 5% at ~45 mg (~3 g/m², ~420 h at the
+  reference duty) and B at ~65 mg; C was still under 5% after ~78 mg (Moyer & Bergman 2000
+  p.602-604 ✓, Figs 2-4). 3M's reading of their Fig 4 (via [3M JobHealth Highlights 2001](https://multimedia.3m.com/mws/media/99824O/spurious-research-on-electrostatic-filter-performance-2001.pdf)
+  Table 3): A 1.4 → 12.4% by 125 mg (~8 g/m², over ~4,500 h calendar), B 1.8 → 9.0%, C 0.8 → 2.3%
+  by 75 mg. Same models, same aerosol: 45 mg dosed weekly did what 200 mg continuous didn't come
+  near, ~30× worse per gram in ln P. Within each session penetration fell (first reading
+  highest), and it rose across each 168 h rest. Breathing resistance barely moved (A 12.9 →
+  14.6 mmH₂O). Controls stored on the desk for 70-147 days (1,700-3,500 h) before their first
+  dose started only slightly higher (A 1.53-2.09% vs 1.28%), so storage alone did little; once
+  dosed they degraded at the same rate. A single 15.5 mg NaCl load followed by 480 h of storage
+  took A from 1.13-1.16% to 2.45-2.71% and B from 2.29-2.35% to 3.58-3.65% (Table I ✓). Silica
+  dust loaded intermittently did nothing (3M, unpublished, in the 3M summary). The authors
+  attribute the loss to "a reduction in the electrostatic mechanism", not clogging.
 - Solids on fine fibres (≤2 µm) raise efficiency: iron alum on 1.3 µm fibres (Otani Fig 11),
   JIS dust on 1.9 µm PP (Ando 1993), NaCl on 0.5 µm PVDF nanofibres - the 2.7-point dip
   becomes 22 points if the same NaCl is fed at lower concentration ([Sun & Leung 2020](https://pmc.ncbi.nlm.nih.gov/articles/PMC7108370/)).
-- Stearic acid 0.6-1.4 µm on a 92 g/m², 20 µm tribo felt: 0.3 µm penetration ~16 → ~31% by
-  7-9 g/m² (970-1,250 h), peak 25-40% near 17 g/m² (2,400 h), then falling as a cake forms.
-  β ~0.08 m²/g (Walsh & Stenhouse 1998).
+- Stearic acid on a mixed-fibre electret (20 µm fibres, 4% packing, 3 mm, 92 g/m², fibre line
+  charge 5 × 10⁻¹⁰ C/m back-fitted), loaded at 10 cm/s, 0.30 µm latex penetration measured
+  between loads ([Walsh & Stenhouse 1998](https://doi.org/10.1080/02786829808965580) Fig 8 ✓):
+  16% clean; 0.61 µm loading 32% at ~7 g/m², peak 41% at ~17, 33% at ~25, 8% at ~31; 1.03 µm
+  30% at ~8, 33% at ~18, 20% at ~28; 1.40 µm 25% at ~18, 12% at ~33, ~1% at ~48. In hours at the
+  reference duty: a quarter of −ln P gone by ~1,000 h, peak at ~2,400 h, then a cake. β ~0.08
+  m²/g. Charged and uncharged 0.61 µm loading aerosol gave the same curve (Fig 9 ✓), the basis
+  for their "screening, not neutralisation". Lower face velocity reached its maximum later
+  (higher mass); X-ray- or radiation-depleted media reached maximum and zero penetration at lower
+  mass (Figs 4-6).
 - Coarse mineral dust: ASHRAE dust to 139 g/m² fed, no loss (NT TR 320 Fig 3.3); SAE coarse
   to 146 g/m², 0.4 µm efficiency unchanged ([EP1874430](https://data.epo.org/publication-server/rest/v1.2/patents/EP1874430NWB1/document.html));
   PTI fine dust 88 → 80% at ~60 g/m² then rising (NT TR 320); coal dust β ~0.03 (Brown 1988).
@@ -453,8 +478,8 @@ to offset the charge loss; on fine fibres the dendrite gain is larger than the l
   DOP (Martin 2006). Spray-charged NaCl (2-3× Boltzmann) gave the same initial β but a deeper
   total loss (Ji 2002). For the same deposit, neutral test particles lose their electrostatic
   capture first (Otani) - most of an ambient MPPS challenge is neutral.
-- Time and loading rate. NaCl dosed every 168 h vs continuous ×30-40 per gram (Moyer & Bergman
-  vs Martin & Moyer). AS-140 DOP at 400 mg per 24 h reached 2.8-4.4% at 21 g/m² vs 0.25-0.85%
+- Time and loading rate. NaCl dosed every 168 h vs continuous ~30× per gram on the same N95 models (Moyer & Bergman
+  2000). AS-140 DOP at 400 mg per 24 h reached 2.8-4.4% at 21 g/m² vs 0.25-0.85%
   at 26.5 g/m² continuous; a 72 h sealed rest with ~60 mg added took 0.35-0.71% to 0.96-1.76%
   (Martin 2006, 200 mg per 24 h series). Sun & Leung: same NaCl at lower concentration, 22 points
   lost instead of 2.7. Field vs lab on the same MERV 13 at similar weighed load: 55% lost at
@@ -471,7 +496,11 @@ to offset the charge loss; on fine fibres the dendrite gain is larger than the l
   ([Mahdavi 2015](https://pharesst.irsst.qc.ca/cgi/viewcontent.cgi?article=1046&context=etudes-primaires)
   pp.10-12). 50% is below NaCl's 75% deliquescence point, so adsorbed surface water on the
   deposit is enough. That's the only quantified RH relationship found; no field study isolates
-  RH. ASHRAE Appendix J keeps KCl conditioning below 65% RH to prevent deliquescence.
+  RH. ASHRAE Appendix J keeps KCl conditioning below 65% RH to prevent deliquescence. One
+  stearic-acid run at 70% vs ~27% RH (charged 1.03 µm, 10 cm/s; [Walsh & Stenhouse 1998](https://doi.org/10.1080/02786829808965580)
+  Fig 7 ✓): same start (~11%), then loading-aerosol penetration ~22% vs ~20% at ~7 g/m² and
+  ~40% vs ~28% at ~13 g/m² (970 h and 1,800 h at the reference duty). Steam-supply trouble cut the
+  run short and the authors call it "far from conclusive".
 - Heat. Irreversible loss needs heat: PP Q 1.23 → 0.64 after 72 h at 70 °C (US4874399 Table I);
   110 °C + 90% RH for 24 h 95.5 → 38.2% ([Liu 2020](https://pmc.ncbi.nlm.nih.gov/articles/PMC7662889/));
   80 °C + 87% RH discharged an IGF medium.
@@ -524,14 +553,9 @@ to offset the charge loss; on fine fibres the dendrite gain is larger than the l
 ### Sources not obtained
 
 Checked Europe PMC, Unpaywall, Semantic Scholar and Crossref for open copies (28 Oct 2026).
-Free to read, but the host blocks automated access from here - one click each in a normal
-browser:
-- Moyer & Bergman 2000 (weekly NaCl doses, primary): https://stacks.cdc.gov/view/cdc/198430/cdc_198430_DS1.pdf
-- Martin & Moyer 2000 (continuous NaCl + IPA, primary): https://stacks.cdc.gov/view/cdc/198418/cdc_198418_DS1.pdf
-- Walsh & Stenhouse 1998 (bronze open access): https://www.tandfonline.com/doi/pdf/10.1080/02786829808965580
-- Pistochini et al. 2025 (Corsi-Rosenthal boxes, 40 weeks, open access): https://pubs.rsc.org/en/content/articlepdf/2025/em/d4em00406j
-
-Paywalled, no open copy found (PDF links work only with access):
+Moyer & Bergman 2000, Martin & Moyer 2000, Walsh & Stenhouse 1998 and Pistochini 2025 were read
+in full on 28 Oct (CDC Stacks loads in the built-in browser; RSC and Taylor & Francis sit behind
+a Cloudflare human check). Paywalled, no open copy found (PDF links work only with access):
 - Wang et al. 2026, ES&T (soot vs organic per gram): https://pubs.acs.org/doi/pdf/10.1021/acs.est.6c03046
 - Li, Chen, Zhou & Chen 2020 (RH and hygroscopicity): https://www.sciencedirect.com/science/article/pii/S0360132320300275/pdfft
 - Zhou et al. 2026 (KCl/Al₂O₃ at 30-80% RH): https://www.sciencedirect.com/science/article/pii/S0360132325014878/pdfft
