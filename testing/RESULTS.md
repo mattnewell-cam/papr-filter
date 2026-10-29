@@ -123,8 +123,8 @@ Per-layer coefficients, geometry and provenance are in `coefficients.json`. Note
   11–12%) and the paper gives no facepiece area, so there is no g/m² figure. Fine oily
   aerosol such as smoke is the real oil hazard: 2.04 g/m² of cigarette smoke took an
   electret sheet 92.5 → 33% (Heo et al. 2022, abstract only).
-  **Loading by any aerosol is now in
-  `../../../zz_filtration-modelling/electret-loading/README.md`.** For an electret layer:
+  **Loading by any aerosol is now in `../electrostatics.md`, "Loading" section.** For an
+  electret layer:
   oily/smoke deposits and outdoor air take ~20–25% of the electrostatic part by
   ~0.5–1 g/m² and half by ~1–4 g/m², and the loss runs on to the discharged floor rather
   than turning over. The earlier "replace at 2 g/m² per layer" estimate came from Walsh
@@ -134,7 +134,7 @@ Per-layer coefficients, geometry and provenance are in `coefficients.json`. Note
   fraction of their logs (3M's 4-layer PP web needed ~5× the DOP of one layer to halve Q).
   At 20 µg/m³ and 200 L/min through 1000 cm² the face takes ~2.4 mg/m² per hour, so
   ~0.7 g/m² is ~300 h of continuous use - not the failure mode for a mask layer in
-  ordinary air, but smoke at 200–500 µg/m³ gets there in a day or two (and it is the
+  ordinary air, but smoke at 200–500 µg/m³ gets there in ~12–30 h (and it is the
   failure mode for charged HVAC media in outdoor air: see the MERV 8 note below). Sources:
   [handling/wear](https://pmc.ncbi.nlm.nih.gov/articles/PMC8943131/),
   [washing](https://pmc.ncbi.nlm.nih.gov/articles/PMC9749850/),
@@ -354,6 +354,6 @@ drop by 1.6×.
   see [the pressure check](MODEL_CHECKS.md#pressure-linearity). No shared exponent or
   zero offset is established across materials.
 - Folded plies are *registered* — same fabric, holes aligned — the worst case in
-  `../../../filtration_modelling/fabric_analyse.py`. Rolled wraps are not.
+  `../../../simulation/fabric_analyse.py`. Rolled wraps are not.
 - Fits cover roughly 0.3–5 cm/s (blue holey and towel to 11–13). Narrow cores push the
   inner face well past that.

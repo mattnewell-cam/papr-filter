@@ -356,7 +356,7 @@ paying for a worse shape; you are paying for material that will not fit in the b
 
 The single-fibre theory the project runs on — Lee & Liu (1982) Eq. (38) for capture
 (coefficients 1.6 and 0.6, no cross term), Davies × 0.67 for pressure, both as implemented
-in `../../../filtration_modelling/src/physics.rs` (`single_fibre`, `davies_dp_real`) — gives d_f a
+in `../../../simulation/src/physics.rs` (`single_fibre`, `davies_dp_real`) — gives d_f a
 different exponent in each regime. With Λ = ln PF, L the wall thickness, α the solidity
 and Pe = v·d_f/D_B (D_B the particle's Brownian diffusivity — not the fitted D above):
 
@@ -378,7 +378,7 @@ fibre-diameters of target.) At fixed thickness:
 The MPPS row is the Google Doc's result (`../PAPR Filtration Google Doc.md`, lines
 157–190): Λ_MPPS = 0.911·αL·((1−α)Ku)^−½·d_f^−2·v^−½·(C_c·kT/η)^½ against Davies scaled by
 0.67, so QF_MPPS ∝ d_f^0 — recorded as a settled position in
-`../../../filtration_modelling/CLAUDE.md`. The other two rows put it in context: in the
+`../../../simulation/CLAUDE.md`. The other two rows put it in context: in the
 diffusion regime **finer fibres are slightly worse per pascal**, because drag grows as
 d_f^(−2) while capture only grows as d_f^(−5/3); in interception finer fibres win outright.
 The MPPS independence is not a coincidence — it is the crossover between the two, which is
@@ -414,7 +414,7 @@ softens the d_f^(−2) drag, so fine fibres recover a little QF relative to thes
 Lee & Liu (1982) Eq. (38) — coefficients 1.6 and 0.6, no cross term — over Davies × 0.67,
 α = 0.05, 1 cm/s, 20 °C. QF = ln PF / Δp in kPa⁻¹, split by mechanism. Impaction omitted:
 St < 0.1 everywhere except the starred cell (0.36). Generated with
-`cargo run --release -- qf --df_um 0.1,1,10,20` in `filtration_modelling`; rerun that,
+`cargo run --release -- qf --df_um 0.1,1,10,20` in `simulation`; rerun that,
 don't hand-roll.
 
 | d_f (µm) | d_p (µm) | Diffusion | Interception | Total |
