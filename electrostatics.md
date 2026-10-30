@@ -248,10 +248,10 @@ Household construction must still demonstrate useful current under corona load, 
 charge throughout fibrous media, and improved filtration; smooth-film charging alone does
 not establish any of these.
 
-## Loading: how many hours electret media keep their charge benefit
+## Loading: how much deposit electret media take before the charge benefit goes
 
 Question (27 Oct 2026): how much deposit an electret takes before its efficiency degrades
-significantly, what sets the number, and what that means in hours. From a seven-pool
+significantly, and what sets the number. From a seven-pool
 literature sweep (solid lab loading, liquid/smoke lab loading, field, standards, mechanism,
 patents, non-English); the per-source extractions, with page/figure locations, conditions
 and arithmetic, are in `electret_loading_sources/` (their `scratchpad\dl\...` paths were a
@@ -259,17 +259,13 @@ session's download folder and no longer exist). ✓ = re-read against the page i
 the main session; everything else was read by one agent from the primary document unless it
 says "secondary" or "abstract only".
 
-### Hours
+### Units
 
-The media load at c·v, so **hours = 27,800 × M / (c × v)**, with M in g/m² of media, c in
-µg/m³ and v the velocity through the media in cm/s, if the media catches everything that
-reaches it (fine aerosol is ~50-90% caught by mass, so for deposited masses the real hours
-run up to ~2× longer). Unless a row says otherwise, hours below are at a reference duty of
-10 µg/m³ through 20 cm/s media - an HVAC filter on outdoor air - where 1 g/m² = 140 h. A PAPR
-at 200 L/min through ~0.1 m² (3.3 cm/s) gets 6× those hours; smoke at 150 µg/m³ gets 1/15.
-Field rows are measured calendar hours. In homes the fan runs only part of the time
-(median runtime 9.6% in the RP-1649 Toronto homes), so home calendar hours overstate fan
-hours.
+Thresholds are in g/m² of deposit per m² of media, which is what the loss tracks; time depends
+on the duty. To convert: hours = 27,800 × M / (c × v), with M in g/m², c in µg/m³ and v the
+velocity through the media in cm/s, if the media catches everything that reaches it. Field rows
+give measured calendar hours with their conditions; in homes the fan runs only part of the time
+(median runtime 9.6% in the RP-1649 Toronto homes).
 
 ### Conventions
 
@@ -290,20 +286,19 @@ hours.
 
 - No threshold. Loss starts with the first deposit and is roughly linear in ln P per gram.
 - Oily, tarry and combustion deposits (oil mist, tobacco/wood/incense smoke, diesel) remove
-  the electrostatic gain. On ordinary PP electret media a quarter goes by ~80-125 h
-  (0.6-0.9 g/m², patent PP webs), half by ~140-560 h (1-4 g/m²), ~all of it by ~700-2,100 h
-  (5-15 g/m²), at the reference duty. Δp nearly flat throughout.
+  the electrostatic gain. On ordinary PP electret media a quarter goes by ~0.6-0.9 g/m²
+  (patent PP webs), half by ~1-4 g/m², ~all of it by ~5-15 g/m². Δp nearly flat throughout.
 - Outdoor air, measured in HVAC duty (20-35 cm/s, 6-15 µg/m³): half the electrostatic part
-  gone after ~300-1,000 h, the IPA-discharged or ASHRAE Appendix J level after ~1,000-3,000 h.
-  In deposited mass that's half at ~1-3.5 g/m² where the field mass can be pinned down (Li 2022
+  gone by ~1-3.5 g/m² deposited (~300-1,000 h of running), the IPA-discharged or ASHRAE
+  Appendix J level by ~5-30 g/m² (~1,000-3,000 h). Half at ~1-3.5 g/m² where the field mass can be pinned down (Li 2022
   weighed, Purdue computed, Tampere and US5496507 estimated; Raynor's whole-filter weighing is
   ×5-10 higher).
-- Coarse mineral dust: little or no loss to 60-146 g/m² (8,000-20,000 h), and the cake raises
+- Coarse mineral dust: little or no loss to 60-146 g/m², and the cake raises
   efficiency.
 - Fine solid salt depends on fibre size and time: 30-70 nm NaCl on 10-32 µm fibres halves the
-  electrostatic part at ~0.2 g/m² (~30 h); fine-fibre N95 media under fast lab NaCl loading lose
-  ≤11% by ≤13 g/m² (>1,800 h); N95s dosed with 5 mg every 168 h passed 5% penetration at
-  ~45-65 mg (~3-4 g/m², ~420-600 h; one model stayed under 5% to 78 mg).
+  electrostatic part at ~0.2 g/m²; fine-fibre N95 media under fast lab NaCl loading lose
+  ≤11% by ≤13 g/m²; N95s dosed with 5 mg every 168 h passed 5% penetration at
+  ~45-65 mg (~3-4 g/m²; one model stayed under 5% to 78 mg).
 - Slow or intermittent loading is several to ~30× worse per gram than accelerated lab
   loading. In the one weighed field-vs-lab comparison (Li 2022, same MERV 13, lab aerosol
   probably NaCl) the field loss per gram was ~1.5× the lab loss.
@@ -318,38 +313,37 @@ hours.
 
 Half of the electrostatic part gone at:
 
-| aerosol | media | v (cm/s) | g/m² | h at ref. duty | other points | source |
-|---|---|---|---|---|---|---|
-| diesel fume, MMD ~0.2 µm | EU7 bag "A", 15-20 µm fibres | 33 | 1.3 fed | 180 | 71% at 3.1, 97% at 5.3 fed (430, 740 h); Δp unchanged | [NT TR 320](http://nordtest.info/images/documents/nt-technical-reports/NT%20TR%20320_Development%20of%20test%20methods%20for%20electret%20filters_Nordtest%20Technical%20Report.pdf) Fig 4.5 ✓ (IPA ref ~16%) |
-| diesel fume | EU7 bag "B", flat 5×15 µm fibres | 21 | <0.94 fed | <130 | at IPA level by 0.94 fed; author: "approximately ... 1 g/m²" | NT TR 320 Fig 4.7, p.17 |
-| sidestream cigarette smoke, MMD ~0.2 µm | EU7 "A" | 33 | 3.3 fed | 460 | 12% at 0.9, 84% at 8, 95% at 12 fed (125, 1,110, 1,670 h) | NT TR 320 Fig 4.10 |
-| sidestream cigarette smoke | EU7 "B" | 21 | <1 fed | <140 | IPA level by ~2 fed (280 h) | NT TR 320 Fig 4.12 |
-| tobacco smoke | PP meltblown, 99.8% at 5.3 cm/s | 5.3 (test) | ~0.8 | 110 | 64% at 1.0, ~100% at 2.7-2.9 (140, 375-400 h) | [Shimokawa 2023](https://www.jstage.jst.go.jp/article/jaca/61/3/61_158/_article/-char/ja) Fig 5 |
-| tobacco smoke | corona PP meltblown, 30 g/m², 5.6 µm (S 23) | 10.2 | 1.8 (half of total −ln P) | 250 | 98% at 6.4 (890 h): E 99.3 → 33%, ethanol twin 28% | [US10940415](https://patents.google.com/patent/US10940415B2/en) Table 2 |
-| tobacco smoke / PAO | PP meltblown, 30 g/m², 3 µm (S 44), corona or hydro | 5 | - | - | ~90% at 3.9-5.4 smoke, 3.6-6.2 PAO (500-860 h) | [US10213716](https://patents.google.com/patent/US10213716B2/en) Comp 1-1 to 1-3, 3-15 to 3-19 |
-| cigarette smoke | electret sheet, 100 cm² | ? | - | - | 92.5 → 33.3% at 2.04 (84% of −ln P; 280 h) | [Heo et al. 2022](https://doi.org/10.1016/j.scitotenv.2021.150754), abstract only |
-| DOP | corona PP meltblown, 51 g/m², 7 µm (S 32) | 7.6 | 2.4-2.7 (Q halved) | 330-380 | Q at 0.75 by 0.85 (120 h) | [US4874399](https://patents.google.com/patent/US4874399A/en) Table II ✓ |
-| DOP | PP meltblown + amide, uncoated (H&V Comp B) | 8.3 | ~1.3 | 180 | 29% at 0.59, 61% at 1.76, ~100% by 4.7 (80, 245, 650 h) | [US6802315](https://patents.google.com/patent/US6802315B2/en) Table 1 |
-| DOP | corona PP, no additive (3M C4/C7) | 6.9 | - | - | 88-95% by ~2-4 captured (280-560 h) | [US5411576](https://patents.google.com/patent/US5411576A/en) Tables III-VI |
-| DOP | hydrocharged PP, 2 × 33 g/m² | 7.8 | - | - | retained −ln P 0.70 / 0.53 / 0.22 at 5.3 / 10.4 / 27 (740 / 1,450 / 3,800 h; stack) | [US6627563](https://patents.google.com/patent/US6627563B1/en) Fig 5 |
-| smouldering oak smoke | MERV 13 flat, 0.55 mm, 17 µm, α 0.13 (S 17) | 10.5 | 4.2 | 580 (39 h at 150 µg/m³) | 23% at 2.6, 79% at 5.6, ~100% by 9-16 (below the 9% IPA value by the end) | [Wang et al. 2026](https://doi.org/10.1021/acs.est.6c03046) SI Fig S2, S5 ✓ ([SI](https://acs.figshare.com/articles/journal_contribution/33121135)) |
-| DEHS | same MERV 13 | 10.5 | ~6 | 830 | ~100% by ~17 (2,400 h) | Wang 2026 SI Fig S8 ✓ |
-| mineral oils 257-2345 cP | same MERV 13 | 10.5 | N140 (257 cP) ~70; N415, N750 not reached | ~9,500; >9,700 | N140 65 → 46% at 68 g/m² (~45% lost); N415, N750 no loss to 70 g/m² | Wang 2026 SI Fig S8 ✓ |
-| 0.1 µm DOS droplets | fine-fibre electret, 1.3 µm, α 0.061, 0.71 mm (S 134) | 5 | ~0.18 (neutral test particles) | 25 | 100% at 0.36 (50 h); charged test particles 75% at ~1.1 | [Otani, Emi & Mori 1993](https://www.jstage.jst.go.jp/article/kona/11/0/11_1993023/_article/-char/en) Figs 11-13 |
-| incense smoke | thick PP electret, 4 mm, 33 µm (S ~53) | 40 | 6-7 (EF-1), 25-30 (EF-2) | 830-970, 3,500-4,200 | gravimetric mass efficiency | [Shimokobe & Inoue 1986](https://www.jstage.jst.go.jp/article/jar/1/3/1_3_186/_article/-char/en) Fig 4 |
-| DEHS | pleated cabin filter, 0.71 m² | 7.8 | - | - | IPA level by ~3-8.5 (420-1,200 h; report's own rough masses); glycerol 0.7-1.4 g/m² no effect | [IGF 19145 N](https://www.iuta.de/igf-docs/abschlussbericht_19145.pdf) Abb. 60-62 |
-| pine-needle smoke, ~1.5 mg/m³ | charged MERV 11-15 media | 33 | not measured | ~330 fed-equivalent | 80 min: MERV 13 62.9 → 17.8%, all charged media 9-21%; glass/uncharged ≤14% relative | [Shirman et al. 2025](https://arxiv.org/pdf/2505.01622) Table 1 |
+| aerosol | media | v (cm/s) | g/m² | other points | source |
+|---|---|---|---|---|---|
+| diesel fume, MMD ~0.2 µm | EU7 bag "A", 15-20 µm fibres | 33 | 1.3 fed | 71% at 3.1, 97% at 5.3 fed; Δp unchanged | [NT TR 320](http://nordtest.info/images/documents/nt-technical-reports/NT%20TR%20320_Development%20of%20test%20methods%20for%20electret%20filters_Nordtest%20Technical%20Report.pdf) Fig 4.5 ✓ (IPA ref ~16%) |
+| diesel fume | EU7 bag "B", flat 5×15 µm fibres | 21 | <0.94 fed | at IPA level by 0.94 fed; author: "approximately ... 1 g/m²" | NT TR 320 Fig 4.7, p.17 |
+| sidestream cigarette smoke, MMD ~0.2 µm | EU7 "A" | 33 | 3.3 fed | 12% at 0.9, 84% at 8, 95% at 12 fed | NT TR 320 Fig 4.10 |
+| sidestream cigarette smoke | EU7 "B" | 21 | <1 fed | IPA level by ~2 fed | NT TR 320 Fig 4.12 |
+| tobacco smoke | PP meltblown, 99.8% at 5.3 cm/s | 5.3 (test) | ~0.8 | 64% at 1.0, ~100% at 2.7-2.9 | [Shimokawa 2023](https://www.jstage.jst.go.jp/article/jaca/61/3/61_158/_article/-char/ja) Fig 5 |
+| tobacco smoke | corona PP meltblown, 30 g/m², 5.6 µm (S 23) | 10.2 | 1.8 (half of total −ln P) | 98% at 6.4: E 99.3 → 33%, ethanol twin 28% | [US10940415](https://patents.google.com/patent/US10940415B2/en) Table 2 |
+| tobacco smoke / PAO | PP meltblown, 30 g/m², 3 µm (S 44), corona or hydro | 5 | - | ~90% at 3.9-5.4 smoke, 3.6-6.2 PAO | [US10213716](https://patents.google.com/patent/US10213716B2/en) Comp 1-1 to 1-3, 3-15 to 3-19 |
+| cigarette smoke | electret sheet, 100 cm² | ? | - | 92.5 → 33.3% at 2.04 (84% of −ln P) | [Heo et al. 2022](https://doi.org/10.1016/j.scitotenv.2021.150754), abstract only |
+| DOP | corona PP meltblown, 51 g/m², 7 µm (S 32) | 7.6 | 2.4-2.7 (Q halved) | Q at 0.75 by 0.85 | [US4874399](https://patents.google.com/patent/US4874399A/en) Table II ✓ |
+| DOP | PP meltblown + amide, uncoated (H&V Comp B) | 8.3 | ~1.3 | 29% at 0.59, 61% at 1.76, ~100% by 4.7 | [US6802315](https://patents.google.com/patent/US6802315B2/en) Table 1 |
+| DOP | corona PP, no additive (3M C4/C7) | 6.9 | - | 88-95% by ~2-4 captured | [US5411576](https://patents.google.com/patent/US5411576A/en) Tables III-VI |
+| DOP | hydrocharged PP, 2 × 33 g/m² | 7.8 | - | retained −ln P 0.70 / 0.53 / 0.22 at 5.3 / 10.4 / 27 (stack) | [US6627563](https://patents.google.com/patent/US6627563B1/en) Fig 5 |
+| smouldering oak smoke | MERV 13 flat, 0.55 mm, 17 µm, α 0.13 (S 17) | 10.5 | 4.2 | 23% at 2.6, 79% at 5.6, ~100% by 9-16 (below the 9% IPA value by the end) | [Wang et al. 2026](https://doi.org/10.1021/acs.est.6c03046) SI Fig S2, S5 ✓ ([SI](https://acs.figshare.com/articles/journal_contribution/33121135)) |
+| DEHS | same MERV 13 | 10.5 | ~6 | ~100% by ~17 | Wang 2026 SI Fig S8 ✓ |
+| mineral oils 257-2345 cP | same MERV 13 | 10.5 | N140 (257 cP) ~70; N415, N750 not reached | N140 65 → 46% at 68 g/m² (~45% lost); N415, N750 no loss to 70 g/m² | Wang 2026 SI Fig S8 ✓ |
+| 0.1 µm DOS droplets | fine-fibre electret, 1.3 µm, α 0.061, 0.71 mm (S 134) | 5 | ~0.18 (neutral test particles) | 100% at 0.36; charged test particles 75% at ~1.1 | [Otani, Emi & Mori 1993](https://www.jstage.jst.go.jp/article/kona/11/0/11_1993023/_article/-char/en) Figs 11-13 |
+| incense smoke | thick PP electret, 4 mm, 33 µm (S ~53) | 40 | 6-7 (EF-1), 25-30 (EF-2) | gravimetric mass efficiency | [Shimokobe & Inoue 1986](https://www.jstage.jst.go.jp/article/jar/1/3/1_3_186/_article/-char/en) Fig 4 |
+| DEHS | pleated cabin filter, 0.71 m² | 7.8 | - | IPA level by ~3-8.5 (report's own rough masses); glycerol 0.7-1.4 g/m² no effect | [IGF 19145 N](https://www.iuta.de/igf-docs/abschlussbericht_19145.pdf) Abb. 60-62 |
+| pine-needle smoke, ~1.5 mg/m³ | charged MERV 11-15 media | 33 | not measured | 80 min: MERV 13 62.9 → 17.8%, all charged media 9-21%; glass/uncharged ≤14% relative | [Shirman et al. 2025](https://arxiv.org/pdf/2505.01622) Table 1 |
 
 Respirator-scale oil loading (multi-layer, mass per whole filter, mostly no media area given):
-200 mg DOP (CMD 0.185 µm, ~13 g/m², ~1,850 h at the reference duty) took N95s 1.15-1.73 → 19-22%
+200 mg DOP (CMD 0.185 µm, ~13 g/m²) took N95s 1.15-1.73 → 19-22%
 (mfr A), 5.7-7.0 → 16.5-20.3% (B), 5.3-5.5 → 35-36% (C), N99 0.63-0.96 → 1.8-4.0%, R95 0.14-0.21
 → 0.77-1.5%, P100 unchanged at 0.000% ([Martin & Moyer 2000](https://stacks.cdc.gov/view/cdc/198418)
 Tables I-II ✓; N95 A retained −ln P ~0.37); N95 FFR DOP 0.85 → 13% at 200 mg, retained −ln P 0.43 ([Rengasamy 2013](https://stacks.cdc.gov/view/cdc/195150)
 Fig 1); FFP2 paraffin oil 834 mg over 8 h, 0.4-0.6 → 2.2-3.2%, retained 0.65-0.72, glass P2 flat
 P but Δp doubled ([Plebani 2010](https://mattioli1885journals.com/index.php/lamedicinadellavoro/article/download/212/179/214)
 Table 1); 3M AS-140 electret PAPR filter (754 cm², 4.97 cm/s) DOP continuous 0.02 → 0.25-0.85%
-at 26.5 g/m² (charged DOP) or 1.2-1.9% (neutralised), ~10% at 44-52 g/m² - at the PAPR's own
-4.97 cm/s and 10 µg/m³ that's ~15,000 h and ~25,000-29,000 h
+at 26.5 g/m² (charged DOP) or 1.2-1.9% (neutralised), ~10% at 44-52 g/m²
 ([Martin, Moyer & Jensen 2006](https://stacks.cdc.gov/view/cdc/191412) Table IV).
 
 Composition per gram: diesel soot ~2× sidestream smoke on both Nordtest media; smouldering
@@ -395,14 +389,14 @@ makes it worse, because the electret then sees mostly fine aerosol. Recovery in 
 - Fine NaCl on coarse fibres, slow: corona PP 133 g/m², 32 µm (S 18), Boltzmann NaCl CMD
   31 nm at 189 µg/m³ through 2 cm/s for 72 h. At 0.2 µm, 21 / 46 / 58 / 69 / 78% of the
   electrostatic part lost after 8 / 24 / 32 / 48 / 72 h, ≈0.07 / 0.2 / 0.26 / 0.37 / 0.52 g/m²
-  (agent's mass estimate ±40%; 10 / 28 / 36 / 51 / 72 h at the reference duty), Δp flat
+  (agent's mass estimate ±40%), Δp flat
   ([IGF 19145 N](https://www.iuta.de/igf-docs/abschlussbericht_19145.pdf) Abb. 53). Cabin media
-  with ~10 µm fibres, 0.07 µm NaCl: β 3.4 m²/g, minimum at ~0.25-0.4 g/m² (35-56 h; Ji 2002
-  Fig 11). Toyobo R-type (15 µm, 300 g/m²): NaCl penetration 0.04 → 3.8% at 10 g/m² (1,390 h)
+  with ~10 µm fibres, 0.07 µm NaCl: β 3.4 m²/g, minimum at ~0.25-0.4 g/m² (Ji 2002
+  Fig 11). Toyobo R-type (15 µm, 300 g/m²): NaCl penetration 0.04 → 3.8% at 10 g/m²
   ([Toyobo 2009](https://www.jstage.jst.go.jp/article/transjtmsj/62/2/62_126/_pdf)).
 - NaCl on N95, fast and continuous (NIOSH 42 CFR 84 conditions without preconditioning,
   85 L/min, NaCl CMD 0.075 µm, loaded in well under 1 h to the penetration maximum, ≤200 mg ≈
-  ≤13 g/m², >1,800 h at the reference duty): photometric penetration rose only 0.28-0.76 →
+  ≤13 g/m²): photometric penetration rose only 0.28-0.76 →
   0.54-1.14% (mfr A), 2.14-2.62 → 2.33-2.66% (B), 1.90-2.23 → 1.97-2.23% (C). A 15 s IPA dip
   took the same models to 34-36% (A), 39% (B), 41-44% (C) on the TSI 8110 NaCl test, so the
   NaCl run cost ≤~11% of the electrostatic part ([Martin & Moyer 2000](https://stacks.cdc.gov/view/cdc/198418)
@@ -410,8 +404,7 @@ makes it worse, because the electret then sees mostly fine aerosol. Recovery in 
   peaked at 1.27-1.60% (A), 1.68-1.82% (B), 0.76-0.91% (C) ([Moyer & Bergman 2000](https://stacks.cdc.gov/view/cdc/198430)
   p.602 ✓).
 - NaCl on N95, 5 ± 1 mg once every 168 h, stored uncovered on an office desk between doses:
-  penetration rose roughly linearly with load. Mfr A passed 5% at ~45 mg (~3 g/m², ~420 h at the
-  reference duty) and B at ~65 mg; C was still under 5% after ~78 mg (Moyer & Bergman 2000
+  penetration rose roughly linearly with load. Mfr A passed 5% at ~45 mg (~3 g/m²) and B at ~65 mg; C was still under 5% after ~78 mg (Moyer & Bergman 2000
   p.602-604 ✓, Figs 2-4). 3M's reading of their Fig 4 (via [3M JobHealth Highlights 2001](https://multimedia.3m.com/mws/media/99824O/spurious-research-on-electrostatic-filter-performance-2001.pdf)
   Table 3): A 1.4 → 12.4% by 125 mg (~8 g/m², over ~4,500 h calendar), B 1.8 → 9.0%, C 0.8 → 2.3%
   by 75 mg. Same models, same aerosol: 45 mg dosed weekly did what 200 mg continuous didn't come
@@ -430,8 +423,8 @@ makes it worse, because the electret then sees mostly fine aerosol. Recovery in 
   charge 5 × 10⁻¹⁰ C/m back-fitted), loaded at 10 cm/s, 0.30 µm latex penetration measured
   between loads ([Walsh & Stenhouse 1998](https://doi.org/10.1080/02786829808965580) Fig 8 ✓):
   16% clean; 0.61 µm loading 32% at ~7 g/m², peak 41% at ~17, 33% at ~25, 8% at ~31; 1.03 µm
-  30% at ~8, 33% at ~18, 20% at ~28; 1.40 µm 25% at ~18, 12% at ~33, ~1% at ~48. In hours at the
-  reference duty: a quarter of −ln P gone by ~1,000 h, peak at ~2,400 h, then a cake. β ~0.08
+  30% at ~8, 33% at ~18, 20% at ~28; 1.40 µm 25% at ~18, 12% at ~33, ~1% at ~48. A quarter of
+  −ln P gone by ~7 g/m², peak at ~17, then a cake. β ~0.08
   m²/g. Charged and uncharged 0.61 µm loading aerosol gave the same curve (Fig 9 ✓), the basis
   for their "screening, not neutralisation". Lower face velocity reached its maximum later
   (higher mass); X-ray- or radiation-depleted media reached maximum and zero penetration at lower
@@ -465,7 +458,7 @@ to offset the charge loss; on fine fibres the dendrite gain is larger than the l
   Brown's fixed β per gram. 3M's 4-layer PP web needed ~5× the DOP of one layer to halve Q.
 - Surface chemistry. Melt fluorochemical, annealed: retained −ln P 0.78-0.86 at ~6-7.5 g/m² DOP
   vs 0.24-0.29 at ~2-4 without (US5411576; unannealed no better than plain). Fluorochemical +
-  quench + anneal: penetration doesn't start rising until 21-35 g/m² (2,900-4,900 h)
+  quench + anneal: penetration doesn't start rising until 21-35 g/m²
   ([US6068799](https://patents.google.com/patent/US6068799A/en) Table 9B), no loss over 33 g/m²
   (US6627563 Fig 4). Surface fluorination + corona: 0.97 at 21 g/m²
   ([US6398847](https://patents.google.com/patent/US6398847B1/en)). Vapour-deposited
@@ -499,7 +492,7 @@ to offset the charge loss; on fine fibres the dendrite gain is larger than the l
   RH. ASHRAE Appendix J keeps KCl conditioning below 65% RH to prevent deliquescence. One
   stearic-acid run at 70% vs ~27% RH (charged 1.03 µm, 10 cm/s; [Walsh & Stenhouse 1998](https://doi.org/10.1080/02786829808965580)
   Fig 7 ✓): same start (~11%), then loading-aerosol penetration ~22% vs ~20% at ~7 g/m² and
-  ~40% vs ~28% at ~13 g/m² (970 h and 1,800 h at the reference duty). Steam-supply trouble cut the
+  ~40% vs ~28% at ~13 g/m². Steam-supply trouble cut the
   run short and the authors call it "far from conclusive".
 - Heat. Irreversible loss needs heat: PP Q 1.23 → 0.64 after 72 h at 70 °C (US4874399 Table I);
   110 °C + 90% RH for 24 h 95.5 → 38.2% ([Liu 2020](https://pmc.ncbi.nlm.nih.gov/articles/PMC7662889/));
@@ -510,7 +503,7 @@ to offset the charge loss; on fine fibres the dendrite gain is larger than the l
 - The old "~2 g/m² per layer for a 20% loss of log PF" (Walsh & Stenhouse stearic acid,
   previously in `testing/RESULTS.md`) was the gentle end. Oily/smoke deposits on plain PP lose
   20-25% of the electrostatic part at ~0.6-0.85 g/m² (US4874399, US6802315), ambient air
-  ~0.5-1 g/m² (Tampere, Purdue): 70-140 h at the reference duty instead of ~280 h. Stearic-acid
+  ~0.5-1 g/m² (Tampere, Purdue), against ~2 g/m² in the old estimate. Stearic-acid
   loss also turned over as a cake formed; oily and ambient losses run on to the discharged floor.
 - US5496507 Table 11 is consistent with the rest: at a central ~2.4 g/m² (290 h at ~24 cm/s),
   retained −ln P is 0.52, between Li 2022's field MERV 13 (55% lost at 3.55 g/m²) and Tampere
@@ -528,8 +521,7 @@ to offset the charge loss; on fine fibres the dendrite gain is larger than the l
 
 ### Standards and what they encode
 
-- NT VVS 117 (1997) → EN 779:2002 Annex A: IPA immersion, or diesel fume in 5 g/m² fed steps
-  (700 h each at the reference duty) to ≥15 g/m², taking the minimum ([NT VVS 117](http://nordtest.info/images/documents/nt-methods/polymers/NT%20vvs%20117_Electret%20filters_Determination%20of%20the%20electrostatic%20enhancement%20factor%20of%20filter%20media_Nordtest%20Method.pdf)).
+- NT VVS 117 (1997) → EN 779:2002 Annex A: IPA immersion, or diesel fume in 5 g/m² fed steps to ≥15 g/m², taking the minimum ([NT VVS 117](http://nordtest.info/images/documents/nt-methods/polymers/NT%20vvs%20117_Electret%20filters_Determination%20of%20the%20electrostatic%20enhancement%20factor%20of%20filter%20media_Nordtest%20Method.pdf)).
   Calibrated on NT TR 320, where 1-6 g/m² of diesel removed the electrostatic effect.
 - EN 779:2012: IPA on media; F7/F8/F9 minimum efficiency ≥35/55/70% at 0.4 µm. ISO 16890-4:
   whole filter 24 h in IPA vapour, ePM = mean of initial and conditioned. §5.1: the drop "can
