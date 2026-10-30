@@ -439,6 +439,10 @@ makes it worse, because the electret then sees mostly fine aerosol. Recovery in 
   run average only, cake forming. A simulation ranks equal masses carbon > NaCl > Al₂O₃ by
   conduction through the deposit (Cai, Lu & Zhang 2021, abstract).
 
+Why the IGF NaCl run looks so much worse per gram than the NIOSH N95 runs. Same salt, but: CMD 31 vs 75 nm at the same GSD (~1.86), so ~14× the particles per gram and ~8× the charge per gram (mean |q| 0.28 e vs ~0.5 e, my estimate); 32 µm fibres with 0.15 m² of fibre per g of media (19.7 m²/m² from their tomography over 133 g/m²) against ~1 m²/g for 3-5 µm meltblown, so g per g of media is the wrong comparison here; no mechanical offset (Δp flat at 72 h), where fine-fibre N95s gain capture from dendrites while losing charge, so "NaCl barely degrades" is a net result on fine fibres; ~1,000× lower concentration (189 µg/m³ over 72 h vs up to 200 mg/m³ in minutes). Humidity isn't stated, but the rig uses HEPA-filtered compressed air and a silica-gel dryer, so it is probably dry. There was no rest period: loading was continuous. Mass is calculated from counts, not weighed (±40%). Ji 2002 agrees with IGF (fine NaCl, ~10 µm fibres); Li 2022's lab run (probably NaCl, 13 µm fibres) lost only ~37% at 3.8 g/m², with particle size not stated, so fibre size alone doesn't explain it.
+
+IGF's "neutralisation, not shadowing" conclusion (Seite 103) rests on a units slip: N·η·(π/4)d² at the 35 nm mode is 2.8 × 10⁻⁶ m² per mm² of media, i.e. 2.8 mm²/mm², ~14% of the 19.73 mm²/mm² of fibre (more for the polydisperse aerosol), not the 2.84 × 10⁻⁶ mm² and 10⁷-fold gap the report prints. So shadowing isn't ruled out. Their 35% charge figure also depends on a back-fitted fibre charge, and 25 µC/m² × 19.73 gives 4.9 × 10⁻¹⁰ C/mm², not the 3.95 × 10⁻¹⁰ printed.
+
 Fibre diameter decides the sign for solids: on coarse fibres there is little mechanical gain
 to offset the charge loss; on fine fibres the dendrite gain is larger than the loss.
 
