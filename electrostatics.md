@@ -311,7 +311,7 @@ give measured calendar hours with their conditions; in homes the fan runs only p
 
 ### Oily, tarry and combustion deposits (lab)
 
-Half of the electrostatic part gone at:
+Half of the electrostatic part of −ln P (logs, not efficiency) gone at; US10940415 and US4874399 give half of total −ln P (no discharged twin), close to the same thing for high-efficiency webs:
 
 | aerosol | media | v (cm/s) | g/m² | other points | source |
 |---|---|---|---|---|---|
