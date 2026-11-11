@@ -81,6 +81,45 @@ All rows are from the live testing sheet, retrieved 2026-10-16.
   fits only D to the electret points. With that choice the two brands' D values match
   to 0.1%.
 
+## Bag electret and surgical-mask meltblown appear to be the same material
+
+**Working position (Matt, 11 Nov 2026): the vacuum-bag electret lining and the middle layer
+of a Type IIR surgical mask are essentially the same charged meltblown, with the bag lining
+at a lower basis weight.** Results for one should transfer to the other after scaling by
+layer count.
+
+Evidence, all at 0.3 µm:
+
+| medium | log10PF per layer | Pa/(cm/s) per layer | measured v, cm/s |
+|---|---|---|---|
+| Arome Livii bag electret (default above) | 1.586·v^−0.307 | 2.58 | 4.94–5.93 (inferred) |
+| IIR mask middle layer | 2.61·v^−0.269 | ~5.0 (4.6–5.8 across the sweep) | 12.3–81.2 |
+
+- The mask rows are "Mask middle layer" in the `Surgical Mask` tab of the testing sheet
+  (Sainsbury's Type IIR, 1 layer, 84.9 cm², 5 points, retrieved 2026-11-11). The power law
+  was fitted to those 5 points on 2026-11-11 and reproduces each within 2%.
+- One mask middle layer equals about 1.8 bag layers in both logs and pressure. At 10 cm/s:
+  1.40 logs for 50 Pa against 0.78 logs for 26 Pa.
+- Logs per pascal agree within 4–10% over 5–20 cm/s (0.028 against 0.030 logs/Pa at
+  10 cm/s; QF 65 against 70 kPa⁻¹ at 10 cm/s), and the exponents are close.
+- Design consequence: for 170 L/min, 100 Pa and 3 logs the mask layer needs 298 cm² of
+  face and 2.1 layers, the bag electret 280 cm² and 3.8 layers. Face area barely moves;
+  only the layer count does.
+
+What this does not establish:
+
+- **Neither basis weight has been measured.** "Lower basis weight" is inferred from the
+  1.8× ratio. The bag lining's ~20 g/m² is an estimate; 1.8× that would be ~36 g/m², above
+  the ~25 g/m² usual for surgical-grade meltblown. Weigh both.
+- The two velocity ranges do not overlap, so every comparison between 6 and 12 cm/s is an
+  extrapolation of both fits.
+- The bag electret fit rests on two points with 59 and 25 downstream counts and an
+  inferred area.
+- Do not use the whole-mask fit in `../testing/coefficients.json` (5.119·v^−0.667 + 0.612)
+  for this comparison. Its two slowest points (2.48 logs at 5.1 cm/s, 2.01 at 6.9) sit
+  0.6 and 0.3 logs above the middle-layer trend plus ~0.15 logs for the spunbond, they set
+  the capped exponent, and all seven runs share one outside-air count.
+
 ## Basis weight and price
 
 - **Basis weight:** the electret lining is about 20 g/m². This is an estimate; no weighing
