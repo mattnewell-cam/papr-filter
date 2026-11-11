@@ -108,9 +108,12 @@ Evidence, all at 0.3 µm:
 
 What this does not establish:
 
-- **Neither basis weight has been measured.** "Lower basis weight" is inferred from the
-  1.8× ratio. The bag lining's ~20 g/m² is an estimate; 1.8× that would be ~36 g/m², above
-  the ~25 g/m² usual for surgical-grade meltblown. Weigh both.
+- **Mask layer weighed, bag lining not.** Matt weighed the mask layer on 11 Nov 2026:
+  0.47 g for 15.3 × 12.5 cm, which is 24.6 g/m² (assumed to be the middle layer alone; he
+  gave only the mass and size). That matches the ~25 g/m² usual for surgical-grade
+  meltblown. If the bag lining is the same material at 1/1.8 the weight, it is ~14 g/m²,
+  not the ~20 g/m² estimated below. The bag lining still needs weighing; until then the
+  calculators keep 20 g/m².
 - The two velocity ranges do not overlap, so every comparison between 6 and 12 cm/s is an
   extrapolation of both fits.
 - The bag electret fit rests on two points with 59 and 25 downstream counts and an
