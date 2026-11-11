@@ -86,7 +86,8 @@ All rows are from the live testing sheet, retrieved 2026-10-16.
 **Working position (Matt, 11 Nov 2026): the vacuum-bag electret lining and the middle layer
 of a Type IIR surgical mask are essentially the same charged meltblown, with the bag lining
 at a lower basis weight.** Results for one should transfer to the other after scaling by
-layer count.
+layer count. The measured weights only partly support the "lower basis weight" half; see
+the first bullet under "What this does not establish".
 
 Evidence, all at 0.3 µm:
 
@@ -108,12 +109,15 @@ Evidence, all at 0.3 µm:
 
 What this does not establish:
 
-- **Mask layer weighed, bag lining not.** Matt weighed the mask layer on 11 Nov 2026:
-  0.47 g for 15.3 × 12.5 cm, which is 24.6 g/m² (assumed to be the middle layer alone; he
-  gave only the mass and size). That matches the ~25 g/m² usual for surgical-grade
-  meltblown. If the bag lining is the same material at 1/1.8 the weight, it is ~14 g/m²,
-  not the ~20 g/m² estimated below. The bag lining still needs weighing; until then the
-  calculators keep 20 g/m².
+- **The basis weights do not account for the 1.8× ratio.** Matt weighed the mask layer on
+  11 Nov 2026: 0.47 g for 15.3 × 12.5 cm, which is 24.6 g/m² (assumed to be the middle
+  layer alone; he gave only the mass and size). He weighed the bag electret earlier and
+  recalls about 19 g/m² (stated from memory on 11 Nov 2026; the weighing is not in the
+  testing sheet). The weight ratio is 1.3, but the mask layer gives 1.8× the logs and 1.8×
+  the pressure. Per gram the mask layer therefore gives about 1.4× the logs and pressure
+  of the bag lining. "Same material, lower basis weight" does not reconcile with this;
+  the two match in logs per pascal, not in logs per gram. Finer fibres or a denser web in
+  the mask layer would produce this, and neither has been checked.
 - The two velocity ranges do not overlap, so every comparison between 6 and 12 cm/s is an
   extrapolation of both fits.
 - The bag electret fit rests on two points with 59 and 25 downstream counts and an
@@ -125,8 +129,9 @@ What this does not establish:
 
 ## Basis weight and price
 
-- **Basis weight:** the electret lining is about 20 g/m². This is an estimate; no weighing
-  is recorded in the testing sheet.
+- **Basis weight:** the electret lining is about 19 g/m². Matt weighed it and gave this
+  from memory on 11 Nov 2026; the weighing is not recorded in the testing sheet. The
+  calculators use 20 g/m².
 - **Wholesale price at scale:** about US$2/kg for charged surgical-grade (BFE99) meltblown.
   [Fujian Angel](https://angelnonwoven.en.made-in-china.com/product/SFmaJONbrecu/China-Wholesale-Meltblown-Nonwoven-Fabric-Bfe99-Meltblown-Fabric.html)
   lists 25 g/m² BFE99 at US$2.29/kg for 1–5 t, US$2.19 for 5–10 t and US$1.99 above 10 t.
