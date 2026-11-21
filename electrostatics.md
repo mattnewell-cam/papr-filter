@@ -565,7 +565,60 @@ a Cloudflare human check). Paywalled, no open copy found (PDF links work only wi
 - ASHRAE RP-1189 (VTT lab + field, the Appendix J evidence; paid): https://store.accuristech.com/standards/rp-1189-investigation-of-mechanisms-and-operating-environments-that-impact-the-filtration-efficiency-of-charged-air-filtration-media?product_id=1711879
 - ASHRAE RP-1360 (in-home weight gain vs efficiency; paid): https://www.techstreet.com/ashrae/standards/ny-14-032-how-do-pressure-drop-efficiency-weight-gain-and-loaded-dust-composition-change-throughout-filter-lifetime-rp-1360?product_id=1876220
 
+## Recharging used media: 3M's IPA-then-water dunk, and cleaning first
+
+**The method** ([US6406657](https://patents.google.com/patent/US6406657B1/en), 3M, Ex. 1): soak the
+web in IPA, let the excess drip off, immerse ~10-20 min in ~8 L of RO + deionised water, wring, air-dry
+overnight. Named wetting liquids: IPA, ethanol, methanol, acetone, and detergent solutions in water.
+The liquids "preferably do not leave a conductive, non-volatile residue". No water-conductivity limit
+given. Never tested on used or discharged webs.
+
+DOP 0.3 µm MMD, 6.9 cm/s, TPA-8F (photometric); 3M BMF PP, 8-9 µm, 54-60 g/m². QF in kPa⁻¹,
+converted from mmH₂O⁻¹ (×102):
+
+| Web | Untreated | IPA only, dried | IPA → water |
+|---|---|---|---|
+| PP, no additive (Table 1) | 7.4 | 7.0 | 42 |
+| PP + 1% fluorochemical oxazolidinone (Table 3) | 7.3 | 42 | 93 |
+| PP + 0.5% Chimassorb 944 (Table 5) | 6.2 | 7.5 | 25 |
+
+Repeat runs (Tables 2, 4) give 46 and 73 for the two IPA → water webs. Water-jet hydrocharging in the
+same test gives 193-207 (US6398847 Table II, different webs), so the dunk gets roughly a fifth to a half
+of factory charging.
+
+**Detergent residue did not block recharging in the three cases found.** None used water charging,
+which may be more sensitive to surface chemistry.
+- [Eun, Lee & Jeon 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8694494/) (ESI Fig. S3, read from the
+  Europe PMC supplementary ZIP): commercial meltblown PP mask electret, 1-10 µm, ~400 µm thick, loaded
+  with Arizona fine dust. Washed in 0.05% Alconox at room temperature, rinsed in water, then 15 double
+  rubs with a PTFE block. Surface potential ~0.9 kV fresh → ~2.5 kV; PM1.0 removal 72.4% fresh → 84.0%;
+  contact angle unchanged (~145°). Detergent removed the dust completely (microscopy); 90 °C water and
+  steam left it. 70% ethanol (1 min shaking, 60 °C 20 min dry) also removed it; ethanol + rub gave 85.5%.
+  Face velocity not reported.
+- [Recharging decontaminated N95s](https://arxiv.org/html/2004.13641v2), Table 2: KN95 machine-washed with
+  detergent (40 °C, 84 min) 75% → 95% after 60 min at 2 kV between plates (new: 95%). 0.3 µm, 10 L/min,
+  homemade Plantower rig.
+- [US4798850](https://patents.google.com/patent/US4798850A/en): PP fibre scoured with non-ionic detergent
+  and "well rinsed", then carded with modacrylic: QF 73 kPa⁻¹ at 0.28 m/s (table above).
+
+**Soap-free cleaning.**
+- Solid dust: 70% ethanol removed it (Eun).
+- Oils: IPA is a poor solvent for hydrocarbon oils (mineral oil, PAO); a patent says IPA has "very low
+  solubility in mineral oil" ([US6064480](https://patents.google.com/patent/US6064480A/en), seen via a
+  search excerpt). Heptane or naphtha dissolves them but doesn't mix with water, so the order has to be
+  hydrocarbon → IPA → water. PP resistance charts disagree on hexane/heptane at room temperature (good to
+  unsatisfactory; search excerpts only).
+- Additive stripping: Chimassorb 944 dissolves ~40 g/100 g in hexane and >50 in acetone, against ~3 in
+  methanol (distributor data sheets, e.g. [Puresorb 944](https://www.knowde.com/stores/polygel/products/puresorb-944);
+  no IPA figure found). Hexane or acetone may strip a hindered-amine charge additive from the fibre surface.
+- Oil dissolved in IPA comes back out of solution when water is added. Finish with clean IPA before the
+  water step.
+
 ## Priority experiments and unresolved questions
+
+- **Recharging loaded electret coupons** (vacuum-bag or mask media): fresh; IPA-discharged; loaded;
+  loaded → dilute detergent wash, DI rinse → IPA → DI water → dry; loaded → IPA (+ heptane first for
+  oils) → clean IPA → DI water → dry. Compare QF in kPa⁻¹ at our face velocity, and repeat after a week.
 
 - Rub each blanket with **PTFE tape and with a latex glove**, on a grounded and an ungrounded
   backing, and compare against wool-on-polyester. The series says PTFE should win by ~10× over
