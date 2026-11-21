@@ -586,8 +586,15 @@ Repeat runs (Tables 2, 4) give 46 and 73 for the two IPA → water webs. Water-j
 same test gives 193-207 (US6398847 Table II, different webs), so the dunk gets roughly a fifth to a half
 of factory charging.
 
-**Detergent residue did not block recharging in the three cases found.** None used water charging,
-which may be more sensitive to surface chemistry.
+**Detergent blocks the water route but not field or rubbing charging.**
+- [Grillet et al. 2021](https://www.osti.gov/servlets/purl/1815497) (Exp Biol Med 246:740; read in full by
+  an earlier session, protocol re-checked from its extract): 3M 1860 and 1870+ soaked 30 min in 2 wt% Dawn
+  in DI water, drained, then soaked 20 min in fresh DI water and dried. "The soap completely neutralized
+  the surface potential" (0 ± 0 V and 1 ± 1 V); fit factor 10. That is 3M's sequence with detergent as the
+  wetting liquid, and it gave no charge. One rinse only; whether more rinsing or an IPA rinse fixes it is
+  untested. Also in `output/stockpile-papr/research/overnight-electret.md`.
+
+Detergent did not stop the two other charging methods:
 - [Eun, Lee & Jeon 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8694494/) (ESI Fig. S3, read from the
   Europe PMC supplementary ZIP): commercial meltblown PP mask electret, 1-10 µm, ~400 µm thick, loaded
   with Arizona fine dust. Washed in 0.05% Alconox at room temperature, rinsed in water, then 15 double
