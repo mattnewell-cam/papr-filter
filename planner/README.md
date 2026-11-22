@@ -16,6 +16,8 @@ This is an observed, flow-dependent discrepancy, not a universal correction or b
 
 Everything runs in the browser. No backend, no data leaves the page.
 
+A Metric / Imperial toggle above step 1 switches every typed and shown length, airflow and face velocity (inches to the nearest 1/8, CFM, ft/min); pressure stays in Pa and the model stays metric. The choice is saved in localStorage key `units`.
+
 `materials/` holds the original material photographs. The planner embeds its display
 images directly in `src.html`; it does not load these files at runtime.
 

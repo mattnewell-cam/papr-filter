@@ -63,3 +63,7 @@ about a minute, almost all of it in the exhaustive search.
 
 `index.html` is the source; there is no build step. Entries are saved in the browser's
 local storage. Push to `main` to redeploy.
+
+A Metric / Imperial toggle (local storage key `units`) switches the fields to inches and CFM and
+shows lengths to the nearest 1/8 in (minimums rounded up); pressure stays in Pa, and the model
+and saved values stay in cm and L/min.

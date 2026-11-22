@@ -31,6 +31,7 @@
     return 2 * kv / (a + Math.sqrt(a * a + 4 * FAN_C * kv));
   }
 
+  // n counts layers across all the bags: each bag is folded the same way and the stacks are piled up.
   function perf(n, sx, sy, inp) {
     const m = MATS[inp.mat], fit = m[inp.slope];
     const area = (sx - 2 * MARGIN) * (sy - 2 * MARGIN);
@@ -99,6 +100,8 @@
     return best;
   }
 
+  const bagsOf = inp => Math.max(1, Math.round(inp.bags || 1));
+
   function faceOrients(inp) {
     return inp.FW === inp.FH ? [[inp.FW, inp.FH]] : [[inp.FW, inp.FH], [inp.FH, inp.FW]];
   }
@@ -116,7 +119,7 @@
           for (let q = 1; inp.H / q >= MIN_PANEL - EPS; q++)
             for (const sy of sizes1D(inp.H, inp.hy, q, fy)) {
               if (sx < MIN_PANEL - EPS || sy < MIN_PANEL - EPS) continue;
-              const pf = perf(p * q, sx, sy, inp);
+              const pf = perf(p * q * bagsOf(inp), sx, sy, inp);
               for (const pc of placeRegion(sheet, p, q, sx, sy, inp.hx, inp.hy))
                 if (pc) out.push(Object.assign({ cls: pc.nTrim ? 1 : 0, rank: pc.rank, hole: pc.hole,
                   sx, sy, pieces: [pc] }, pf));
@@ -155,7 +158,7 @@
           }).filter(Boolean));
           for (const A of opts[0]) for (const B of opts[1]) {
             if (A.rank === 1 && B.rank === 1) continue;   // only one layer can go outside
-            const n = A.p * A.q + B.p * B.q;
+            const n = (A.p * A.q + B.p * B.q) * bagsOf(inp);
             pf[n] = pf[n] || perf(n, a, b, inp);
             const worst = A.rank <= B.rank ? A : B;
             out.push(Object.assign({ cls: 2, rank: worst.rank, hole: worst.hole, sx: a, sy: b, pieces: [A, B], cut: { vert, at: c } }, pf[n]));
@@ -180,8 +183,10 @@
   }
 
   function solve(inp) {
-    const single = singleCandidates(inp);
-    const double = doubleCandidates(inp);
+    // A holed panel taped as an outside layer works for at most two bags: one stack faces up, the other down.
+    const ok = c => bagsOf(inp) <= 2 || c.rank !== 1;
+    const single = singleCandidates(inp).filter(ok);
+    const double = doubleCandidates(inp).filter(ok);
     const byCls = [0, 1, 2].map(k => pickBest((k < 2 ? single : double).filter(c => c.cls === k), inp.Qt));
     // Fold only if it reaches the goal, else trim, else two pieces; if nothing does, best PF overall.
     let best = byCls.find(b => b && b.goal);
@@ -189,7 +194,7 @@
     return { best, byCls, count: single.length + double.length };
   }
 
-  const api = { MATS, LOG_ENOUGH, HOLE_R, MARGIN, TOL, MIN_PANEL, TRIM_MIN,
+  const api = { MATS, bagsOf, LOG_ENOUGH, HOLE_R, MARGIN, TOL, MIN_PANEL, TRIM_MIN,
                 flowFor, perf, classify1D, place1D, combine, solve, singleCandidates, doubleCandidates };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.ElectretSolver = api;

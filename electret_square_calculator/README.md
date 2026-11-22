@@ -4,9 +4,11 @@ Sizes a square stack of vacuum-bag electret for a fan that pressurises a room.
 [Live page](https://mattnewell-cam.github.io/papr-filter/electret_square_calculator/).
 
 **Inputs:** room pressure, orifice area (the room's total leak), fan shut-off pressure, and
-either a PF target (100, 1,000 or 10,000 at 0.3 µm) or the electret on hand (m²).
+either a PF target (100, 1,000 or 10,000 at 0.3 µm) or the electret on hand, as an area or as a
+count of paper vacuum bags.
 
-**Outputs:** square side, number of layers and total electret area. PF target mode adds a
+**Outputs:** square side, number of layers and total electret area. Both modes give the number of
+paper bags the design takes. PF target mode adds a
 cost estimate; electret-on-hand mode gives the PF.
 
 ## Model
@@ -27,3 +29,11 @@ cost estimate; electret-on-hand mode gives the PF.
 - **Electret on hand:** for each layer count, the biggest square the stock allows, rounded
   down to 0.5 cm. The page picks the highest PF within the pressure.
 - **Cost:** 20 g/m² at US$2/kg. See the bag calculator's "Basis weight and price" notes.
+- **Paper bags:** one bag is an Arome Livii lining opened out, 62 × 69 cm (the bag calculator's default
+  sheet). Each layer is a whole square from one bag, so a bag gives floor(62/s)·floor(69/s) squares of side s.
+  Bags on hand: for each layer count, the biggest square the bags give that many of. Bags needed: layers ÷
+  squares per bag, rounded up; by area (and flagged) when the square is wider than 62 cm. The 45 mm inlet
+  hole is ignored.
+- **Units:** a Metric | Imperial toggle (localStorage `units`) shows in, in², ft², CFM and ft/min; pressure
+  stays in Pa. PF target designs are found on the 0.5 cm grid in both systems, and imperial rounds the side up
+  to the next 1/4 in and re-evaluates. On-hand modes search a 1/4 in grid (rounding down) in imperial.

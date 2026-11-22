@@ -41,7 +41,7 @@ function checkLayout(c, inp, label) {
   for (const pc of c.pieces)
     assert((pc.su <= inp.FW + 1e-6 && pc.sv <= inp.FH + 1e-6) || (pc.su <= inp.FH + 1e-6 && pc.sv <= inp.FW + 1e-6), label + ": panel too big for face");
   const n = c.pieces.reduce((s, pc) => s + pc.p * pc.q, 0);
-  assert.strictEqual(n, c.n, label + ": layer count");
+  assert.strictEqual(n * S.bagsOf(inp), c.n, label + ": layer count");
   const fan = 0.765 * inp.V ** 2 - 0.000383 * c.Q ** 2;
   assert(Math.abs(fan - c.dp) < 1e-6 * Math.max(1, fan), label + ": fan and filter Δp disagree");
 }
@@ -56,15 +56,15 @@ const cases = [
   { W: 80, H: 25, hx: 40, hy: 12, FW: 40, FH: 25 },
 ];
 let n = 0;
-for (const base of cases) for (const mat of ["arome", "kenmore"]) for (const V of [8, 12, 15, 20]) for (const Qt of [150, 200]) {
-  const inp = Object.assign({ mat, slope: "comp", V, Qt }, base);
+for (const base of cases) for (const mat of ["arome", "kenmore"]) for (const V of [8, 12, 15, 20]) for (const Qt of [150, 200]) for (const bags of [1, 2, 3]) {
+  const inp = Object.assign({ mat, slope: "comp", V, Qt, bags }, base);
   const t0 = Date.now();
   const r = S.solve(inp);
   const ms = Date.now() - t0;
   const label = JSON.stringify(inp);
   assert(ms < 3000, label + ": slow " + ms + " ms");
   for (const c of S.singleCandidates(inp).concat(S.doubleCandidates(inp))) { checkLayout(c, inp, label); n++; }
-  if (r.best) checkLayout(r.best.c, inp, label);
+  if (r.best) { checkLayout(r.best.c, inp, label); assert(bags <= 2 || r.best.c.rank !== 1, label + ": taped outside layer with more than two bags"); }
 }
 console.log(`ok: ${n} layouts checked`);
 

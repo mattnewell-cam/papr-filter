@@ -110,6 +110,10 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 
   <div class="main">
     <form class="panel controls" id="controls" autocomplete="off">
+      <div class="seg" role="group" aria-label="Units">
+        <button type="button" data-units="metric">Metric</button>
+        <button type="button" data-units="imperial">Imperial</button>
+      </div>
       <div class="seg modes" role="group" aria-label="Mode">
         <button type="button" data-mode="target">PF target</button>
         <button type="button" data-mode="stock">Electret on hand</button>
@@ -119,7 +123,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
         <div class="row2"><input type="range" id="rpr" min="1" max="50" step="0.5" aria-label="Room pressure slider"><input type="number" id="rp" min="0.5" max="500" step="0.5"></div>
       </div>
       <div class="field">
-        <label for="oa">Orifice area <span class="u">cm²</span></label>
+        <label for="oa">Orifice area <span class="u" id="u-oa">cm²</span></label>
         <div class="row2"><input type="range" id="oar" min="1" max="200" step="1" aria-label="Orifice area slider"><input type="number" id="oa" min="0.1" max="5000" step="1"></div>
         <div class="out"><span>Required airflow</span><b id="o-q"></b></div>
       </div>
@@ -139,8 +143,13 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
           </div>
         </div>
         <div class="field" id="f-stock">
-          <label for="ea">Electret on hand <span class="u">m²</span></label>
-          <div class="row2"><input type="range" id="ear" min="0.02" max="1.5" step="0.01" aria-label="Electret on hand slider"><input type="number" id="ea" min="0.01" max="50" step="0.01"></div>
+          <span class="lab">Electret on hand <span class="u" id="u-stock">m²</span></span>
+          <div class="seg" role="group" aria-label="Electret on hand as">
+            <button type="button" data-by="area">Area</button>
+            <button type="button" data-by="bags">Paper bags</button>
+          </div>
+          <div class="row2" id="r-area"><input type="range" id="ear" min="0.02" max="1.5" step="0.01" aria-label="Electret on hand slider"><input type="number" id="ea" min="0.01" max="50" step="0.01" aria-label="Electret on hand"></div>
+          <div class="row2" id="r-bags"><input type="range" id="bgr" min="1" max="20" step="1" aria-label="Paper bags on hand slider"><input type="number" id="bg" min="1" max="500" step="1" aria-label="Paper bags on hand"></div>
         </div>
       </div>
     </form>
@@ -148,16 +157,17 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
     <section class="panel answer" aria-live="polite">
       <div class="top">
         <div class="hero">
-          <div class="fig"><span class="cap">Square side</span><span class="num"><span id="h-side">—</span><small>cm</small></span></div>
+          <div class="fig"><span class="cap">Square side</span><span class="num"><span id="h-side">—</span><small id="h-side-u">cm</small></span></div>
           <div class="fig"><span class="cap">Layers</span><span class="num" id="h-n">—</span></div>
           <div class="fig" id="h-pf-fig"><span class="cap">PF at 0.3 µm</span><span class="num" id="h-pf">—</span></div>
         </div>
-        <div class="total"><span class="cap">Total area</span><b id="t-area">—</b><span class="cost" id="t-cost"></span></div>
+        <div class="total"><span class="cap">Total area</span><b id="t-area">—</b><span class="cost" id="t-bags"></span><span class="cost" id="t-cost"></span></div>
       </div>
       <svg id="stack" viewBox="0 0 480 300" role="img" aria-label="Stack of electret layers"></svg>
       <dl class="spec" id="spec"></dl>
       <div class="flags" id="flags"></div>
       <p class="note" id="note"></p>
+      <p class="note" id="note-bag"></p>
     </section>
   </div>
 </div>
@@ -195,29 +205,71 @@ function forTarget(Ql, dp, L) {
   }
   return best;
 }
-// Electret on hand: for each n, the biggest square the stock allows (rounded down to 0.5 cm); keep the
+// Electret on hand: for each n, the biggest square the stock allows (rounded down to the grid G cm); keep the
 // highest PF within the pressure. null if even one layer is over the pressure.
-function forStock(Ql, dp, areaCm2) {
+function forStock(Ql, dp, areaCm2, G) {
   const Qc = Ql * 1000 / 60;
   let best = null;
   for (let n = 1; n <= MAX_N; n++) {
-    const side = Math.floor(2 * Math.sqrt(areaCm2 / n) + 1e-9) / 2;
+    const side = Math.floor(Math.sqrt(areaCm2 / n) / G + 1e-9) * G;
     if (side <= 2 * MARGIN) break;
     const o = perf(n, side, Qc);
     if (o.dp <= dp && (!best || o.logs > best.logs)) best = o;
   }
   return best;
 }
+// Paper bags on hand: each layer is a whole square cut from one bag's opened-out lining, so a bag gives
+// floor(W/s)·floor(H/s) squares. For each n, the biggest square on the grid that the bags give n of.
+const BAG_W = 62, BAG_H = 69;   // Arome Livii bag lining opened out, one ply (the bag calculator's default sheet)
+const perBag = s => s > Math.min(BAG_W, BAG_H) + 1e-9 ? 0 : Math.floor(BAG_W / s + 1e-9) * Math.floor(BAG_H / s + 1e-9);
+function forBags(Ql, dp, bags, G) {
+  const Qc = Ql * 1000 / 60;
+  let best = null;
+  for (let n = 1; n <= MAX_N; n++) {
+    let i = Math.floor(Math.min(BAG_W, BAG_H) / G + 1e-9);
+    while (i * G > 2 * MARGIN && bags * perBag(i * G) < n) i--;
+    if (i * G <= 2 * MARGIN) break;
+    const o = perf(n, i * G, Qc);
+    if (o.dp <= dp && (!best || o.logs > best.logs)) best = o;
+  }
+  return best;
+}
+// Bags a design takes; by area (and flagged) when the square is bigger than one bag.
+const bagsFor = b => perBag(b.side) ? { n: Math.ceil(b.n / perBag(b.side)), whole: true }
+                                    : { n: Math.ceil(b.used / (BAG_W * BAG_H)), whole: false };
+
+// ---------------------------------------------------------------- units
+// The model works in cm, cm², m² and L/min. Imperial shows in, in², ft², CFM and ft/min; pressure stays in Pa.
+const IN = 2.54, L_PER_FT3 = 28.3168, CMS_PER_FPM = 0.508, M2_PER_FT2 = 0.09290304, G_PER_OZYD2 = 33.906, LB = 0.45359237;
+let imp = false;
+try { imp = localStorage.getItem('units') === 'imperial'; } catch (e) {}
+const GRID = () => imp ? IN / 4 : 0.5;   // square sides: 1/4 in or 0.5 cm
+function eighths(x) {
+  const e = Math.round(x * 8), w = Math.floor(e / 8), r = e % 8;
+  if (!r) return String(w);
+  const d = r % 4 === 0 ? 4 : r % 2 === 0 ? 2 : 1;
+  return (w ? w + ' ' : '') + (r / d) + '/' + (8 / d);
+}
+const lenNum = cm => imp ? eighths(cm / IN) : fcm(cm);
+const len = cm => `${lenNum(cm)} ${imp ? 'in' : 'cm'}`;
+const FACTOR = { area: 1 / (IN * IN), stock: 1 / M2_PER_FT2 };   // imperial per metric: in² per cm², ft² per m²
+const RANGES = { area: [[1, 200, 1], [0.2, 31, 0.1]], stock: [[0.02, 1.5, 0.01], [0.2, 16, 0.1]] };
 
 // ---------------------------------------------------------------- state & inputs
 const $ = id => document.getElementById(id);
-const S = { mode: 'target', roomDp: 5, area: 20, fan: 200, logs: 3, stock: 0.25 };
+const S = { mode: 'target', roomDp: 5, area: 20, fan: 200, logs: 3, stock: 0.25, by: 'area', bags: 2 };
 
-function bind(rid, nid, key) {
+const shows = [];
+function bind(rid, nid, key, kind) {
   const r = $(rid), n = $(nid);
-  r.value = n.value = S[key];
-  r.addEventListener('input', () => { n.value = r.value; S[key] = +r.value; render(); });
-  n.addEventListener('input', () => { const v = parseFloat(n.value); if (v > 0) { S[key] = v; r.value = v; render(); } });
+  const f = () => imp && kind ? FACTOR[kind] : 1;
+  const show = () => {
+    if (kind) { const [mn, mx, st] = RANGES[kind][imp ? 1 : 0]; r.min = mn; r.max = mx; r.step = st; n.step = st; }
+    r.value = n.value = +(S[key] * f()).toPrecision(4);
+  };
+  r.addEventListener('input', () => { n.value = r.value; S[key] = +r.value / f(); render(); });
+  n.addEventListener('input', () => { const v = parseFloat(n.value); if (v > 0) { S[key] = v / f(); r.value = v; render(); } });
+  shows.push(show); show();
 }
 function seg(attr, key, parse = x => x) {
   const bs = document.querySelectorAll(`[data-${attr}]`);
@@ -228,7 +280,7 @@ function seg(attr, key, parse = x => x) {
 
 // ---------------------------------------------------------------- formatting
 const fcm = x => Number.isInteger(x) ? String(x) : x.toFixed(1);
-const lpm = q => `${Math.round(q).toLocaleString('en-GB')} L/min`;
+const lpm = q => imp ? `${(q / L_PER_FT3).toFixed(1)} CFM` : `${Math.round(q).toLocaleString('en-GB')} L/min`;
 const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
 function pfStr(L) {
   if (L < 6) return Number(Math.pow(10, L).toPrecision(2)).toLocaleString('en-GB');
@@ -240,10 +292,16 @@ const el = (tag, attrs = {}, text) => { const e = document.createElementNS('http
 
 // ---------------------------------------------------------------- render
 function render() {
-  const stock = S.mode === 'stock';
+  const stock = S.mode === 'stock', byBags = S.by === 'bags';
   $('f-target').hidden = stock;
   $('f-stock').hidden = !stock;
   $('h-pf-fig').hidden = !stock;
+  $('r-area').hidden = byBags;
+  $('r-bags').hidden = !byBags;
+  $('u-stock').textContent = byBags ? 'bags' : imp ? 'ft²' : 'm²';
+  $('u-oa').textContent = imp ? 'in²' : 'cm²';
+  $('h-side-u').textContent = imp ? 'in' : 'cm';
+  $('note-bag').textContent = `Paper bag: one Arome Livii lining opened out, ${lenNum(BAG_W)} × ${len(BAG_H)}, cut into whole squares.`;
 
   const Q = leakFlow(S.roomDp, S.area), pf = fanAt(S.fan, Q), dpf = pf - S.roomDp;
   $('o-q').textContent = lpm(Q);
@@ -255,24 +313,31 @@ function render() {
   $('note').hidden = true;
   const blank = txt => {
     for (const id of ['h-side', 'h-n', 'h-pf', 't-area']) $(id).textContent = '—';
-    for (const id of ['t-cost', 'stack', 'spec']) $(id).replaceChildren();
+    for (const id of ['t-cost', 't-bags', 'stack', 'spec']) $(id).replaceChildren();
     flag(txt);
   };
 
   if (dpf <= 0) return blank('No pressure left for the filter');
-  const b = stock ? forStock(Q, dpf, S.stock * 1e4) : forTarget(Q, dpf, S.logs);
+  let b = !stock ? forTarget(Q, dpf, S.logs)
+    : byBags ? forBags(Q, dpf, Math.max(1, Math.floor(S.bags)), GRID()) : forStock(Q, dpf, S.stock * 1e4, GRID());
   if (!b) return blank('Not enough electret');
+  // PF target: the design is found on the 0.5 cm grid in both unit systems; imperial rounds the side up to
+  // the next 1/4 in and re-evaluates (a bigger square only lowers face speed and Δp).
+  if (!stock && imp) b = perf(b.n, Math.ceil(b.side / GRID() - 1e-9) * GRID(), Q * 1000 / 60);
 
-  $('h-side').textContent = fcm(b.side);
+  $('h-side').textContent = lenNum(b.side);
   $('h-n').textContent = String(b.n);
   $('h-pf').textContent = pfStr(b.logs);
-  $('t-area').textContent = `${(b.used / 1e4).toFixed(2)} m²`;
+  $('t-area').textContent = imp ? `${(b.used / 1e4 / M2_PER_FT2).toFixed(1)} ft²` : `${(b.used / 1e4).toFixed(2)} m²`;
+  const bg = bagsFor(b);
+  $('t-bags').textContent = `${bg.whole ? '' : '≈ '}${bg.n} paper bag${bg.n > 1 ? 's' : ''}`;
+  if (!bg.whole) flag(`Square is bigger than one opened-out bag (${len(Math.min(BAG_W, BAG_H))}); each layer needs pieces joined`);
   $('t-cost').textContent = stock ? '' : usd(b.used / 1e4 * GSM / 1000 * USD_PER_KG);
   if (!stock) $('t-cost').append(Object.assign(document.createElement('sup'), { textContent: '1' }));
   $('note').hidden = stock;
 
   const spec = $('spec'); spec.replaceChildren();
-  const rows = [['Filter Δp', `${Math.round(b.dp)} Pa`], ['Face speed', `${b.v.toFixed(1)} cm/s`]];
+  const rows = [['Filter Δp', `${Math.round(b.dp)} Pa`], ['Face speed', imp ? `${(b.v / CMS_PER_FPM).toFixed(1)} ft/min` : `${b.v.toFixed(1)} cm/s`]];
   if (!stock) rows.push(['Predicted', `PF ${pfStr(b.logs)}`]);
   for (const [k, v] of rows) {
     const d = document.createElement('div'), dt = document.createElement('dt'), dd = document.createElement('dd');
@@ -311,7 +376,7 @@ function drawStack(b, Ql) {
   g.append(el('line', { x1: d1[0], y1: d1[1], x2: d2[0], y2: d2[1], stroke: 'var(--ink-3)' }));
   for (const [x, y] of [d1, d2]) g.append(el('line', { x1: x - nx * 5, y1: y - ny * 5, x2: x + nx * 5, y2: y + ny * 5, stroke: 'var(--ink-3)' }));
   const mx = (d1[0] + d2[0]) / 2 + nx * 14, my = (d1[1] + d2[1]) / 2 + ny * 14;
-  g.append(el('text', { class: 'big', x: mx, y: my, 'text-anchor': 'middle', 'dominant-baseline': 'middle', transform: `rotate(30 ${mx.toFixed(1)} ${my.toFixed(1)})` }, `${fcm(b.side)} cm`));
+  g.append(el('text', { class: 'big', x: mx, y: my, 'text-anchor': 'middle', 'dominant-baseline': 'middle', transform: `rotate(30 ${mx.toFixed(1)} ${my.toFixed(1)})` }, len(b.side)));
 
   // layer count, bracketed at the right corner
   const [rx, ry] = P(s, 0, 0), bx = rx + 12, yTop = ry - zTop;
@@ -322,21 +387,36 @@ function drawStack(b, Ql) {
   const bb = g.getBBox();
   // Width fixed so the scale holds between settings; only the height follows the drawing.
   svg.setAttribute('viewBox', `0 ${(bb.y - 8).toFixed(1)} ${W} ${(bb.height + 16).toFixed(1)}`);
-  svg.setAttribute('aria-label', `${b.n} layers of ${fcm(b.side)} cm square electret`);
+  svg.setAttribute('aria-label', `${b.n} layers of ${len(b.side)} square electret`);
 }
 
 // ---------------------------------------------------------------- init
-{
+function costNote() {
   const a = document.createElement('a');
-  a.href = PRICE_SRC; a.target = '_blank'; a.rel = 'noopener'; a.textContent = `$${USD_PER_KG}/kg`;
-  $('note').append(Object.assign(document.createElement('sup'), { textContent: '1' }), ` ${GSM} gsm charged meltblown at `, a, ' bulk wholesale (surgical grade).');
+  a.href = PRICE_SRC; a.target = '_blank'; a.rel = 'noopener';
+  a.textContent = imp ? `$${(USD_PER_KG * LB).toFixed(2)}/lb` : `$${USD_PER_KG}/kg`;
+  $('note').replaceChildren(Object.assign(document.createElement('sup'), { textContent: '1' }),
+    ` ${imp ? (GSM / G_PER_OZYD2).toFixed(2) + ' oz/yd²' : GSM + ' gsm'} charged meltblown at `, a, ' bulk wholesale (surgical grade).');
 }
 bind('rpr', 'rp', 'roomDp');
-bind('oar', 'oa', 'area');
+bind('oar', 'oa', 'area', 'area');
 bind('fpr', 'fp', 'fan');
-bind('ear', 'ea', 'stock');
+bind('ear', 'ea', 'stock', 'stock');
+bind('bgr', 'bg', 'bags');
 seg('mode', 'mode');
 seg('logs', 'logs', Number);
+seg('by', 'by');
+{
+  const bs = document.querySelectorAll('[data-units]');
+  const sync = () => bs.forEach(b => b.setAttribute('aria-pressed', String((b.dataset.units === 'imperial') === imp)));
+  bs.forEach(b => b.addEventListener('click', () => {
+    imp = b.dataset.units === 'imperial';
+    try { localStorage.setItem('units', imp ? 'imperial' : 'metric'); } catch (e) {}
+    sync(); shows.forEach(f => f()); costNote(); render();
+  }));
+  sync();
+}
+costNote();
 $('controls').addEventListener('submit', e => e.preventDefault());
 render();
 </script>

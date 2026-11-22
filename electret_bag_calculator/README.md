@@ -5,7 +5,14 @@ The user enters:
 - the opened-out electret sheet (W × H, one ply);
 - the centre of its 45 mm inlet hole;
 - the filter face (W × H);
-- the fan voltage and the airflow needed.
+- the fan voltage and the airflow needed;
+- the number of bags. Each bag is cut and folded the same way and the stacks are piled up, so
+  every layout has bags × (layers per bag) layers. With more than two bags the hole cannot be
+  taped on an outside layer (only the top and bottom layers are outside), so those layouts are
+  dropped.
+
+A Metric | Imperial toggle (saved in localStorage `units`) shows lengths in inches to the nearest
+1/8 in, airflow in CFM and face velocity in ft/min. Pressure stays in Pa. The model works in cm.
 
 The page gives fold or cut instructions for a stack of equal rectangular layers, with a
 drawing of the sheet. The model is in `solver.js`. `node electret_bag_calculator/test.cjs`

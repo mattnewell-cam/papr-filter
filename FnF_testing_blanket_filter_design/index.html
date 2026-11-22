@@ -34,6 +34,10 @@ input,select{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);
 input[aria-invalid=true]{border-color:var(--bad);outline:1px solid var(--bad)}
 input:focus,select:focus,button:focus-visible{outline:2px solid var(--go);outline-offset:1px}
 button{font:inherit;cursor:pointer;border-radius:6px}
+.units{display:inline-flex;background:var(--paper);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.units button{border:0;border-radius:0;background:none;color:var(--ink-2);padding:7px 16px;min-height:40px}
+.units button+button{border-left:1px solid var(--rule)}
+.units button[aria-pressed=true]{background:var(--ink);color:var(--paper);font-weight:600}
 .addrow{display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:10px;align-items:end}
 .addrow button{background:var(--ink);color:var(--paper);border:0;padding:9px 18px;font-weight:600;min-height:42px}
 @media (max-width:520px){.addrow{grid-template-columns:1fr 1fr}.addrow label:first-child,.addrow button{grid-column:1/-1}}
@@ -84,6 +88,9 @@ ol.steps .sz{font-size:14px;color:var(--ink-3);white-space:nowrap}
 <h1>Blanket filter designer</h1>
 <p class="lede">List the blankets, duvets and sheets you can spare. This works out the best way to
 roll them onto the filter core for your fan, and tells you how to build it.</p>
+<div class="units" role="group" aria-label="Units">
+  <button type="button" data-units="metric" aria-pressed="true">Metric</button><button type="button" data-units="imperial" aria-pressed="false">Imperial</button>
+</div>
 
 <h2><span class="n">1.</span>Your materials</h2>
 <div class="panel">
@@ -96,8 +103,8 @@ roll them onto the filter core for your fan, and tells you how to build it.</p>
         <option value="duvet">Duvet (synthetic fill)</option>
         <option value="linen">Sheet</option>
       </select></label>
-    <label>Length · cm<input id="len" type="number" inputmode="decimal" min="1" step="any"></label>
-    <label>Width · cm<input id="wid" type="number" inputmode="decimal" min="1" step="any"></label>
+    <label>Length · <span data-i="in">cm</span><input id="len" type="number" inputmode="decimal" min="1" step="any"></label>
+    <label>Width · <span data-i="in">cm</span><input id="wid" type="number" inputmode="decimal" min="1" step="any"></label>
     <button type="submit">Add</button>
   </form>
   <p class="err" id="adderr" role="alert"></p>
@@ -107,10 +114,10 @@ roll them onto the filter core for your fan, and tells you how to build it.</p>
 
 <h2><span class="n">2.</span>Your limits</h2>
 <div class="panel limits">
-  <label>Airflow · L/min<input id="q" type="number" value="180" min="1" step="any"><small>How much air the fan moves. 1 m³/h = 16.7 L/min; 1 CFM = 28.3 L/min.</small></label>
+  <label>Airflow · <span data-i="CFM">L/min</span><input id="q" type="number" value="180" min="1" step="any"><small data-i="How much air the fan moves. 1 m³/h = 0.589 CFM; 1 L/min = 0.0353 CFM.">How much air the fan moves. 1 m³/h = 16.7 L/min; 1 CFM = 28.3 L/min.</small></label>
   <label>Pressure budget · Pa<input id="dp" type="number" value="202" min="1" step="any"><small>The pressure your fan can still give at that airflow, not its maximum pressure.</small></label>
-  <label>Max diameter · cm<input id="od" type="number" value="30" min="1" step="any"><small>Widest the finished roll can be.</small></label>
-  <label>Max length · cm<input id="h" type="number" value="50" min="1" step="any"><small>Longest the roll can be, not counting the tied-off end.</small></label>
+  <label>Max diameter · <span data-i="in">cm</span><input id="od" type="number" value="30" min="1" step="any"><small>Widest the finished roll can be.</small></label>
+  <label>Max length · <span data-i="in">cm</span><input id="h" type="number" value="50" min="1" step="any"><small>Longest the roll can be, not counting the tied-off end.</small></label>
 </div>
 
 <button id="go" type="button">Design my filter</button>
@@ -344,21 +351,75 @@ try{
   }
 }catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({items:state.items,
-  limits:Object.fromEntries(LIMITS.map(k=>[k,$(k).value]))}));}catch(e){}};
+  limits:Object.fromEntries(LIMITS.map(k=>[k,k in UF?metricText(k):$(k).value])),
+  typed:Object.fromEntries(LIMITS.filter(k=>k in UF).map(k=>[k,typed[k]]))}));}catch(e){}};
 
 const NB=' ';
 const cm=x=>Math.abs(x-Math.round(x))<0.05?String(Math.round(x)):x.toFixed(1);
 const label=i=>`${TYPES[i.type].name} ${i.n}`;
 
+/* ---- units ------------------------------------------------------------------
+ * The model works in cm and L/min throughout. In imperial mode the fields take inches and
+ * CFM and lengths are shown in inches; pressure stays in Pa. Each field keeps the text typed
+ * and the units it was typed in, so switching back and forth keeps the same value.        */
+const IN=2.54, CFM=28.3168;                   // cm per inch, L/min per CFM
+const UF={len:IN,wid:IN,od:IN,h:IN,q:CFM};    // metric units per imperial unit, by field
+let imperial=false;
+try{ imperial=localStorage.getItem('units')==='imperial'; }catch(e){}
+const typed={};
+let savedTyped={};
+try{ savedTyped=JSON.parse(localStorage.getItem(KEY)).typed||{}; }catch(e){}
+for(const k in UF){
+  const s=savedTyped[k];
+  typed[k]=s&&typeof s.text==='string'?{imp:!!s.imp,text:s.text}:{imp:false,text:$(k).value};
+  $(k).addEventListener('input',()=>{typed[k]={imp:imperial,text:$(k).value};});
+}
+const metricOf=k=>{const t=typed[k], x=parseFloat(t.text); return t.imp?x*UF[k]:x;};
+const metricText=k=>typed[k].imp&&typed[k].text!==''?String(+metricOf(k).toPrecision(12)):typed[k].text;
+// A length (cm) as shown: metric as cm() gives it; imperial to the nearest 1/8 in, or up to
+// the next 1/8 in for a minimum, written like 12 3/8.
+function num(x,up){
+  if(!imperial) return cm(x);
+  const e=up?Math.ceil(x*8/IN-1e-6):Math.round(x*8/IN), w=Math.floor(e/8), r=e%8;
+  if(!r) return String(w);
+  const d=r%4?r%2?8:4:2, f=`${r*d/8}/${d}`;
+  return w?w+NB+f:f;
+}
+const unit=()=>imperial?'in':'cm', lenStr=(x,up)=>num(x,up)+NB+unit();
+const core=()=>imperial?num(RI*2)+NB+'in':RI*20+NB+'mm';
+const addErr=()=>`Enter a length and width in ${imperial?'inches':'cm'}.`;
+function showUnits(){
+  for(const k in UF){
+    const t=typed[k], x=metricOf(k);
+    $(k).value=t.imp===imperial||!Number.isFinite(x)?t.text
+      :String(k==='q'?+(imperial?x/CFM:x).toPrecision(imperial?3:4):+(imperial?x/IN:x).toFixed(1));
+  }
+  document.querySelectorAll('[data-i]').forEach(e=>{
+    if(e.dataset.m==null) e.dataset.m=e.textContent;
+    e.textContent=imperial?e.dataset.i:e.dataset.m;
+  });
+  document.querySelectorAll('.units button').forEach(b=>
+    b.setAttribute('aria-pressed',String((b.dataset.units==='imperial')===imperial)));
+}
+document.querySelector('.units').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-units]');
+  if(!b||(b.dataset.units==='imperial')===imperial) return;
+  imperial=!imperial;
+  try{ localStorage.setItem('units',imperial?'imperial':'metric'); }catch(e){}
+  showUnits(); renderItems();
+  if($('adderr').textContent) $('adderr').textContent=addErr();
+  if(redraw) $('out').innerHTML=redraw();
+});
+
 function renderItems(){
   $('items').innerHTML=state.items.length?state.items.map(i=>`<li>
     <span class="dot" style="background:${TYPES[i.type].colour}"></span>
-    <span class="what">${label(i)}</span><span class="size">${cm(i.L)} × ${cm(i.W)}${NB}cm</span>
+    <span class="what">${label(i)}</span><span class="size">${num(i.L)} × ${num(i.W)}${NB}${unit()}</span>
     <button type="button" class="linkbtn" data-id="${i.id}" aria-label="Remove ${label(i)}">Remove</button></li>`).join('')
     :'<li class="none">Nothing added yet.</li>';
   $('clear').hidden=!state.items.length;
 }
-function changed(){ version++; save(); if(!$('res').hidden) $('out').innerHTML=
+function changed(){ version++; save(); redraw=null; if(!$('res').hidden) $('out').innerHTML=
   '<p class="notice">You’ve changed your materials or limits. Press <b>Design my filter</b> to update.</p>'; }
 $('items').addEventListener('click',e=>{
   const b=e.target.closest('button[data-id]'); if(!b) return;
@@ -371,13 +432,14 @@ $('clear').addEventListener('click',()=>{
 });
 $('add').addEventListener('submit',e=>{
   e.preventDefault();
-  const L=parseFloat($('len').value), W=parseFloat($('wid').value), type=$('type').value;
-  if(!(L>0&&W>0)){ $('adderr').textContent='Enter a length and width in cm.'; return; }
+  const L=metricOf('len'), W=metricOf('wid'), type=$('type').value;
+  if(!(L>0&&W>0)){ $('adderr').textContent=addErr(); return; }
   $('adderr').textContent='';
   // Numbers stay with a piece; a new one takes the next free number for its type.
   const n=1+Math.max(0,...state.items.filter(i=>i.type===type).map(i=>i.n));
   state.items.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),type,n,L,W});
-  $('len').value=''; $('wid').value=''; $('len').focus();
+  for(const k of ['len','wid']){ $(k).value=''; typed[k]={imp:imperial,text:''}; }
+  $('len').focus();
   renderItems(); changed();
 });
 LIMITS.forEach(k=>$(k).addEventListener('input',()=>{$(k).removeAttribute('aria-invalid');changed();}));
@@ -387,30 +449,33 @@ const sig2=x=>Number(x.toPrecision(2)).toLocaleString();
 const FOLD={2:'Fold it in half',3:'Fold it in thirds, like a letter',4:'Fold it in half, then in half again',
             6:'Fold it in thirds, then in half',8:'Fold it in half three times'};
 
-function show(html){
-  const out=$('out'); $('res').hidden=false; out.innerHTML=html;
+// make() builds the panel's contents; it is kept to rebuild them when the units change.
+let redraw=null;
+function show(make){
+  const out=$('out'); $('res').hidden=false; out.innerHTML=make(); redraw=make;
   out.focus({preventScroll:true}); $('res').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function invalid(id,msg){ $(id).setAttribute('aria-invalid','true'); show(`<p class="notice">${msg}</p>`); }
+function invalid(id,msg){ $(id).setAttribute('aria-invalid','true'); show(()=>`<p class="notice">${msg()}</p>`); }
 
 $('go').addEventListener('click',async()=>{
-  const q=+$('q').value, dp=+$('dp').value, od=+$('od').value, h=+$('h').value;
-  if(!state.items.length) return show('<p class="notice">Add at least one piece first.</p>');
+  const q=metricOf('q'), dp=+$('dp').value, od=metricOf('od'), h=metricOf('h');
+  if(!state.items.length) return show(()=>'<p class="notice">Add at least one piece first.</p>');
   for(const [id,v,name] of [['q',q,'airflow'],['dp',dp,'pressure budget'],['od',od,'max diameter'],['h',h,'max length']])
-    if(!(v>0)) return invalid(id,`Enter your ${name} as a number above zero.`);
-  if(od<=RI*2) return invalid('od',`The max diameter must be more than the ${RI*20}${NB}mm core (${cm(RI*2)}${NB}cm).`);
-  if(h<H_MIN) return invalid('h',`The max length must be at least ${H_MIN}${NB}cm.`);
+    if(!(v>0)) return invalid(id,()=>`Enter your ${name} as a number above zero.`);
+  if(od<=RI*2) return invalid('od',()=>`The max diameter must be more than the ${core()} core (${
+    imperial?'at least '+lenStr(RI*2,1):cm(RI*2)+NB+'cm'}).`);
+  if(h<H_MIN) return invalid('h',()=>`The max length must be at least ${lenStr(H_MIN,1)}.`);
   const sel=state.items.map(i=>({...TYPES[i.type],id:i.id,type:i.type,label:label(i),L:i.L,W:i.W}));
   if(sel.every(m=>Math.max(m.L,m.W)<H_MIN+OVERHANG))
-    return show(`<p class="notice">Every piece needs one side at least ${H_MIN+OVERHANG}${NB}cm long.</p>`);
+    return show(()=>`<p class="notice">Every piece needs one side at least ${lenStr(H_MIN+OVERHANG,1)} long.</p>`);
   const lim={dpMax:dp, roMax:od/2, Hmax:h}, asked=version;
   Q=q*1000/60;
   $('go').disabled=true; $('go').textContent='Working it out…';
   const rep=await solve(sel,lim);
   $('go').disabled=false; $('go').textContent='Design my filter';
   if(asked!==version) return;          // inputs changed while it ran; the notice is showing
-  if(rep.error) return show('<p class="notice">Something went wrong working this out. Please try again.</p>');
-  show(rep.r?report(rep.r,sel,lim)
+  if(rep.error) return show(()=>'<p class="notice">Something went wrong working this out. Please try again.</p>');
+  show(()=>rep.r?report(rep.r,sel,lim)
     :`<p class="notice">None of your pieces can be used within these limits. Try a higher pressure
       budget, a bigger diameter or a longer roll.</p>`);
 });
@@ -424,8 +489,8 @@ function report(r,sel,lim){
   const fact=(t,v,max,u)=>`<div><dt>${t}</dt><dd>${v} <span>of ${max}</span>${NB}${u}</dd></div>`;
   const facts=[
     fact('Pressure',r.dp.toFixed(0),lim.dpMax.toFixed(0),'Pa'),
-    fact('Diameter',cm(r.ro*2),cm(lim.roMax*2),'cm'),
-    fact('Length',cm(r.H),cm(lim.Hmax),'cm')
+    fact('Diameter',num(r.ro*2),num(lim.roMax*2),unit()),
+    fact('Length',num(r.H),num(lim.Hmax),unit())
   ].join('');
   // Radius to scale, core on the left.
   const wall=`<div class="wall" aria-hidden="true"><div class="c" style="flex:${r.ri.toFixed(3)}"></div>`+
@@ -436,20 +501,20 @@ function report(r,sel,lim){
   const steps=r.bands.map(b=>{
     const m=b.m, f=b.fold, foldSide=f.roll==='L'?m.W:m.L;
     const fold=f.f===1?`Don't fold it.`
-      :`${FOLD[f.f]}, so the ${cm(foldSide)}${NB}cm side becomes <b>${cm(f.axial)}${NB}cm</b>.`;
-    return `<li><p><i class="dot" style="background:${TYPES[m.type].colour}"></i> <b>${m.label}</b> <span class="sz">${cm(m.L)} × ${cm(m.W)}${NB}cm</span></p>
-      <p>${fold} Lay its ${cm(f.axial)}${NB}cm edge along the core with every layer level with the fan end,
-      then roll the whole piece on tightly. About ${cm(f.axial-r.H)}${NB}cm will hang past the far end.</p></li>`;
+      :`${FOLD[f.f]}, so the ${lenStr(foldSide)} side becomes <b>${lenStr(f.axial)}</b>.`;
+    return `<li><p><i class="dot" style="background:${TYPES[m.type].colour}"></i> <b>${m.label}</b> <span class="sz">${num(m.L)} × ${num(m.W)}${NB}${unit()}</span></p>
+      <p>${fold} Lay its ${lenStr(f.axial)} edge along the core with every layer level with the fan end,
+      then roll the whole piece on tightly. About ${lenStr(f.axial-r.H)} will hang past the far end.</p></li>`;
   }).join('');
   const usedIds=new Set(r.bands.map(b=>b.m.id));
   const left=sel.filter(m=>!usedIds.has(m.id)).map(m=>{
     const opts=foldAll(m), s=firstFit(opts,r.H+OVERHANG);
     if(s===opts.length)
-      return `${m.label} is too small: it needs a side at least ${cm(r.H+OVERHANG)}${NB}cm long for this ${cm(r.H)}${NB}cm roll.`;
+      return `${m.label} is too small: it needs a side at least ${lenStr(r.H+OVERHANG,1)} long for this ${lenStr(r.H)} roll.`;
     if(!opts.slice(s).some(o=>Math.sqrt(r.ro*r.ro+o.area/Math.PI)-r.ro>=o.f*m.t-1e-9))
       return `${m.label} is too short to go all the way round the roll.`;
     return Math.sqrt(r.ro*r.ro+opts[opts.length-1].area/Math.PI)>lim.roMax+1e-9
-      ? `${m.label} would make the roll wider than ${cm(lim.roMax*2)}${NB}cm.`
+      ? `${m.label} would make the roll wider than ${lenStr(lim.roMax*2)}.`
       : `${m.label} would need more pressure than your fan has.`;
   });
   return `<div class="big">${pfText}<small>protection factor</small></div>
@@ -457,7 +522,7 @@ function report(r,sel,lim){
     <dl class="facts">${facts}</dl>
     <p class="hint" style="margin:0">From the centre (left) to the outside (right):</p>
     ${wall}${legend}
-    <p>You need the ${RI*20}${NB}mm core, ${cm(r.H)}${NB}cm long. One end goes to the fan; the other is the far end.
+    <p>You need the ${core()} core, ${lenStr(r.H)} long. One end goes to the fan; the other is the far end.
     Put the pieces on in this order. Start each piece where the last one finished, and keep rolling the same way.</p>
     <ol class="steps">${steps}</ol>
     <p>Tape or pin down the end of the last piece so the roll can’t loosen. Then gather everything hanging past
@@ -466,7 +531,7 @@ function report(r,sel,lim){
     ${left.length?`<p class="unused"><b>Not used.</b> ${left.join(' ')}</p>`:''}`;
 }
 
-renderItems();
+showUnits(); renderItems();
 </script>
 </body>
 </html>

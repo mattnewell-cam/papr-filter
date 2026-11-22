@@ -51,6 +51,12 @@ header.top{border-bottom:1px solid var(--line);background:var(--panel);position:
 .themebtn{margin-left:auto;background:none;border:1px solid var(--line);border-radius:999px;
   padding:5px 13px;cursor:pointer;color:var(--ink-2);font-size:12px}
 .themebtn:hover{border-color:var(--accent);color:var(--accent)}
+.units{display:inline-flex;margin-bottom:12px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.units button{background:none;border:none;padding:5px 13px;cursor:pointer;color:var(--ink-2);font-size:12px}
+.units button:first-child{border-radius:999px 0 0 999px}
+.units button:last-child{border-radius:0 999px 999px 0;border-left:1px solid var(--line)}
+.units button:hover{color:var(--accent)}
+.units button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
 
 .wrap{max-width:1320px;margin:0 auto;padding:22px 22px 48px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:22px;align-items:start}
 @media(max-width:1040px){.wrap{grid-template-columns:minmax(0,1fr)}}
@@ -201,9 +207,10 @@ dialog button.close{background:var(--accent);color:#fff;border:none;border-radiu
 
 <div class="wrap">
   <div>
+    <div class="units" role="group" aria-label="Units"><button id="uM" aria-pressed="true">Metric</button><button id="uI" aria-pressed="false">Imperial</button></div>
     <section class="card">
       <h2><span class="stepno">1</span>What have you got?</h2>
-      <div class="hint">Tap everything you're willing to cut up. Quality factor is protection per unit of pressure — higher is better. Shown at 1.2 cm/s.</div>
+      <div class="hint">Tap everything you're willing to cut up. Quality factor is protection per unit of pressure — higher is better. Shown at <span id="qfv">1.2 cm/s</span>.</div>
       <div class="grid" id="picker"></div>
     </section>
 
@@ -528,6 +535,58 @@ function solveAsync(sel,dpMax,roMax,Hmax,fixedRi,q,seed){
   });
 }
 
+/* ---- units. The model works in metric (cm, mm, L/min). Imperial changes only what is
+ * typed and shown; pressure stays in Pa. Typed values are kept in metric in VAL, so
+ * switching units never changes the physical value. ---- */
+let units='metric';
+try{ if(localStorage.getItem('units')==='imperial') units='imperial'; }catch(e){}
+const imp=()=>units==='imperial';
+// f = metric units per imperial unit; min/step are [metric, imperial]
+const FIELDS={
+  bq:{lab:'Airflow',            m:'L/min', i:'CFM', f:28.3168, min:[10,0.5], step:[10,0.5]},
+  bp:{lab:'Pressure budget',    m:'Pa',    i:'Pa',  f:1,       min:[10,10],  step:[10,10]},
+  bd:{lab:'Max outer diameter', m:'mm',    i:'in',  f:25.4,    min:[60,2.5], step:[10,0.5]},
+  bl:{lab:'Max bundle length',  m:'cm',    i:'in',  f:2.54,    min:[8,3],    step:[5,1]},
+  bi:{lab:'Core diameter',      m:'mm',    i:'in',  f:25.4,    min:[0,0],    step:[5,0.25]},
+  cL:{lab:'Length rolled',      m:'cm',    i:'in',  f:2.54},
+  cC:{lab:'Circumference',      m:'cm',    i:'in',  f:2.54}
+};
+const VAL={};   // metric value of each field; NaN when blank
+for(const [id,F] of Object.entries(FIELDS)){
+  const el=document.getElementById(id);
+  VAL[id]=el.defaultValue===''?NaN:+el.defaultValue;
+  el.addEventListener('input',()=>{VAL[id]=el.value===''?NaN:+el.value*(imp()?F.f:1);});
+}
+const FR=['','1/8','1/4','3/8','1/2','5/8','3/4','7/8'];
+// cm -> nearest 1/8 in, written like "12 3/8 in"
+function inch(cm,unit=true){
+  const e=Math.round(cm/2.54*8), w=Math.floor(e/8), f=e%8;
+  return (w&&f? w+' '+FR[f] : f? FR[f] : String(w))+(unit?' in':'');
+}
+const len =cm=> imp()? inch(cm) : cm.toFixed(0)+' cm';
+const dia =r => imp()? inch(2*r) : (r*20).toFixed(0)+' mm';            // r is a radius in cm
+const diaR=(r0,r1,s)=> imp()? inch(2*r0,false)+s+inch(2*r1) : (r0*20).toFixed(0)+s+(r1*20).toFixed(0)+' mm';
+const fpm =v=>{ const x=v/0.508; return x<1? x.toFixed(2) : x.toFixed(1); };   // cm/s -> ft/min
+const vel =v=> imp()? fpm(v)+' ft/min' : v.toFixed(2)+' cm/s';
+const velR=(a,b)=> imp()? fpm(a)+'–'+fpm(b)+' ft/min' : a.toFixed(2)+'–'+b.toFixed(2)+' cm/s';
+const flow=q=> imp()? (q*60/28316.8).toFixed(1)+' CFM' : (q*60/1000).toFixed(0)+' L/min';  // q in cm³/s
+const lenPair=(a,b,mul,u)=> imp()? inch(a,false)+' of '+inch(b) : (a*mul).toFixed(0)+' / '+(b*mul).toFixed(0)+' '+u;
+function applyUnits(){
+  const I=imp();
+  document.getElementById('uM').setAttribute('aria-pressed',!I);
+  document.getElementById('uI').setAttribute('aria-pressed',I);
+  for(const [id,F] of Object.entries(FIELDS)){
+    const el=document.getElementById(id), v=VAL[id]/(I?F.f:1);
+    el.previousElementSibling.textContent=F.lab+' · '+(I?F.i:F.m);
+    if(F.min){ el.min=F.min[+I]; el.step=F.step[+I]; }
+    el.value=isFinite(v)? +v.toFixed(I?2:1) : '';
+  }
+  document.getElementById('qfv').textContent=I? (1.2/0.508).toFixed(1)+' ft/min' : '1.2 cm/s';
+  calc(); renderDims();
+  if(shown) show();
+}
+function setUnits(u){ units=u; try{ localStorage.setItem('units',u); }catch(e){} applyUnits(); }
+
 /* ---- state + render ---- */
 const state={sel:new Set(['grey holey','duvet','grey fuzzy']),dims:{}};
 MATS.forEach(m=>state.dims[m.id]={L:m.L,W:m.W,t:m.t??1});
@@ -544,12 +603,15 @@ function renderDims(){
   const d=document.getElementById('dims');
   const list=MATS.filter(m=>state.sel.has(m.id));
   if(!list.length){d.innerHTML='<div class="empty">Pick a material above.</div>';return;}
-  d.innerHTML=`<div class="head"><span class="lab"></span><span class="lab">Side A cm</span><span class="lab">Side B cm</span><span class="lab">Thick cm <button class="info" id="ti">i</button></span></div>`+
+  const I=imp(), u=I?'in':'cm', k=I?2.54:1;
+  d.innerHTML=`<div class="head"><span class="lab"></span><span class="lab">Side A ${u}</span><span class="lab">Side B ${u}</span><span class="lab">Thick ${u} <button class="info" id="ti">i</button></span></div>`+
    list.map(m=>`<div class="row"><div class="who">${swSvg(m.id)}<span>${m.label} · ${m.sub}</span></div>
-    ${['L','W','t'].map(f=>`<input class="mono" data-id="${m.id}" data-f="${f}" type="number" step="${f==='t'?0.01:1}" value="${f==='t'?(+state.dims[m.id][f]).toFixed(3):state.dims[m.id][f]}">`).join('')}</div>`).join('');
+    ${['L','W','t'].map(f=>{const v=state.dims[m.id][f];
+      return `<input class="mono" data-id="${m.id}" data-f="${f}" type="number" step="${f==='t'?(I?0.005:0.01):(I?0.5:1)}" value="${
+        I? (f==='t'?(v/k).toFixed(4):+(v/k).toFixed(2)) : (f==='t'?(+v).toFixed(3):v)}">`;}).join('')}</div>`).join('');
   d.querySelectorAll('input').forEach(i=>i.addEventListener('input',()=>{
     const v=parseFloat(i.value);
-    state.dims[i.dataset.id][i.dataset.f]=isFinite(v)&&v>0?v:0;   // 0 or blank -> the piece drops out
+    state.dims[i.dataset.id][i.dataset.f]=isFinite(v)&&v>0?v*k:0;   // 0 or blank -> the piece drops out
     markStale();}));
   document.getElementById('ti').onclick=()=>document.getElementById('tdlg').showModal();
 }
@@ -559,24 +621,31 @@ function extrapChip(m,b,r){
   const vLo=r.K/b.r1, vHi=r.K/b.r0;
   if(vHi<=m.vhi+1e-9 && vLo>=m.vlo-1e-9) return '';
   return `<span class="xtr" tabindex="0">(!) Outside measured range<span class="tip">`+
-    `Measured range: ${m.vlo.toFixed(2)}–${m.vhi.toFixed(2)} cm/s<br>`+
-    `Velocity range here: ${vLo.toFixed(2)}–${vHi.toFixed(2)} cm/s<br><br>`+
+    `Measured range: ${velR(m.vlo,m.vhi)}<br>`+
+    `Velocity range here: ${velR(vLo,vHi)}<br><br>`+
     `Modelled protection factor here is based on extrapolation and may be inaccurate.</span></span>`;
 }
 function fmtPF(x){ return x>=10000? x.toPrecision(3).replace(/e\+?/,'e') : x>=100? Math.round(x).toLocaleString() : x.toFixed(1); }
 
 function render(){ renderDims(); return compute(); }
 
+let shown=null;   // last solve, kept so switching units can redraw it without solving again
 async function compute(){
-  Q=(+document.getElementById('bq').value||180)*1000/60;
-  const dpMax=+document.getElementById('bp').value||202;
-  const roMax=(+document.getElementById('bd').value||300)/20;
-  const Hmax=+document.getElementById('bl').value||50;
-  const fixedRi=(+document.getElementById('bi').value||0)/20 || null;
+  Q=(VAL.bq||180)*1000/60;
+  const dpMax=VAL.bp||202;
+  const roMax=(VAL.bd||300)/20;
+  const Hmax=VAL.bl||50;
+  const fixedRi=(VAL.bi||0)/20 || null;
   const sel=MATS.filter(m=>state.sel.has(m.id)).map(m=>({...m,L:state.dims[m.id].L,W:state.dims[m.id].W,t:state.dims[m.id].t}));
   const rep = await solveAsync(sel,dpMax,roMax,Hmax,fixedRi,Q,LAST);
   const r = rep.result;
   if(rep.seed) LAST = rep.seed;
+  shown={r,sel,dpMax,roMax,Hmax,q:Q};
+  show();
+  if(r&&r.bands.length) scheduleSens(sel,{dpMax,roMax,Hmax,fixedRi},r.logs,LAST);
+}
+function show(){
+  const {r,sel,dpMax,roMax,Hmax,q}=shown;
   const pfv=document.getElementById('pfv'),pfl=document.getElementById('pfl'),pfat=document.getElementById('pfat');
 
   if(!r||!r.bands.length){
@@ -590,12 +659,14 @@ async function compute(){
   const PF=Math.pow(10,r.logs);
   pfv.textContent=fmtPF(PF); pfl.textContent=r.logs.toFixed(2)+' logs';
   const vIn=r.K/r.ri, vOut=r.K/r.ro;
-  pfat.innerHTML=`${(Q*60/1000).toFixed(0)} L/min · QF ${(LN10*r.logs/(r.dp/1000)).toFixed(0)} kPa⁻¹<br>face velocity ${vOut.toFixed(2)}–${vIn.toFixed(2)} cm/s`;
+  pfat.innerHTML=`${flow(q)} · QF ${(LN10*r.logs/(r.dp/1000)).toFixed(0)} kPa⁻¹<br>face velocity ${velR(vOut,vIn)}`;
 
-  const met=[['Pressure',r.dp,dpMax,'Pa',0],['Outer diameter',r.ro*20,roMax*20,'mm',0],['Bundle length',r.H,Hmax,'cm',0]];
-  document.getElementById('meters').innerHTML=met.map(([n,a,b,u,dp])=>{
+  const met=[['Pressure',r.dp,dpMax,`${r.dp.toFixed(0)} / ${dpMax.toFixed(0)} Pa`],
+    ['Outer diameter',r.ro*20,roMax*20,lenPair(2*r.ro,2*roMax,10,'mm')],
+    ['Bundle length',r.H,Hmax,lenPair(r.H,Hmax,1,'cm')]];
+  document.getElementById('meters').innerHTML=met.map(([n,a,b,txt])=>{
     const pc=Math.min(100,100*a/b), cls=pc>99.5?'full':'';
-    return `<div class="meter"><div class="mtop"><span>${n}</span><b>${a.toFixed(dp)} / ${b.toFixed(dp)} ${u}</b></div><div class="bar"><i class="${cls}" style="width:${pc}%"></i></div></div>`;}).join('');
+    return `<div class="meter"><div class="mtop"><span>${n}</span><b>${txt}</b></div><div class="bar"><i class="${cls}" style="width:${pc}%"></i></div></div>`;}).join('');
 
   // cross-section
   const S=240, pad=4, sc=(S/2-pad)/r.ro;
@@ -603,13 +674,13 @@ async function compute(){
   let rings=r.bands.slice().reverse().map(b=>`<circle cx="${cx}" cy="${cy}" r="${(b.r1*sc).toFixed(2)}" fill="${b.m.ring}" stroke="var(--panel)" stroke-width="0.8"/>`).join('');
   const scaleCm = r.ro>12?10:5, scalePx=scaleCm*sc;
   document.getElementById('xsecbox').hidden=false;
-  document.getElementById('xsec').innerHTML=`<svg viewBox="0 0 ${S} ${S}" role="img" aria-label="Bundle cross-section, ${(r.ro*20).toFixed(0)} mm across">
+  document.getElementById('xsec').innerHTML=`<svg viewBox="0 0 ${S} ${S}" role="img" aria-label="Bundle cross-section, ${dia(r.ro)} across">
     <circle cx="${cx}" cy="${cy}" r="${(r.ro*sc).toFixed(2)}" fill="var(--panel-2)"/>${rings}
     ${r.bands.map((b,i)=>`<circle id="hl${i}" cx="${cx}" cy="${cy}" r="${((b.r0+b.r1)/2*sc).toFixed(2)}" fill="none" stroke="var(--ink)" stroke-opacity=".9" stroke-width="${Math.max(1.6,(b.r1-b.r0)*sc)}" opacity="0" class="hl" pointer-events="none"/>`).join('')}
     <circle cx="${cx}" cy="${cy}" r="${(r.ri*sc).toFixed(2)}" fill="var(--ground)" stroke="var(--line)" stroke-width="1"/>
   </svg>`;
   document.getElementById('xcap').innerHTML=
-    `<span>OD ${(r.ro*20).toFixed(0)} mm</span><span>core ${(r.ri*20).toFixed(0)} mm</span><span>${r.H.toFixed(0)} cm long</span>`;
+    `<span>OD ${dia(r.ro)}</span><span>core ${dia(r.ri)}</span><span>${len(r.H)} long</span>`;
   const svgEl=document.querySelector('#xsec svg'), xt=document.getElementById('xtip'),
         box=document.getElementById('xsecbox');
   const clearHl=()=>svgEl.querySelectorAll('.hl').forEach(c=>c.setAttribute('opacity','0'));
@@ -622,33 +693,32 @@ async function compute(){
     const b=r.bands.find(z=>rr>=z.r0-1e-6&&rr<=z.r1+1e-6);
     if(!b && rr>r.ri){ hide(); return; }
     xt.classList.add('on');
-    if(!b){ xt.innerHTML=`<b>Core</b><span class="num">${(r.ri*20).toFixed(0)} mm · air leaves at ${(r.K/r.ri).toFixed(2)} cm/s</span>`; }
+    if(!b){ xt.innerHTML=`<b>Core</b><span class="num">${dia(r.ri)} · air leaves at ${vel(r.K/r.ri)}</span>`; }
     else{
       const h=svgEl.querySelector('#hl'+r.bands.indexOf(b)); if(h) h.setAttribute('opacity','1');
-      xt.innerHTML=`<b>${b.m.label} · ${b.m.sub}</b><span class="num">${num1(b.turns)} turn${b.turns>1.02?'s':''} · ${num1(b.n)} layer${b.n>1.02?'s':''} · ${(b.r0*20).toFixed(0)}–${(b.r1*20).toFixed(0)} mm</span><span class="num">${logsOf(b.m,b.r0,b.r1,r.K).toFixed(2)} logs · ${dpOf(b.m,b.r0,b.r1,r.K).toFixed(0)} Pa · ${(r.K/((b.r0+b.r1)/2)).toFixed(2)} cm/s</span>`;
+      xt.innerHTML=`<b>${b.m.label} · ${b.m.sub}</b><span class="num">${num1(b.turns)} turn${b.turns>1.02?'s':''} · ${num1(b.n)} layer${b.n>1.02?'s':''} · ${diaR(b.r0,b.r1,'–')}</span><span class="num">${logsOf(b.m,b.r0,b.r1,r.K).toFixed(2)} logs · ${dpOf(b.m,b.r0,b.r1,r.K).toFixed(0)} Pa · ${vel(r.K/((b.r0+b.r1)/2))}</span>`;
     }
     const x=ev.clientX-bb.left+14, y=ev.clientY-bb.top+14;
     xt.style.left=Math.min(x,bb.width-xt.offsetWidth-8)+'px';
     xt.style.top=Math.min(y,bb.height-xt.offsetHeight-4)+'px';
   });
-  scheduleSens(sel,{dpMax,roMax,Hmax,fixedRi},r.logs,LAST);
   document.getElementById('legend').innerHTML=r.bands.map(b=>{
     return `<span><i style="background-image:url('${IMG[b.m.id]}')"></i>${b.m.label} · ${b.m.sub} — ${num1(b.turns)} turn${b.turns>1.02?'s':''}, ${num1(b.n)} layer${b.n>1.02?'s':''}</span>`;}).join('');
 
   // build sequence
   document.getElementById('spec').innerHTML=
-    `<div class="core"><span class="lab">Start with</span><b class="mono">${(r.ri*20).toFixed(0)} mm</b> core — a tube or rolled card this diameter, ${r.H.toFixed(0)} cm long. Roll materials concentrically around it in the following order:</div>`+
+    `<div class="core"><span class="lab">Start with</span><b class="mono">${dia(r.ri)}</b> core — a tube or rolled card this diameter, ${len(r.H)} long. Roll materials concentrically around it in the following order:</div>`+
     r.bands.map((b,i)=>{
     const m=b.m, fd=r.folds[m.id], n=b.n, turns=b.turns;
     const stripCm=Math.PI*(b.r0+b.r1)*turns;                  // strip length used, cm
-    const foldSide = (fd.roll==='L' ? m.W : m.L).toFixed(0);
+    const foldSide = fd.roll==='L' ? m.W : m.L;
     const foldTxt = fd.f===1
       ? `Use it single — no folding.`
-      : `Fold the <b>${foldSide} cm</b> side down to <b>${fd.axial.toFixed(0)} cm</b>, giving <b>${fd.f}</b> plies.`;
-    const rollTxt = `Roll the <b>${fd.circ.toFixed(0)} cm</b> side on — <b>${num1(turns)}</b> turn${turns>1.02?'s':''}, using <b>${stripCm.toFixed(0)} cm</b> of its ${fd.circ.toFixed(0)} cm.`;
+      : `Fold the <b>${len(foldSide)}</b> side down to <b>${len(fd.axial)}</b>, giving <b>${fd.f}</b> plies.`;
+    const rollTxt = `Roll the <b>${len(fd.circ)}</b> side on — <b>${num1(turns)}</b> turn${turns>1.02?'s':''}, using <b>${len(stripCm)}</b> of its ${len(fd.circ)}.`;
     return `<div class="step"><div class="sh"><span class="ord">${i+1}</span>${swSvg(m.id)}<b>${m.label} · ${m.sub}</b></div>
       <p>${foldTxt}</p><p>${rollTxt}</p>${extrapChip(m,b,r)}
-      <p style="color:var(--ink-3)">${num1(turns)} × ${fd.f} ply = ${num1(n)} layer${n>1.02?'s':''} · ${(b.r0*20).toFixed(0)}→${(b.r1*20).toFixed(0)} mm · ${logsOf(m,b.r0,b.r1,r.K).toFixed(2)} logs · ${dpOf(m,b.r0,b.r1,r.K).toFixed(0)} Pa</p></div>`;
+      <p style="color:var(--ink-3)">${num1(turns)} × ${fd.f} ply = ${num1(n)} layer${n>1.02?'s':''} · ${diaR(b.r0,b.r1,'→')} · ${logsOf(m,b.r0,b.r1,r.K).toFixed(2)} logs · ${dpOf(m,b.r0,b.r1,r.K).toFixed(0)} Pa</p></div>`;
   }).join('');
 }
 
@@ -721,13 +791,15 @@ document.getElementById('tt').onclick=()=>{
   const cur=document.documentElement.getAttribute('data-theme');
   const dark=cur? cur==='dark' : matchMedia('(prefers-color-scheme:dark)').matches;
   document.documentElement.setAttribute('data-theme',dark?'light':'dark');};
+document.getElementById('uM').onclick=()=>setUnits('metric');
+document.getElementById('uI').onclick=()=>setUnits('imperial');
 const cOut=document.getElementById('cOut');
-function calc(){const L=+cL.value,P=+cP.value,C=+cC.value;
+function calc(){const L=VAL.cL,P=+cP.value,C=VAL.cC;
   const t=Math.PI*Math.pow(C/(2*Math.PI),2)/(P*L);
-  cOut.textContent=isFinite(t)&&t>0? `t = ${t.toFixed(4)} cm per layer`:'—';}
+  cOut.textContent=!(isFinite(t)&&t>0)? '—' : imp()? `t = ${(t/2.54).toFixed(4)} in per layer` : `t = ${t.toFixed(4)} cm per layer`;}
 ['cL','cP','cC'].forEach(i=>document.getElementById(i).addEventListener('input',calc));
 document.getElementById('cClose').onclick=()=>document.getElementById('tdlg').close();
-calc(); render().then(markClean);
+applyUnits(); render().then(markClean);
 </script>
 
 </body>
